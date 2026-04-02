@@ -556,7 +556,8 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
         estimado: Number.isFinite(estKg) ? `${estKg.toFixed(1)} kg` : "—",
         dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
 estadoAlim,
-        conf, confClass,
+esperadoAlim,
+conf, confClass,
         estado, estadoClass,
         bucket,
         estKg
