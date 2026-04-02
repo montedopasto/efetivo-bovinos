@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monte do Pasto — Dashboard Bovinos</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+:root{
+  --bg:#f3f7f4;
+
+--panel:#ffffff;
+--panel-strong:#d9e3dc;
+--text:#0f172a;
+--muted:#475569;
+
+  /* verde assinatura Monte do Pasto */
+  --green:#2f9e44;
+  --green-glow:#22c55e;
+
+  --yellow:#ffb800;
+  --red:#ff3b5c;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:
+    radial-gradient(circle at 15% 20%, #dcfce7 0%, transparent 45%),
+    radial-gradient(circle at 85% 30%, #bbf7d0 0%, transparent 45%),
+    var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+
+nav{
+  padding:14px 26px;
+  background:#e6f4ea;
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--panel-strong);
+}
+
+nav a{
+  color:var(--muted);
+  text-decoration:none;
+  margin-right:18px;
+  font-weight:600;
+}
+
+nav a:hover{color:#fff}
+
+/* HEADER */
+
+.topline{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:22px 28px;
+  background:#d1fae5;
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--panel-strong);
+}
+
+.logo{height:84px}
+
+.topline h1{
+  font-size:22px;
+  margin:0;
+}
+
+.header-text{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.header-right{
+  margin-left:auto;
+  text-align:right;
+}
+
+.clock{
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.weather{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* LAYOUT */
+
+.cards{
+  display:grid;
+  gap:22px;
+  padding:26px;
+}
+
+.card{
+  position:relative;
+  background:var(--panel);
+  backdrop-filter:blur(18px);
+  border:1px solid var(--panel-strong);
+  border-radius:20px;
+  padding:22px;
+  overflow:hidden;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    0 12px 40px rgba(0,0,0,.45);
+
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.card.main{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(255,255,255,.2);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.1),
+    0 22px 70px rgba(0,0,0,.6),
+    0 0 22px rgba(0,255,156,.18);
+}
+/* brilho de vidro */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    120deg,
+    rgba(255,255,255,.18) 0%,
+    transparent 40%
+  );
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* hover futurista */
+.card:hover{
+  transform:translateY(-4px) scale(1.01);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.08),
+    0 18px 60px rgba(0,0,0,.6),
+    0 0 18px rgba(0,255,156,.15);
+}
+
+/* NOVO BLOCO ↓↓↓ */
+
+.bar{
+  margin:26px;
+  padding:18px;
+  background:var(--panel);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--panel-strong);
+  border-radius:18px;
+}
+
+input[type="file"]{
+  padding:10px 14px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid var(--panel-strong);
+  color:#fff;
+}
+
+input[type="file"]::file-selector-button{
+  background:rgba(255,255,255,.15);
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  margin-right:8px;
+  cursor:pointer;
+}
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  align-items:flex-end;
+}
+
+.controls label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+/* BUTTONS */
+
+button{
+  background:var(--green);
+  color:#ffffff;
+  border:1px solid #1b7f35;
+  padding:10px 16px;
+  border-radius:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.18s ease;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+button:hover{
+  background:var(--green-glow);
+  transform:translateY(-1px);
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+}
+
+/* TEXT */
+
+.small{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:8px;
+  line-height:1.35;
+}
+
+.pill{
+  display:inline-block;
+  padding:3px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  border:1px solid var(--panel-strong);
+}
+
+.mono{
+  font-family:ui-monospace,monospace;
+}
+
+/* ALERTS */
+
+.alerts-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.alert-row{
+  padding:12px 14px;
+  border-radius:14px;
+  background:#ffffff;
+  border:1px solid var(--panel-strong);
+}
+
+.alert-row.bad{
+  border-color:var(--red);
+  box-shadow:0 0 16px rgba(255,59,92,.25);
+}
+
+.alert-row.warn{
+  border-color:var(--yellow);
+  box-shadow:0 0 16px rgba(255,184,0,.2);
+}
+
+.alert-row.ok{
+  border-color:var(--green);
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+th, td{
+  padding:8px 6px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  text-align:center;
+}
+
+th.left, td.left{text-align:left}
+
+/* STATUS BAR */
+
+.stackbar{
+  height:10px;
+  background:#111;
+  border-radius:999px;
+  overflow:hidden;
+  display:flex;
+}
+
+.seg{height:100%}
+.g{background:var(--green)}
+.o{background:var(--yellow)}
+.r{background:var(--red)}
+
+.tag{
+  display:inline-block;
+  font-size:12px;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid var(--panel-strong);
+  margin-left:8px;
+}
+.badge-risk{
+  display:inline-block;
+  font-size:12px;
+  font-weight:700;
+  padding:3px 8px;
+  border-radius:999px;
+  color:#fff;
+  margin-left:8px;
+  letter-spacing:.2px;
+}
+
+.badge-risk.low{ background:#15803d; }   /* verde */
+.badge-risk.mid{ background:#ca8a04; }   /* amarelo */
+.badge-risk.high{ background:#b91c1c; }  /* vermelho */
+/* PRINT */
+
+@media print{
+  nav, button, input, .small{display:none !important}
+  body{background:#fff;color:#000}
+  .card{background:#fff;border:1px solid #000}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="animais.html">Animais</a>
+  <a href="planeamento.html">Planeamento</a>
+  <a href="ranking.html">Ranking</a>
+</nav>
+
+<div class="topline">
+  <img src="logo-monte-do-pasto.png" alt="Monte do Pasto" class="logo">
+
+  <div class="header-text">
+  <h1>Dashboard Bovinos — Monitorização (Alertas + Resumo)</h1>
+  <div class="status" id="stamp"></div>
+</div>
+
+<div class="header-right">
+  <div id="clock" class="clock">--:--</div>
+  <div id="weather" class="weather">🌤 --°C</div>
+</div>
+</div>
+
+<div class="bar">
+  <input type="file" id="fileInput" accept=".csv,text/csv">
+  <div class="status" id="status">Carrega o teu <b>efetivo_bovinos.csv</b> (fica guardado até carregares outro)</div>
+</div>
+
+<div class="cards">
+
+  <div class="card main">
+    <div class="controls">
+      <div>
+        <label>Ações</label>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button id="btnExport">Exportar PDF</button>
+  <button id="btnClear">Limpar dados (app)</button>
+  <button id="btnClearMeteo">Limpar cache meteo</button>
+  <button id="btnAdmin">Modo Admin</button>
+</div>
+      </div>
+      <div class="right status" id="metaLine"></div>
+    </div>
+
+    <div class="small">
+      • Esta página é o <b>painel principal</b>. Carregas o CSV uma vez e depois vais para “Animais” e “Planeamento”.<br>
+      • “Limpar dados” apaga o estado guardado no browser. “Limpar cache meteo” força novo download da meteorologia (pode demorar um pouco).
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Alertas</h2>
+    <div id="alerts" class="alerts-wrap"></div>
+    <div class="small">
+  🔴 <b>Estado crítico</b> = GMD real abaixo do mínimo aceitável.<br>
+  🟡 <b>Risco</b> = crescimento abaixo do esperado (tendência negativa).<br>
+  🟢 <b>Normal</b> = crescimento dentro do ritmo esperado.<br><br>
+
+  O alerta do grupo ativa quando:
+  • 🔴 ≥ 15% dos animais → grupo crítico<br>
+  • (🟡 + 🔴) ≥ 30% → grupo em risco
+</div>
+  </div>
+
+  <div class="card">
+    <h2>Resumo por Grupo</h2>
+    <div class="small">
+  <b>Risco</b> = percentagem de animais que estão a crescer abaixo do ritmo esperado.
+  Representa a fração do grupo que precisa de atenção.
+</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Grupo</th>
+          <th>Animais</th>
+          <th>M</th>
+          <th>F</th>
+          <th>Peso M (kg)</th>
+          <th>Peso F (kg)</th>
+          <th>GMD M real</th>
+          <th>GMD F real</th>
+          <th>Temp. média (°C)</th>
+          <th class="left">Estado do grupo</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyGroups"></tbody>
+    </table>
+    <div class="small">
+      • “GMD real” usa apenas animais com <b>2 pesagens</b> (crescimento observado).<br>
+      • A barra 🟢🟡🔴 conta apenas animais com histórico (2 pesagens).<br>
+      • Meteorologia: temperatura média do período desde a última pesagem (Open-Meteo histórico). Se falhar/timeout, usa fallback e segue.
+    </div>
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+(function(){
+  const statusEl = document.getElementById("status");
+  const stampEl = document.getElementById("stamp");
+  const metaLineEl = document.getElementById("metaLine");
+  const alertsEl = document.getElementById("alerts");
+  const tbodyGroups = document.getElementById("tbodyGroups");
+
+  const btnClear = document.getElementById("btnClear");
+  const btnClearMeteo = document.getElementById("btnClearMeteo");
+  const fileInput = document.getElementById("fileInput");
+  const btnExport = document.getElementById("btnExport");
+const btnAdmin = document.getElementById("btnAdmin");
+  const ADMIN_USER = "josealmanso";
+const ADMIN_PASS = "1983Ja1002.";
+  function isAdmin(){
+  return localStorage.getItem("admin") === "1";
+}
+
+function applyAdminMode(){
+  const admin = isAdmin();
+
+  fileInput.style.display = admin ? "" : "none";
+  btnClear.style.display = admin ? "" : "none";
+  btnClearMeteo.style.display = admin ? "" : "none";
+}
+
+function askAdmin(){
+
+  const u = prompt("Utilizador:");
+  if(u !== ADMIN_USER){
+    alert("Utilizador inválido");
+    return;
+  }
+
+  const p = prompt("Password:");
+  if(p !== ADMIN_PASS){
+    alert("Password errada");
+    return;
+  }
+
+  localStorage.setItem("admin", "1");
+  applyAdminMode();
+  alert("Modo administrador ativo ✅");
+}
+
+document.addEventListener("keydown", e=>{
+  const key = e.key.toLowerCase();
+
+  if(e.metaKey && e.altKey && key === "a"){
+    e.preventDefault();
+
+    if(isAdmin()){
+      localStorage.removeItem("admin");
+      applyAdminMode();
+      alert("Modo administrador desligado");
+    }else{
+      askAdmin();
+    }
+  }
+});
+
+  function setStamp(state){
+    if(!state?.generated_at){
+      stampEl.textContent = "";
+      return;
+    }
+    const d = new Date(state.generated_at);
+    const when = isFinite(d.getTime()) ? d.toLocaleString("pt-PT") : state.generated_at;
+    stampEl.innerHTML = `<span class="pill">Última atualização: <b>${when}</b></span>`;
+  }
+
+  function setMetaLine(state){
+    if(!state?.meta) { metaLineEl.textContent = ""; return; }
+    const m = state.meta;
+    const loc = state?.config?.SITE ? `${state.config.SITE.lat.toFixed(4)}, ${state.config.SITE.lon.toFixed(4)}` : "—";
+    metaLineEl.innerHTML =
+      `Separador: <b>${m.delimiter || "—"}</b> · Linhas: <b>${m.lines ?? "—"}</b> · ` +
+      `Processadas: <b>${m.processed_ok ?? "—"}</b> · Falhas: <b>${m.processed_fail ?? "—"}</b> · ` +
+      `Local: <b>${loc}</b>`;
+  }
+
+  function renderAlerts(state){
+    alertsEl.innerHTML = "";
+    const list = Core.buildAlerts(state?.groupsOut || []);
+
+    if(!list.length){
+      const div = document.createElement("div");
+      div.className = "alert-row ok";
+      div.innerHTML = `<b class="ok">✔ Nenhum alerta ativo</b>`;
+      alertsEl.appendChild(div);
+      return;
+    }
+
+    for(const r of list){
+      const div = document.createElement("div");
+      div.className = `alert-row ${r.level}`;
+      let action = "";
+
+if(r.level === "bad"){
+  action = "👉 Ação: verificar alimentação, stress térmico e última pesagem.";
+}
+else if(r.level === "warn"){
+  action = "👉 Ação: monitorizar crescimento nos próximos dias.";
+}
+
+div.innerHTML = `
+  <b class="${r.level}">${Core.escapeHtml(r.text)}</b>
+  <div class="small">
+  ${Core.escapeHtml(r.meta)}
+  ${r.pctBad != null ? `<br>🔴 críticos: <b>${r.pctBad.toFixed(0)}%</b>` : ""}
+</div>
+  ${action ? `<div class="small"><b>${action}</b></div>` : ""}
+`;
+
+alertsEl.appendChild(div);
+    }
+  }
+function buildRiskBadge(risk){
+  const pct = (risk||0)*100;
+
+  let cls = "low";
+  if(pct >= 60) cls = "high";
+  else if(pct >= 30) cls = "mid";
+
+  return `
+    <span class="badge-risk ${cls}"
+      title="Percentagem de animais em risco (amarelo + vermelho)">
+      risco ${pct.toFixed(0)}%
+    </span>
+  `;
+}
+  function renderGroupRow(g){
+    const totalStatus = (g.ok||0) + (g.warn||0) + (g.bad||0);
+    const green = totalStatus ? ((g.ok||0)/totalStatus)*100 : 0;
+    const orange = totalStatus ? ((g.warn||0)/totalStatus)*100 : 0;
+    const red = totalStatus ? ((g.bad||0)/totalStatus)*100 : 0;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="left"><b>${Core.escapeHtml(g.name)}</b></td>
+      <td>${g.n ?? 0}</td>
+      <td>${g.m ?? 0}</td>
+      <td>${g.f ?? 0}</td>
+      <td>${Number.isFinite(g.avgPesoM) ? g.avgPesoM.toFixed(1) : "—"}</td>
+      <td>${Number.isFinite(g.avgPesoF) ? g.avgPesoF.toFixed(1) : "—"}</td>
+      <td>${Number.isFinite(g.avgGmdM) ? g.avgGmdM.toFixed(2) : "—"}</td>
+      <td>${Number.isFinite(g.avgGmdF) ? g.avgGmdF.toFixed(2) : "—"}</td>
+      <td>${Number.isFinite(g.avgTemp) ? g.avgTemp.toFixed(1) : "—"}</td>
+      <td class="left">
+        <div class="stackbar" title="Distribuição do estado (apenas com 2 pesagens)">
+          <div class="seg g" style="width:${green}%"></div>
+          <div class="seg o" style="width:${orange}%"></div>
+          <div class="seg r" style="width:${red}%"></div>
+        </div>
+        <div style="margin-top:6px" class="mono">
+  🟢 ${g.ok||0} &nbsp; 🟡 ${g.warn||0} &nbsp; 🔴 ${g.bad||0}
+  <span class="muted"> (com histórico: ${totalStatus})</span>
+  ${buildRiskBadge(g.risk)}
+</div>
+      </td>
+    `;
+    tbodyGroups.appendChild(tr);
+  }
+
+  function renderGroups(state){
+    tbodyGroups.innerHTML = "";
+    const groups = state?.groupsOut || [];
+    if(!groups.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td class="left muted" colspan="10">Sem dados. Carrega um CSV para começar.</td>`;
+      tbodyGroups.appendChild(tr);
+      return;
+    }
+    for(const g of groups) renderGroupRow(g);
+  }
+
+  function renderAll(state){
+    setStamp(state);
+    setMetaLine(state);
+    renderAlerts(state);
+    renderGroups(state);
+
+    if(!state?.generated_at){
+      statusEl.innerHTML = `Carrega o teu <b>efetivo_bovinos.csv</b> (fica guardado até carregares outro)`;
+    }else{
+      statusEl.innerHTML = `Dados carregados e guardados. Podes ir a <b>Animais</b> e <b>Planeamento</b>.`;
+    }
+  }
+
+  async function importFromFile(file){
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const txt = ev.target.result;
+
+      fileInput.disabled = true;
+      btnClear.disabled = true;
+      btnClearMeteo.disabled = true;
+
+      statusEl.innerHTML = `A iniciar importação…`;
+
+      try{
+        const st = await Core.importCSVText(txt, {
+          onProgress: (p) => {
+            if(p.phase === "parse"){
+              statusEl.innerHTML = `A ler CSV… <b>${p.done}</b>/<b>${p.total}</b>`;
+            }else if(p.phase === "meteo"){
+              statusEl.innerHTML = `A pedir meteorologia… <b>${p.done}</b>/<b>${p.total}</b>`;
+            }else{
+              statusEl.innerHTML = `A processar…`;
+            }
+          }
+        });
+
+        statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
+        renderAll(st);
+
+      }catch(err){
+        console.error(err);
+        alert("Falha ao importar o CSV. Confirma o formato/colunas.\n\nDetalhe: " + (err?.message || err));
+        renderAll(Core.loadState() || null);
+      }finally{
+        fileInput.disabled = false;
+        btnClear.disabled = false;
+        btnClearMeteo.disabled = false;
+        fileInput.value = "";
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  fileInput.addEventListener("change", (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    importFromFile(file);
+  });
+
+  btnClear.addEventListener("click", ()=>{
+    if(!confirm("Isto vai apagar os dados guardados no browser para esta app. Continuar?")) return;
+    Core.clearState();
+    renderAll(null);
+  });
+
+btnClearMeteo.addEventListener("click", ()=>{
+  if(!confirm("Isto vai apagar a cache de meteorologia. A próxima importação vai voltar a pedir tudo. Continuar?")) return;
+  Core.clearMeteoCache();
+  alert("Cache meteo apagada. ✅");
+});
+
+btnExport.addEventListener("click", ()=>{
+  window.print();
+});
+
+btnAdmin.addEventListener("click", ()=>{
+  if(isAdmin()){
+    localStorage.removeItem("admin");
+    applyAdminMode();
+    alert("Modo administrador desligado");
+  }else{
+    askAdmin();
+  }
+});
+
+// relógio em tempo real
+function startClock(){
+  const el = document.getElementById("clock");
+
+  function tick(){
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString("pt-PT", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+// meteorologia atual
+async function loadWeather(){
+  const el = document.getElementById("weather");
+
+  try{
+    const lat = 38.02;
+    const lon = -8.21;
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+
+    const r = await fetch(url);
+    const j = await r.json();
+
+    const t = j.current_weather.temperature;
+    const code = j.current_weather.weathercode;
+
+    const icon = weatherIcon(code);
+
+    el.textContent = `${icon} ${t.toFixed(1)}°C`;
+
+  }catch(err){
+    el.textContent = "⚠ sem meteo";
+  }
+}
+
+function weatherIcon(code){
+  if(code === 0) return "☀️";
+  if(code <= 3) return "⛅";
+  if(code <= 48) return "🌫";
+  if(code <= 67) return "🌧";
+  if(code <= 77) return "❄️";
+  if(code <= 99) return "⛈";
+  return "🌤";
+}
+
+// boot
+applyAdminMode();
+renderAll(Core.loadState() || null);
+
+startClock();
+loadWeather();
+setInterval(loadWeather, 10 * 60 * 1000);
+
+})();
+</script>
+
+</body>
+</html>
