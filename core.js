@@ -454,7 +454,7 @@ const factorSexoAlim = (r.sexo === "F") ? 1.02 : 0.98;
 // idade
 let factorIdade = 1.0;
 if (r.dNasc) {
-  const idadeDias = daysBetweenUTC(parseDatePT(r.dNasc), today);
+  const idadeDias = daysBetweenUTC(r.dNasc, today);
   if (idadeDias < 300) factorIdade = 1.05;
   else if (idadeDias > 600) factorIdade = 0.95;
 }
