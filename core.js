@@ -390,6 +390,9 @@ else{
     const i_datual = idx("data_peso_atual") >= 0 ? idx("data_peso_atual") : 6;
     const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
     const i_nasc = idx("data_nasc") >= 0 ? idx("data_nasc") : -1;
+    const i_nif = idx("nif");
+const i_raca = idx("raca");
+const i_dataEntrada = idx("data_entrada");
 
     if(onProgress) onProgress({ phase:"parse", message:`A ler dados…`, done:0, total:st.meta.lines });
 
@@ -403,6 +406,9 @@ else{
   const animal = clean(cols[i_animal]) || "—";
   const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
   const grupo  = clean(cols[i_grupo]) || "—";
+      const nif = i_nif >= 0 ? clean(cols[i_nif]) : "";
+const raca = i_raca >= 0 ? clean(cols[i_raca]) : "";
+const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null;
 
   // 👇 AQUI
   const dNasc = i_nasc >= 0 ? parseDatePT(cols[i_nasc]) : null;
