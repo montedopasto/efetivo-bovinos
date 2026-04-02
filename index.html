@@ -418,10 +418,16 @@ O alerta do grupo ativa quando:<br>
       • Meteorologia: temperatura média do período desde a última pesagem (Open-Meteo histórico). Se falhar/timeout, usa fallback e segue.
     </div>
     <div class="small" style="margin-top:12px">
-<b>Consumo médio (kg/dia)</b> = quantidade média de alimento ingerido por animal.<br>
-<b>Estado alimentação</b> = avaliação do consumo face ao esperado:<br>
-🟢 Normal · 🟡 Alto · 🔴 Baixo
-  </div>
+  <b>Consumo esperado</b> = aproximadamente <b>2,5% do peso vivo por dia</b>.<br><br>
+
+  <b>Estado alimentação</b> resulta da comparação entre o consumo real e o esperado:<br>
+  🟢 <b>Normal</b> → consumo dentro do intervalo esperado (±10%)<br>
+  🔴 <b>Baixo</b> → consumo inferior a 90% do esperado (possível problema de ingestão)<br>
+  🟡 <b>Alto</b> → consumo superior a 115% do esperado (possível desperdício ou baixa eficiência)<br><br>
+
+  • Valores baseados no peso médio do grupo.<br>
+  • O objetivo é identificar rapidamente grupos com problemas de alimentação ou custos excessivos.
+</div>
 
 </div>
 
