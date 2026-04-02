@@ -487,6 +487,7 @@ if (Number.isFinite(fcr)) {
         estimado: Number.isFinite(estKg) ? `${estKg.toFixed(1)} kg` : "—",
         dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
 fcr: Number.isFinite(fcr) ? fcr.toFixed(2) : "—",
+eficiencia,
         conf, confClass,
         estado, estadoClass,
         bucket,
