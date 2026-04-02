@@ -637,8 +637,22 @@ const sx = clean(r.sexo).toUpperCase();
   // 🔥 DMI médio
   g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
 
-  // 🔥 FCR REAL (correto)
-  g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
+let estadoAlimGrupo = "—";
+
+if (Number.isFinite(g.avgDmi) && g.n > 0) {
+  const pesoMedio = ((g.avgPesoM || 0) + (g.avgPesoF || 0)) / ((g.m > 0 && g.f > 0) ? 2 : 1);
+  const esperado = pesoMedio * 0.025;
+
+  if (g.avgDmi < esperado * 0.9) {
+    estadoAlimGrupo = "🔴 Baixo";
+  } else if (g.avgDmi > esperado * 1.15) {
+    estadoAlimGrupo = "🟡 Alto";
+  } else {
+    estadoAlimGrupo = "🟢 Normal";
+  }
+}
+
+g.estadoAlim = estadoAlimGrupo;
 
   // 🔥 eficiência
   let eficienciaGrupo = "—";
