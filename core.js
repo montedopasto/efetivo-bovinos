@@ -517,11 +517,6 @@ if(!groupAgg[g]){
 ga.n++;
 
 
-if (Number.isFinite(fcr)) {
-  ga.sumFcr += fcr;
-  ga.nFcr++;
-}
-
 const sx = clean(r.sexo).toUpperCase();
       if(sx==="M"){
         ga.m++; ga.sumPesoM += r.pAtual;
@@ -562,7 +557,13 @@ g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
 // 🔥 FCR CORRETO (não é média!)
 g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
 
-// eficiência
+// 🔥 DMI médio
+g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
+
+// 🔥 FCR correto (biológico)
+g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
+
+// 🔥 eficiência
 let eficienciaGrupo = "—";
 if (Number.isFinite(g.avgFcr)) {
   if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
@@ -570,34 +571,6 @@ if (Number.isFinite(g.avgFcr)) {
   else eficienciaGrupo = "🔴 Ineficiente";
 }
 g.eficiencia = eficienciaGrupo;
-g.avgDmi = g.nDmi ? g.sumDmi / g.nDmi : NaN;
-g.avgFcr = g.nFcr ? g.sumFcr / g.nFcr : NaN;
-
-let eficienciaGrupo = "—";
-if (Number.isFinite(g.avgFcr)) {
-  if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
-  else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
-  else eficienciaGrupo = "🔴 Ineficiente";
-}
-g.eficiencia = eficienciaGrupo;
-      const totalStatus = g.ok + g.warn + g.bad;
-      g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
-
-      g.sortKey = (g.bad*1000) + (g.warn*100) - (g.ok*10);
-      return g;
-    }).sort((a,b)=>b.sortKey-a.sortKey || b.risk-a.risk || a.name.localeCompare(b.name));
-
-    st.animalsOut = animalsOut;
-    st.groupsOut = groupsOut;
-    st.groupAgg = groupAgg;
-
-    st.meta.processed_ok = okRows;
-    st.meta.processed_fail = badRows;
-    st.meta.delimiter = delim;
-    st.generated_at = new Date().toISOString();
-
-    return st;
-  }
 
   /* ===================== ALERTAS (para dashboard) ===================== */
   function buildAlerts(groupsOut){
