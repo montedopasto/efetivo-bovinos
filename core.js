@@ -613,7 +613,16 @@ const sx = clean(r.sexo).toUpperCase();
   return g;
 
 }).sort((a,b)=>b.sortKey-a.sortKey || b.risk-a.risk || a.name.localeCompare(b.name));
+st.animalsOut = animalsOut;
+st.groupsOut = groupsOut;
+st.groupAgg = groupAgg;
 
+st.meta.processed_ok = okRows;
+st.meta.processed_fail = badRows;
+st.meta.delimiter = delim;
+st.generated_at = new Date().toISOString();
+
+return st;
 
   /* ===================== FORECAST (para planeamento) ===================== */
   function computeForecast(state, targets){
