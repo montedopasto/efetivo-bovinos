@@ -328,6 +328,7 @@ function safeInt(x){
     const i_pant   = idx("peso_anterior") >= 0 ? idx("peso_anterior") : 5;
     const i_datual = idx("data_peso_atual") >= 0 ? idx("data_peso_atual") : 6;
     const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
+    const i_nasc = idx("data_nasc") >= 0 ? idx("data_nasc") : -1;
 
     if(onProgress) onProgress({ phase:"parse", message:`A ler dados…`, done:0, total:st.meta.lines });
 
