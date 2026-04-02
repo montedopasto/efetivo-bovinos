@@ -226,7 +226,9 @@ function buildAlerts(groupsOut){
     const pRisk = ((g.bad||0) + (g.warn||0)) / total;
 
     if(pRed >= 0.15){
-      rows.push({level:"bad", text:`🔥 ${g.name} — ALERTA VERMELHO`, meta:`🔴 ${(pRed*100).toFixed(0)}% | risco ${(pRisk*100).toFixed(0)}% | hist ${total}`});
+      rows.push({level:"bad", text:`🔥 ${g.name} — ALERTA VERMELHO`, meta: pRed === pRisk
+  ? `🔴 ${(pRed*100).toFixed(0)}% | hist ${total}`
+  : `🔴 ${(pRed*100).toFixed(0)}% | risco ${(pRisk*100).toFixed(0)}% | hist ${total}`);
     }else if(pRisk >= 0.30){
       rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | hist ${total}`});
     }
