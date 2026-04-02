@@ -651,15 +651,6 @@ if (Number.isFinite(g.avgDmi) && g.n > 0) {
 
 g.estadoAlim = estadoAlimGrupo;
 
-  // 🔥 eficiência
-  let eficienciaGrupo = "—";
-  if (Number.isFinite(g.avgFcr)) {
-    if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
-    else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
-    else eficienciaGrupo = "🔴 Ineficiente";
-  }
-  g.eficiencia = eficienciaGrupo;
-
   const totalStatus = g.ok + g.warn + g.bad;
   g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
 
