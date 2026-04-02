@@ -636,16 +636,30 @@ const sx = clean(r.sexo).toUpperCase();
 
 let estadoAlimGrupo = "—";
 
-if (Number.isFinite(g.avgDmi) && g.n > 0) {
-  const pesoMedio = ((g.avgPesoM || 0) + (g.avgPesoF || 0)) / ((g.m > 0 && g.f > 0) ? 2 : 1);
-  const esperado = pesoMedio * 0.025;
+if (Number.isFinite(g.avgDmi)) {
 
-  if (g.avgDmi < esperado * 0.9) {
-    estadoAlimGrupo = "🔴 Baixo";
-  } else if (g.avgDmi > esperado * 1.15) {
-    estadoAlimGrupo = "🟡 Alto";
-  } else {
-    estadoAlimGrupo = "🟢 Normal";
+  let pesoMedio = NaN;
+
+  if (g.m > 0 && g.f > 0) {
+    pesoMedio = (g.avgPesoM + g.avgPesoF) / 2;
+  } else if (g.m > 0) {
+    pesoMedio = g.avgPesoM;
+  } else if (g.f > 0) {
+    pesoMedio = g.avgPesoF;
+  }
+
+  if (Number.isFinite(pesoMedio)) {
+
+    const esperado = pesoMedio * 0.025;
+
+    if (g.avgDmi < esperado * 0.9) {
+      estadoAlimGrupo = "🔴 Baixo";
+    } else if (g.avgDmi > esperado * 1.15) {
+      estadoAlimGrupo = "🟡 Alto";
+    } else {
+      estadoAlimGrupo = "🟢 Normal";
+    }
+
   }
 }
 
