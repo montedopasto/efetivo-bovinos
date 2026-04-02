@@ -337,16 +337,19 @@ function safeInt(x){
     const periodKeys = new Set();
 
     for(let li=1; li<lines.length; li++){
-      const cols = lines[li].split(delim);
+  const cols = lines[li].split(delim);
 
-      const animal = clean(cols[i_animal]) || "—";
-      const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
-      const grupo  = clean(cols[i_grupo]) || "—";
+  const animal = clean(cols[i_animal]) || "—";
+  const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
+  const grupo  = clean(cols[i_grupo]) || "—";
 
-      const dAnt   = parseDatePT(cols[i_dant]);
-      const pAnt   = parseNumber(cols[i_pant]);
-      const dAtual = parseDatePT(cols[i_datual]);
-      const pAtual = parseNumber(cols[i_patual]);
+  // 👇 AQUI
+  const dNasc = i_nasc >= 0 ? parseDatePT(cols[i_nasc]) : null;
+
+  const dAnt   = parseDatePT(cols[i_dant]);
+  const pAnt   = parseNumber(cols[i_pant]);
+  const dAtual = parseDatePT(cols[i_datual]);
+  const pAtual = parseNumber(cols[i_patual]);
 
       let gmdInd = NaN;
       if(dAnt && dAtual && Number.isFinite(pAnt) && Number.isFinite(pAtual)){
