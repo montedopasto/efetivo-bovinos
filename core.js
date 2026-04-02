@@ -575,6 +575,7 @@ if(!groupAgg[g]){
 
     // 🔥 NOVO MODELO CORRETO
     sumDmi:0,
+    sumEsperadoAlim:0,
     sumGanho:0,
 
     ok:0,warn:0,bad:0
@@ -587,7 +588,9 @@ ga.n++;
 if (Number.isFinite(dmi)) {
   ga.sumDmi += dmi;
 }
-
+if (Number.isFinite(esperadoAlim)) {
+  ga.sumEsperadoAlim += esperadoAlim;
+}
 // 🔥 ACUMULAR GANHO (kg/dia)
 const ganho = Number.isFinite(r.gmdInd) && r.gmdInd > 0
   ? r.gmdInd
@@ -635,33 +638,23 @@ const sx = clean(r.sexo).toUpperCase();
 
   // 🔥 DMI médio
   g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
+g.avgEsperadoAlim = g.n ? g.sumEsperadoAlim / g.n : NaN;
 
 let estadoAlimGrupo = "—";
 
-if (Number.isFinite(g.avgDmi)) {
+if (
+  Number.isFinite(g.avgDmi) &&
+  Number.isFinite(g.avgEsperadoAlim) &&
+  g.avgEsperadoAlim > 0
+) {
+  const ratioAlimGrupo = g.avgDmi / g.avgEsperadoAlim;
 
-  let pesoMedio = NaN;
-
-  if (g.m > 0 && g.f > 0) {
-    pesoMedio = (g.avgPesoM + g.avgPesoF) / 2;
-  } else if (g.m > 0) {
-    pesoMedio = g.avgPesoM;
-  } else if (g.f > 0) {
-    pesoMedio = g.avgPesoF;
-  }
-
-  if (Number.isFinite(pesoMedio)) {
-
-    const esperado = pesoMedio * 0.025;
-
-    if (g.avgDmi < esperado * 0.9) {
-      estadoAlimGrupo = "🔴 Baixo";
-    } else if (g.avgDmi > esperado * 1.15) {
-      estadoAlimGrupo = "🟡 Alto";
-    } else {
-      estadoAlimGrupo = "🟢 Normal";
-    }
-
+  if (ratioAlimGrupo < 0.9) {
+    estadoAlimGrupo = "🔴 Baixo";
+  } else if (ratioAlimGrupo > 1.15) {
+    estadoAlimGrupo = "🟡 Alto";
+  } else {
+    estadoAlimGrupo = "🟢 Normal";
   }
 }
 
