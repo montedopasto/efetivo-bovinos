@@ -366,7 +366,7 @@ function safeInt(x){
         periodKeys.add(`${isoDateUTC(dAtual)}|${isoDateUTC(todayUTC)}`);
       }
 
-      rows.push({animal, sexo, grupo, dAnt, pAnt, dAtual, pAtual, gmdInd});
+      rows.push({animal, sexo, grupo, dNasc, dAnt, pAnt, dAtual, pAtual, gmdInd});
 
       if(onProgress && li % 200 === 0){
         onProgress({ phase:"parse", message:`A ler dados…`, done:li-1, total:st.meta.lines });
