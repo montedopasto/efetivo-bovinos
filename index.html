@@ -376,14 +376,14 @@ th.left, td.left{text-align:left}
   <div class="card">
     <h2>Alertas</h2>
     <div id="alerts" class="alerts-wrap"></div>
-    <div class="small">
-  🔴 <b>Estado crítico</b> = GMD real abaixo do mínimo aceitável.<br>
-  🟡 <b>Risco</b> = crescimento abaixo do esperado (tendência negativa).<br>
-  🟢 <b>Normal</b> = crescimento dentro do ritmo esperado.<br><br>
+   <div class="small">
+  🔴 <b>Estado crítico</b> = problemas reais de desempenho (GMD baixo ou FCR elevado).<br>
+  🟡 <b>Risco</b> = sinais de alerta (queda de desempenho ou eficiência a degradar).<br>
+  🟢 <b>Normal</b> = crescimento e eficiência dentro do esperado.<br><br>
 
-  O alerta do grupo ativa quando:
-  • 🔴 ≥ 15% dos animais → grupo crítico<br>
-  • (🟡 + 🔴) ≥ 30% → grupo em risco
+  O alerta do grupo ativa quando:<br>
+  • 🔴 <b>Crítico</b> → FCR &gt; 8 ou GMD &lt; 0.9 kg/dia ou ≥ 40% dos animais em risco<br>
+  • 🟡 <b>Risco</b> → FCR &gt; 6.5 ou GMD &lt; 1.1 kg/dia ou ≥ 25% dos animais em risco
 </div>
   </div>
 
