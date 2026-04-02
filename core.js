@@ -460,6 +460,12 @@ const dmi = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
 
 // FCR estimado
 const fcr = (gmdFinal > 0) ? dmi / gmdFinal : NaN;
+      let eficiencia = "—";
+if (Number.isFinite(fcr)) {
+  if (fcr < 6) eficiencia = "🟢 Excelente";
+  else if (fcr < 7.5) eficiencia = "🟡 Normal";
+  else eficiencia = "🔴 Ineficiente";
+}
       const [estado, estadoClass, estadoSort, bucket] = performanceStatus(r.gmdInd, gmdMediaGrupo[r.grupo]);
 
       okRows++;
