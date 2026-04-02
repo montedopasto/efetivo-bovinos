@@ -512,7 +512,6 @@ if(!groupAgg[g]){
     ok:0,warn:0,bad:0
   };
 }
-}
 
       const ga = groupAgg[g];
 ga.n++;
