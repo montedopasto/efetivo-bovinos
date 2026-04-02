@@ -229,9 +229,7 @@ function buildAlerts(groupsOut){
       rows.push({
   level:"bad",
   text:`🔥 ${g.name} — ALERTA VERMELHO`,
-  meta: pRed === pRisk
-    ? `🔴 ${(pRed*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
-    : `🔴 ${(pRed*100).toFixed(0)}% | risco ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
+  meta: `🔴 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
 });
     }else if(pRisk >= 0.30){
       rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`});
