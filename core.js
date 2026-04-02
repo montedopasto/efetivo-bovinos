@@ -249,14 +249,26 @@ const isWarning =
   pRisk >= 0.25;
 
 if(isCritical){
-      rows.push({
-  level:"bad",
-  text:`🔥 ${g.name} — ALERTA VERMELHO`,
-  meta: `🔴 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
-});
-    }else if(isWarning){
-      rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`});
-    }
+  rows.push({
+    level:"bad",
+    text:`🔥 ${g.name} — ALERTA VERMELHO`,
+    meta: `🔴 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
+  });
+}
+else if(isWarning){
+  rows.push({
+    level:"warn",
+    text:`⚠️ ${g.name} — ALERTA AMARELO`,
+    meta:`🟡 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
+  });
+}
+else{
+  rows.push({
+    level:"ok",
+    text:`🟢 ${g.name} — NORMAL`,
+    meta:`🟢 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
+  });
+}
   }
 
   rows.sort((a,b)=>{
