@@ -495,17 +495,21 @@ eficiencia,
       });
 
       const g = r.grupo || "—";
-      if(!groupAgg[g]){
-        groupAgg[g] = {
-          name:g,n:0,m:0,f:0,
-          sumPesoM:0,sumPesoF:0,
-          sumEstM:0,sumEstF:0,
-          sumGmdM:0,sumGmdF:0,
-          nGmdM:0,nGmdF:0,
-          sumTemp:0,nTemp:0,
-          ok:0,warn:0,bad:0
-        };
-      }
+if(!groupAgg[g]){
+  groupAgg[g] = {
+    name:g,n:0,m:0,f:0,
+    sumPesoM:0,sumPesoF:0,
+    sumEstM:0,sumEstF:0,
+    sumGmdM:0,sumGmdF:0,
+    nGmdM:0,nGmdF:0,
+    sumTemp:0,nTemp:0,
+
+    sumDmi:0,nDmi:0,
+    sumFcr:0,nFcr:0,
+
+    ok:0,warn:0,bad:0
+  };
+}
 
       const ga = groupAgg[g];
       ga.n++;
