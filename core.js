@@ -225,13 +225,33 @@ function buildAlerts(groupsOut){
     const pRed = (g.bad||0) / total;
     const pRisk = ((g.bad||0) + (g.warn||0)) / total;
 
-    if(pRed >= 0.15){
+    const fcr = g.avgFcr;
+let gmd = NaN;
+
+if (Number.isFinite(g.avgGmdM) && Number.isFinite(g.avgGmdF)) {
+  gmd = (g.avgGmdM + g.avgGmdF) / 2;
+} else if (Number.isFinite(g.avgGmdM)) {
+  gmd = g.avgGmdM;
+} else if (Number.isFinite(g.avgGmdF)) {
+  gmd = g.avgGmdF;
+}
+
+const isCritical =
+  (Number.isFinite(fcr) && fcr > 8) ||
+  (Number.isFinite(gmd) && gmd < 0.9) ||
+  pRisk >= 0.40;
+
+const isWarning =
+  pRisk >= 0.25 ||
+  (Number.isFinite(fcr) && fcr > 6.5);
+
+if(isCritical){
       rows.push({
   level:"bad",
   text:`🔥 ${g.name} — ALERTA VERMELHO`,
   meta: `🔴 ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`
 });
-    }else if(pRisk >= 0.30){
+    }else if(isWarning){
       rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | 🐄 ${total}/${g.n} animais`});
     }
   }
