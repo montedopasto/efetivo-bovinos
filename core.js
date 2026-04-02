@@ -509,7 +509,15 @@ eficiencia,
 
       const ga = groupAgg[g];
       ga.n++;
+if (Number.isFinite(r.dmi)) {
+  ga.sumDmi = (ga.sumDmi || 0) + r.dmi;
+  ga.nDmi = (ga.nDmi || 0) + 1;
+}
 
+if (Number.isFinite(r.fcr)) {
+  ga.sumFcr = (ga.sumFcr || 0) + r.fcr;
+  ga.nFcr = (ga.nFcr || 0) + 1;
+}
       const sx = clean(r.sexo).toUpperCase();
       if(sx==="M"){
         ga.m++; ga.sumPesoM += r.pAtual;
