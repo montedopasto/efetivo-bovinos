@@ -623,7 +623,7 @@ st.meta.delimiter = delim;
 st.generated_at = new Date().toISOString();
 
 return st;
-
+}
   /* ===================== FORECAST (para planeamento) ===================== */
   function computeForecast(state, targets){
     const st = state;
