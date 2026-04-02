@@ -529,13 +529,14 @@ const dmi = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
 
 // 🔥 ESTADO DE ALIMENTAÇÃO (SIMPLES E CLARO)
 let estadoAlim = "—";
+const esperadoAlim = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
 
-if (Number.isFinite(dmi) && Number.isFinite(r.pAtual)) {
-  const esperado = r.pAtual * 0.025;
+if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
+  const ratioAlim = dmi / esperadoAlim;
 
-  if (dmi < esperado * 0.9) {
+  if (ratioAlim < 0.9) {
     estadoAlim = "🔴 Baixo";
-  } else if (dmi > esperado * 1.15) {
+  } else if (ratioAlim > 1.15) {
     estadoAlim = "🟡 Alto";
   } else {
     estadoAlim = "🟢 Normal";
