@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monte do Pasto — Ranking de Saída</title>
+
+<link rel="stylesheet" href="theme.css">
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+.small{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.35}
+.pill{display:inline-block;padding:2px 10px;border:1px solid #bbb;border-radius:999px;background:#fafafa}
+.topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.right{margin-left:auto}
+.big{font-size:16px;font-weight:900}
+
+/* 👉 COLA AQUI EM BAIXO 👇 */
+
+.rank-badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:.2px;
+}
+
+.rank-ready{ background:#15803d; }   /* verde */
+.rank-almost{ background:#ca8a04; }  /* amarelo */
+.rank-grow{ background:#64748b; }    /* neutro */
+
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="animais.html">Animais</a>
+  <a href="planeamento.html">Planeamento</a>
+  <a href="ranking.html"><b>Ranking</b></a>
+</nav>
+
+<div class="topline">
+  <h1 style="margin:0;">Ranking Automático de Prioridade de Saída</h1>
+  <button id="btnExport">Exportar PDF</button>
+  <div class="status right" id="stamp"></div>
+</div>
+
+<div class="card">
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th class="left">Grupo</th>
+<th>% do alvo</th>
+<th>Dias restantes</th>
+<th class="left">Estado</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+
+<div class="small">
+• Ranking baseado em proximidade ao peso alvo (≥95% = pronto).<br>
+• Ordena automaticamente por prioridade de venda.<br>
+• Usa os dados já importados no Dashboard.
+</div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+(function(){
+
+const tbody = document.getElementById("tbody");
+const stampEl = document.getElementById("stamp");
+const btnExport = document.getElementById("btnExport");
+
+function setStamp(state){
+  if(!state?.generated_at){
+    stampEl.textContent = "";
+    return;
+  }
+  const d = new Date(state.generated_at);
+  const when = isFinite(d.getTime()) ? d.toLocaleString("pt-PT") : state.generated_at;
+  stampEl.innerHTML = `<span class="pill">Dados: <b>${when}</b></span>`;
+}
+
+function render(){
+
+  const state = Core.loadState();
+  tbody.innerHTML = "";
+
+  if(!state || !state.groupsOut){
+    tbody.innerHTML = `<tr><td colspan="5" class="muted left">Sem dados. Importa CSV no Dashboard.</td></tr>`;
+    return;
+  }
+
+  setStamp(state);
+
+  const targets = Core.getTargets();
+  const rows = Core.computeForecast(state, targets);
+
+  const ranked = rows.map(r=>{
+
+    const pctM = r.pM ? r.pM/targets.targetM : 0;
+    const pctF = r.pF ? r.pF/targets.targetF : 0;
+    const pct = Math.max(pctM, pctF);
+
+    let score = 0;
+
+    if(pct >= 0.95) score += 1000;
+    if(r.minDays === 0) score += 500;
+    score -= (r.minDays || 999);
+
+    return {
+      ...r,
+      pct: pct*100,
+      score
+    };
+
+  });
+
+  ranked.sort((a,b)=>b.score-a.score);
+
+  ranked.forEach((r,i)=>{
+
+    let badge = `<span class="rank-badge rank-grow">Em engorda</span>`;
+
+if(r.pct >= 100){
+  badge = `<span class="rank-badge rank-ready">Pronto</span>`;
+}
+else if(r.pct >= 95){
+  badge = `<span class="rank-badge rank-almost">Quase pronto</span>`;
+}
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td class="big">${i+1}</td>
+      <td class="left"><b>${Core.escapeHtml(r.name)}</b></td>
+      <td><b>${r.pct.toFixed(1)}%</b></td>
+      <td>${Core.safeInt(r.minDays)}</td>
+      <td class="left">${badge}</td>
+    `;
+
+    tbody.appendChild(tr);
+
+  });
+
+}
+
+btnExport.addEventListener("click", ()=>{
+  window.print();
+});
+
+render();
+
+})();
+</script>
+
+</body>
+</html>
