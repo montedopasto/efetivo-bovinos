@@ -472,6 +472,8 @@ const fcr = (gmdFinal > 0) ? dmi / gmdFinal : NaN;
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
         fatorClima: fc,
         estimado: Number.isFinite(estKg) ? `${estKg.toFixed(1)} kg` : "—",
+        dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
+fcr: Number.isFinite(fcr) ? fcr.toFixed(2) : "—",
         conf, confClass,
         estado, estadoClass,
         bucket,
