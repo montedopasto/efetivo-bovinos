@@ -236,9 +236,11 @@ if (Number.isFinite(g.avgGmdM) && Number.isFinite(g.avgGmdF)) {
   gmd = g.avgGmdF;
 }
 
+const hasData = total >= 5; // mínimo de animais com histórico
+
 const isCritical =
-  (Number.isFinite(fcr) && fcr > 8) ||
-  (Number.isFinite(gmd) && gmd < 0.9) ||
+  (hasData && Number.isFinite(fcr) && fcr > 8) ||
+  (hasData && Number.isFinite(gmd) && gmd < 0.9) ||
   pRisk >= 0.40;
 
 const isWarning =
