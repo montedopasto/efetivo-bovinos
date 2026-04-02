@@ -505,11 +505,13 @@ if(!groupAgg[g]){
     nGmdM:0,nGmdF:0,
     sumTemp:0,nTemp:0,
 
-    sumDmi:0,nDmi:0,
-    sumFcr:0,nFcr:0,
+    // 🔥 NOVO MODELO CORRETO
+    sumDmi:0,
+    sumGanho:0,
 
     ok:0,warn:0,bad:0
   };
+}
 }
 
       const ga = groupAgg[g];
