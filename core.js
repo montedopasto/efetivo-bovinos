@@ -225,7 +225,6 @@ function buildAlerts(groupsOut){
     const pRed = (g.bad||0) / total;
     const pRisk = ((g.bad||0) + (g.warn||0)) / total;
 
-    const fcr = g.avgFcr;
 let gmd = NaN;
 
 if (Number.isFinite(g.avgGmdM) && Number.isFinite(g.avgGmdF)) {
@@ -239,12 +238,10 @@ if (Number.isFinite(g.avgGmdM) && Number.isFinite(g.avgGmdF)) {
 const hasData = total >= 5; // mínimo de animais com histórico
 
 const isCritical =
-  (hasData && Number.isFinite(fcr) && fcr > 8) ||
   (hasData && Number.isFinite(gmd) && gmd < 0.9) ||
   pRisk >= 0.40;
 
 const isWarning =
-  (hasData && Number.isFinite(fcr) && fcr > 6.5) ||
   (hasData && Number.isFinite(gmd) && gmd < 1.1) ||
   pRisk >= 0.25;
 
