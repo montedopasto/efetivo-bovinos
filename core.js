@@ -244,8 +244,9 @@ const isCritical =
   pRisk >= 0.40;
 
 const isWarning =
-  pRisk >= 0.25 ||
-  (Number.isFinite(fcr) && fcr > 6.5);
+  (hasData && Number.isFinite(fcr) && fcr > 6.5) ||
+  (hasData && Number.isFinite(gmd) && gmd < 1.1) ||
+  pRisk >= 0.25;
 
 if(isCritical){
       rows.push({
