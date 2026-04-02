@@ -434,7 +434,32 @@ function safeInt(x){
       const gmdBase = Number.isFinite(r.gmdInd) ? r.gmdInd : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
       const gmdFinal = gmdBase * factorSexo(r.sexo) * factorMaturidade(r.pAtual, r.sexo) * fc;
       const estKg = r.pAtual + (gmdFinal * daysSince);
+// ===== ALIMENTAÇÃO INTELIGENTE =====
 
+// % base por peso
+let percBase = 0.025;
+if (r.pAtual < 300) percBase = 0.028;
+else if (r.pAtual > 500) percBase = 0.022;
+
+// sexo
+const factorSexoAlim = (r.sexo === "F") ? 1.02 : 0.98;
+
+// idade
+let factorIdade = 1.0;
+if (r.data_nasc) {
+  const idadeDias = daysBetweenUTC(parseDatePT(r.data_nasc), today);
+  if (idadeDias < 300) factorIdade = 1.05;
+  else if (idadeDias > 600) factorIdade = 0.95;
+}
+
+// clima (já tens)
+const factorClima = fc;
+
+// DMI estimado
+const dmi = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
+
+// FCR estimado
+const fcr = (gmdFinal > 0) ? dmi / gmdFinal : NaN;
       const [estado, estadoClass, estadoSort, bucket] = performanceStatus(r.gmdInd, gmdMediaGrupo[r.grupo]);
 
       okRows++;
