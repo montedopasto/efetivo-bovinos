@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monte do Pasto — Animais</title>
+
+<link rel="stylesheet" href="theme.css">
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+.small{font-size:12px;color:var(--muted);margin-top:8px}
+.pill{display:inline-block;padding:2px 10px;border:1px solid #bbb;border-radius:999px;background:#fafafa}
+.topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.right{margin-left:auto}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="animais.html"><b>Animais</b></a>
+  <a href="planeamento.html">Planeamento</a>
+  <a href="ranking.html">Ranking</a>
+</nav>
+
+<div class="topline">
+  <h1 style="margin:0;">Detalhe por Animal</h1>
+
+<button id="btnExport">
+  Exportar PDF
+</button>
+
+  <div class="status right" id="stamp"></div>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Animal</th>
+        <th class="left">Grupo</th>
+        <th>Sexo</th>
+        <th>Peso atual</th>
+        <th>Data peso</th>
+        <th>Temp. período</th>
+        <th>Fator clima</th>
+        <th>Peso estimado hoje</th>
+        <th>Confiança</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyAnimals"></tbody>
+  </table>
+
+  <div class="small">
+    • Esta página usa os dados já carregados no Dashboard.<br>
+    • Se a tabela estiver vazia, volta ao Dashboard e carrega o CSV.
+  </div>
+</div>
+
+<script src="core.js"></script>
+<script>
+(function(){
+  const tbody = document.getElementById("tbodyAnimals");
+  const stampEl = document.getElementById("stamp");
+  const btnExport = document.getElementById("btnExport");
+
+  function setStamp(state){
+    if(!state?.generated_at){
+      stampEl.textContent = "";
+      return;
+    }
+    const d = new Date(state.generated_at);
+    const when = isFinite(d.getTime()) ? d.toLocaleString("pt-PT") : state.generated_at;
+    stampEl.innerHTML = `<span class="pill">Dados: <b>${when}</b></span>`;
+  }
+
+  function renderRow(a){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="left">${Core.escapeHtml(a.animal)}</td>
+      <td class="left">${Core.escapeHtml(a.grupo)}</td>
+      <td>${Core.escapeHtml(a.sexo)}</td>
+      <td>${Core.escapeHtml(a.pesoAtual)}</td>
+      <td>${Core.escapeHtml(a.dataAtual)}</td>
+      <td>${Core.escapeHtml(a.temp)}</td>
+      <td>${a.fatorClima}</td>
+      <td><b>${Core.escapeHtml(a.estimado)}</b></td>
+      <td class="${a.confClass}">${Core.escapeHtml(a.conf)}</td>
+      <td class="${a.estadoClass}">${Core.escapeHtml(a.estado)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function render(){
+    const state = Core.loadState();
+    tbody.innerHTML = "";
+
+    if(!state || !state.animalsOut || !state.animalsOut.length){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="10" class="left muted">Sem dados. Vai ao Dashboard e carrega o CSV.</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
+    setStamp(state);
+
+    for(const a of state.animalsOut){
+      renderRow(a);
+    }
+  }
+
+  btnExport.addEventListener("click", ()=>{
+    window.print();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
