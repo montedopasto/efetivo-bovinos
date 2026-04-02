@@ -234,7 +234,7 @@ function buildAlerts(groupsOut){
     : `🔴 ${(pRed*100).toFixed(0)}% | risco ${(pRisk*100).toFixed(0)}% | 👥 ${total}/${g.n} animais`
 });
     }else if(pRisk >= 0.30){
-      rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | hist ${total}`});
+      rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | 👥 ${total}/${g.n} animais`});
     }
   }
 
