@@ -515,7 +515,19 @@ if(!groupAgg[g]){
 
       const ga = groupAgg[g];
 ga.n++;
+// 🔥 ACUMULAR DMI
+if (Number.isFinite(dmi)) {
+  ga.sumDmi += dmi;
+}
 
+// 🔥 ACUMULAR GANHO (kg/dia)
+const ganho = Number.isFinite(r.gmdInd) && r.gmdInd > 0
+  ? r.gmdInd
+  : gmdFinal;
+
+if (Number.isFinite(ganho)) {
+  ga.sumGanho += ganho;
+}
 
 const sx = clean(r.sexo).toUpperCase();
       if(sx==="M"){
