@@ -558,7 +558,16 @@ const sx = clean(r.sexo).toUpperCase();
       g.avgGmdM  = g.nGmdM ? g.sumGmdM/g.nGmdM : NaN;
       g.avgGmdF  = g.nGmdF ? g.sumGmdF/g.nGmdF : NaN;
       g.avgTemp  = g.nTemp ? g.sumTemp/g.nTemp : NaN;
+g.avgDmi = g.nDmi ? g.sumDmi / g.nDmi : NaN;
+g.avgFcr = g.nFcr ? g.sumFcr / g.nFcr : NaN;
 
+let eficienciaGrupo = "—";
+if (Number.isFinite(g.avgFcr)) {
+  if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
+  else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
+  else eficienciaGrupo = "🔴 Ineficiente";
+}
+g.eficiencia = eficienciaGrupo;
       const totalStatus = g.ok + g.warn + g.bad;
       g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
 
