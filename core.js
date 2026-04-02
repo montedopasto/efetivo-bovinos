@@ -449,7 +449,8 @@ if (r.pAtual < 300) percBase = 0.028;
 else if (r.pAtual > 500) percBase = 0.022;
 
 // sexo
-const factorSexoAlim = (r.sexo === "F") ? 1.02 : 0.98;
+const sexoNorm = clean(r.sexo).toUpperCase();
+const factorSexoAlim = (sexoNorm === "F") ? 1.02 : 0.98;
 
 // idade
 let factorIdade = 1.0;
