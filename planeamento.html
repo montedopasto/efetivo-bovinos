@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monte do Pasto — Planeamento</title>
+
+<link rel="stylesheet" href="theme.css">
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:10px}
+.controls label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.controls input{
+  padding:8px 10px;border-radius:10px;border:1px solid #ccc;background:#fff;
+  font-size:13px;min-width:160px
+}
+
+/* ================= SMART PLANNING ================= */
+
+.smartCard{
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:14px;
+  background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+
+.smartCard:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 12px rgba(0,0,0,0.08);
+}
+
+.smartAlta{ border-left:6px solid #d32f2f }
+.smartMedia{ border-left:6px solid #ff9800 }
+.smartBaixa{ border-left:6px solid #4caf50 }
+.controls button{
+  padding:9px 14px;border-radius:10px;border:1px solid #ccc;background:#eee;
+  cursor:pointer;font-weight:700
+}
+.controls button:disabled{opacity:.6;cursor:not-allowed}
+.small{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.35}
+.topline{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.right{margin-left:auto}
+.pill{display:inline-block;padding:2px 10px;border:1px solid #bbb;border-radius:999px;background:#fafafa}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="animais.html">Animais</a>
+  <a href="planeamento.html"><b>Planeamento</b></a>
+  <a href="ranking.html">Ranking</a>
+</nav>
+
+<div class="topline">
+  <h1 style="margin:0;">Previsão de Saída por Grupo</h1>
+
+<button id="btnExport">
+  Exportar PDF
+</button>
+
+  <div class="status right" id="stamp"></div>
+</div>
+
+<div class="card">
+
+  <div class="controls">
+    <div>
+      <label>Peso alvo Machos (kg)</label>
+      <input id="targetM" inputmode="numeric" value="620">
+    </div>
+    <div>
+      <label>Peso alvo Fêmeas (kg)</label>
+      <input id="targetF" inputmode="numeric" value="520">
+    </div>
+    <button id="btnRecalc">Recalcular previsão</button>
+    <div class="status" id="forecastStatus"></div>
+  </div>
+<div class="card" style="margin-bottom:12px">
+  <h3 style="margin-top:0">Sugestões Inteligentes</h3>
+  <div id="smartCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px"></div>
+</div>
+  <table>
+    <thead>
+      <tr>
+        <th class="left">Grupo</th>
+        <th>M</th>
+        <th>F</th>
+        <th>Peso est. M</th>
+        <th>Peso est. F</th>
+        <th>GMD M (usado)</th>
+        <th>GMD F (usado)</th>
+        <th>Dias M</th>
+        <th>Data M</th>
+        <th>Dias F</th>
+        <th>Data F</th>
+        <th class="left">Estado</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="small">
+    • Esta página usa o estado guardado (localStorage).<br>
+    • Se estiver vazio, volta ao Dashboard e importa o CSV novamente.
+  </div>
+
+</div>
+
+<script src="core.js"></script>
+<script>
+(function(){
+  const tbody = document.getElementById("tbody");
+  const stampEl = document.getElementById("stamp");
+  const statusEl = document.getElementById("forecastStatus");
+  const btn = document.getElementById("btnRecalc");
+
+  const targetMEl = document.getElementById("targetM");
+  const targetFEl = document.getElementById("targetF");
+  const btnExport = document.getElementById("btnExport");
+const smartCardsEl = document.getElementById("smartCards");
+  function setStamp(state){
+    if(!state?.generated_at){
+      stampEl.textContent = "";
+      return;
+    }
+    const d = new Date(state.generated_at);
+    const when = isFinite(d.getTime()) ? d.toLocaleString("pt-PT") : state.generated_at;
+    stampEl.innerHTML = `<span class="pill">Dados: <b>${when}</b></span>`;
+  }
+
+  function readTargets(){
+    const m = Core.parseNumber(targetMEl.value);
+    const f = Core.parseNumber(targetFEl.value);
+    return {
+      targetM: (Number.isFinite(m) && m > 0) ? m : 620,
+      targetF: (Number.isFinite(f) && f > 0) ? f : 520
+    };
+  }
+
+  function renderEmpty(msg){
+  tbody.innerHTML = "";
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td colspan="12" class="left muted">${Core.escapeHtml(msg)}</td>`;
+  tbody.appendChild(tr);
+}
+
+
+/* ===== SMART CARDS ===== */
+
+function renderSmartCards(state, targets){
+
+  smartCardsEl.innerHTML = "";
+
+  const suggestions = Core.buildSmartPlanning(state, targets);
+
+  if(!suggestions.length){
+    smartCardsEl.innerHTML = "<div class='muted'>Sem sugestões disponíveis</div>";
+    return;
+  }
+
+  for(const s of suggestions){
+
+    const div = document.createElement("div");
+
+    let cls = "smartCard ";
+    if(s.prioridade === "alta") cls += "smartAlta";
+    else if(s.prioridade === "media") cls += "smartMedia";
+    else cls += "smartBaixa";
+
+    div.className = cls;
+
+    div.innerHTML = `
+      <b>${Core.escapeHtml(s.grupo)}</b><br>
+      <span><b>Ação:</b> ${Core.escapeHtml(s.acao)}</span><br>
+      <span><b>Estado:</b> ${Core.escapeHtml(s.estado)}</span><br>
+      <span class="small">${Core.escapeHtml(s.nota)}</span><br>
+      <span class="pill">⏳ ${Core.safeInt(s.diasPrevistos)} dias</span>
+    `;
+
+    smartCardsEl.appendChild(div);
+  }
+}
+
+  function render(){
+    const state = Core.loadState();
+    tbody.innerHTML = "";
+
+    if(!state || !state.groupsOut || !state.groupsOut.length){
+  setStamp(state);
+  renderEmpty("Sem dados. Vai ao Dashboard e carrega o CSV.");
+  smartCardsEl.innerHTML = "";
+  statusEl.textContent = "";
+  return;
+}
+
+    setStamp(state);
+
+    const targets = readTargets();
+    Core.setTargets(targets.targetM, targets.targetF);
+
+    const rows = Core.computeForecast(state, targets);
+
+renderSmartCards(state, targets);
+
+    if(!rows.length){
+      renderEmpty("Sem grupos para previsão.");
+      statusEl.textContent = "";
+      return;
+    }
+
+    for(const r of rows){
+      const tr = document.createElement("tr");
+
+      const pM = Number.isFinite(r.pM) ? r.pM.toFixed(1) : "—";
+      const pF = Number.isFinite(r.pF) ? r.pF.toFixed(1) : "—";
+
+      const gmdM = Number.isFinite(r.gmdUsedM) ? r.gmdUsedM.toFixed(2) : "—";
+      const gmdF = Number.isFinite(r.gmdUsedF) ? r.gmdUsedF.toFixed(2) : "—";
+
+      const dM = Core.safeInt(r.daysM);
+      const dF = Core.safeInt(r.daysF);
+
+      tr.innerHTML = `
+        <td class="left"><b>${Core.escapeHtml(r.name)}</b></td>
+        <td>${r.m ?? 0}</td>
+        <td>${r.f ?? 0}</td>
+        <td>${pM}</td>
+        <td>${pF}</td>
+        <td><b>${gmdM}</b></td>
+        <td><b>${gmdF}</b></td>
+        <td>${dM}</td>
+        <td>${Core.escapeHtml(r.dateM || "—")}</td>
+        <td>${dF}</td>
+        <td>${Core.escapeHtml(r.dateF || "—")}</td>
+        <td class="left ${r.estadoClass || "muted"}"><b>${Core.escapeHtml(r.estadoTexto || "—")}</b></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    const fb = Number.isFinite(state?.config?.CONSERVATIVE_FALLBACK_GMD) ? state.config.CONSERVATIVE_FALLBACK_GMD : 1.10;
+    statusEl.textContent = `Alvos: M ${targets.targetM}kg · F ${targets.targetF}kg · fallback: ${fb.toFixed(2)} kg/dia`;
+  }
+
+btn.addEventListener("click", render);
+
+btnExport.addEventListener("click", ()=>{
+  window.print();
+});
+
+render();
+})();
+</script>
+
+</body>
+</html>
