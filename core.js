@@ -589,32 +589,6 @@ const sx = clean(r.sexo).toUpperCase();
 
 }).sort((a,b)=>b.sortKey-a.sortKey || b.risk-a.risk || a.name.localeCompare(b.name));
 
-  /* ===================== ALERTAS (para dashboard) ===================== */
-  function buildAlerts(groupsOut){
-    const rows = [];
-    for(const g of groupsOut || []){
-      const total = (g.ok||0) + (g.warn||0) + (g.bad||0);
-      if(total === 0) continue;
-
-      const pRed = (g.bad||0) / total;
-      const pRisk = ((g.bad||0) + (g.warn||0)) / total;
-
-      if(pRed >= 0.15){
-        rows.push({level:"bad", text:`🔥 ${g.name} — ALERTA VERMELHO`, meta:`🔴 ${(pRed*100).toFixed(0)}% | risco ${(pRisk*100).toFixed(0)}% | hist ${total}`});
-      }else if(pRisk >= 0.30){
-        rows.push({level:"warn", text:`⚠️ ${g.name} — ALERTA AMARELO`, meta:`risco ${(pRisk*100).toFixed(0)}% | hist ${total}`});
-      }
-    }
-
-    rows.sort((a,b)=>{
-      const la = a.level==="bad" ? 2 : 1;
-      const lb = b.level==="bad" ? 2 : 1;
-      if(lb!==la) return lb-la;
-      return a.text.localeCompare(b.text);
-    });
-
-    return rows;
-  }
 
   /* ===================== FORECAST (para planeamento) ===================== */
   function computeForecast(state, targets){
