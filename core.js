@@ -411,19 +411,19 @@ function safeInt(x){
       if(!hasAtual){
         badRows++;
         animalsOut.push({
-          sortKey: 99,
-          animal:r.animal, grupo:r.grupo, sexo:r.sexo,
-          pesoAtual:"—", dataAtual:"—",
-          temp:"—", fatorClima: NaN,
-          estimado:"—",
-          conf:"—", confClass:"muted",
-          estado:"—", estadoClass:"muted",
-          bucket:"none",
-          estKg: NaN
-          dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
-fcr: Number.isFinite(fcr) ? fcr.toFixed(2) : "—",
-eficiencia,
-        });
+  sortKey: 99,
+  animal:r.animal, grupo:r.grupo, sexo:r.sexo,
+  pesoAtual:"—", dataAtual:"—",
+  temp:"—", fatorClima: NaN,
+  estimado:"—",
+  conf:"—", confClass:"muted",
+  estado:"—", estadoClass:"muted",
+  bucket:"none",
+  estKg: NaN
+  dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
+  fcr: Number.isFinite(fcr) ? fcr.toFixed(2) : "—",
+  eficiencia,
+});
         continue;
       }
 
