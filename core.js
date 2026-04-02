@@ -416,13 +416,13 @@ function safeInt(x){
   pesoAtual:"—", dataAtual:"—",
   temp:"—", fatorClima: NaN,
   estimado:"—",
+  dmi: "—",
+  fcr: "—",
+  eficiencia: "—",
   conf:"—", confClass:"muted",
   estado:"—", estadoClass:"muted",
   bucket:"none",
   estKg: NaN
-  dmi: Number.isFinite(dmi) ? `${dmi.toFixed(1)} kg/dia` : "—",
-  fcr: Number.isFinite(fcr) ? fcr.toFixed(2) : "—",
-  eficiencia,
 });
         continue;
       }
