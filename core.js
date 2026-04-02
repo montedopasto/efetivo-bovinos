@@ -527,16 +527,22 @@ if (r.dNasc) {
 // clima (já tens)
 const factorClima = fc;
 
-// DMI estimado
+// DMI estimado (Consumo diário)
 const dmi = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
 
-// FCR estimado
-const fcr = (gmdFinal > 0) ? dmi / gmdFinal : NaN;
-      let eficiencia = "—";
-if (Number.isFinite(fcr)) {
-  if (fcr < 6) eficiencia = "🟢 Excelente";
-  else if (fcr < 7.5) eficiencia = "🟡 Normal";
-  else eficiencia = "🔴 Ineficiente";
+// 🔥 ESTADO DE ALIMENTAÇÃO (SIMPLES E CLARO)
+let estadoAlim = "—";
+
+if (Number.isFinite(dmi) && Number.isFinite(r.pAtual)) {
+  const esperado = r.pAtual * 0.025;
+
+  if (dmi < esperado * 0.9) {
+    estadoAlim = "🔴 Baixo";
+  } else if (dmi > esperado * 1.15) {
+    estadoAlim = "🟡 Alto";
+  } else {
+    estadoAlim = "🟢 Normal";
+  }
 }
       const [estado, estadoClass, estadoSort, bucket] = performanceStatus(r.gmdInd, gmdMediaGrupo[r.grupo]);
 
