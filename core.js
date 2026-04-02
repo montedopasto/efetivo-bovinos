@@ -554,35 +554,40 @@ const sx = clean(r.sexo).toUpperCase();
     animalsOut.sort((a,b)=>a.sortKey-b.sortKey || a.grupo.localeCompare(b.grupo) || a.animal.localeCompare(b.animal));
 
     // gruposOut
-    const groupsOut = Object.values(groupAgg).map(g=>{
-      g.avgPesoM = g.m ? g.sumPesoM/g.m : NaN;
-      g.avgPesoF = g.f ? g.sumPesoF/g.f : NaN;
-      g.avgEstM  = g.m ? g.sumEstM/g.m : NaN;
-      g.avgEstF  = g.f ? g.sumEstF/g.f : NaN;
+    const groupsOut = Object.values(groupAgg).map(g => {
 
-      g.avgGmdM  = g.nGmdM ? g.sumGmdM/g.nGmdM : NaN;
-      g.avgGmdF  = g.nGmdF ? g.sumGmdF/g.nGmdF : NaN;
-      g.avgTemp  = g.nTemp ? g.sumTemp/g.nTemp : NaN;
-      // 🔥 DMI médio (mantém)
-g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
+  g.avgPesoM = g.m ? g.sumPesoM/g.m : NaN;
+  g.avgPesoF = g.f ? g.sumPesoF/g.f : NaN;
+  g.avgEstM  = g.m ? g.sumEstM/g.m : NaN;
+  g.avgEstF  = g.f ? g.sumEstF/g.f : NaN;
 
-// 🔥 FCR CORRETO (não é média!)
-g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
+  g.avgGmdM  = g.nGmdM ? g.sumGmdM/g.nGmdM : NaN;
+  g.avgGmdF  = g.nGmdF ? g.sumGmdF/g.nGmdF : NaN;
+  g.avgTemp  = g.nTemp ? g.sumTemp/g.nTemp : NaN;
 
-// 🔥 DMI médio
-g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
+  // 🔥 DMI médio
+  g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
 
-// 🔥 FCR correto (biológico)
-g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
+  // 🔥 FCR REAL (correto)
+  g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
 
-// 🔥 eficiência
-let eficienciaGrupo = "—";
-if (Number.isFinite(g.avgFcr)) {
-  if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
-  else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
-  else eficienciaGrupo = "🔴 Ineficiente";
-}
-g.eficiencia = eficienciaGrupo;
+  // 🔥 eficiência
+  let eficienciaGrupo = "—";
+  if (Number.isFinite(g.avgFcr)) {
+    if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
+    else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
+    else eficienciaGrupo = "🔴 Ineficiente";
+  }
+  g.eficiencia = eficienciaGrupo;
+
+  const totalStatus = g.ok + g.warn + g.bad;
+  g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
+
+  g.sortKey = (g.bad*1000) + (g.warn*100) - (g.ok*10);
+
+  return g;
+
+}).sort((a,b)=>b.sortKey-a.sortKey || b.risk-a.risk || a.name.localeCompare(b.name));
 
   /* ===================== ALERTAS (para dashboard) ===================== */
   function buildAlerts(groupsOut){
