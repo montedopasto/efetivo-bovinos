@@ -557,6 +557,20 @@ const sx = clean(r.sexo).toUpperCase();
       g.avgGmdM  = g.nGmdM ? g.sumGmdM/g.nGmdM : NaN;
       g.avgGmdF  = g.nGmdF ? g.sumGmdF/g.nGmdF : NaN;
       g.avgTemp  = g.nTemp ? g.sumTemp/g.nTemp : NaN;
+      // 🔥 DMI médio (mantém)
+g.avgDmi = g.n ? g.sumDmi / g.n : NaN;
+
+// 🔥 FCR CORRETO (não é média!)
+g.avgFcr = (g.sumGanho > 0) ? (g.sumDmi / g.sumGanho) : NaN;
+
+// eficiência
+let eficienciaGrupo = "—";
+if (Number.isFinite(g.avgFcr)) {
+  if (g.avgFcr < 6) eficienciaGrupo = "🟢 Excelente";
+  else if (g.avgFcr < 7.5) eficienciaGrupo = "🟡 Normal";
+  else eficienciaGrupo = "🔴 Ineficiente";
+}
+g.eficiencia = eficienciaGrupo;
 g.avgDmi = g.nDmi ? g.sumDmi / g.nDmi : NaN;
 g.avgFcr = g.nFcr ? g.sumFcr / g.nFcr : NaN;
 
