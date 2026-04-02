@@ -517,10 +517,6 @@ if(!groupAgg[g]){
       const ga = groupAgg[g];
 ga.n++;
 
-if (Number.isFinite(dmi)) {
-  ga.sumDmi += dmi;
-  ga.nDmi++;
-}
 
 if (Number.isFinite(fcr)) {
   ga.sumFcr += fcr;
