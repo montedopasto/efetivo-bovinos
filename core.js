@@ -548,7 +548,7 @@ if (Number.isFinite(dmi)) {
 // 🔥 ACUMULAR GANHO (kg/dia)
 const ganho = Number.isFinite(r.gmdInd) && r.gmdInd > 0
   ? r.gmdInd
-  : gmdFinal;
+  : null;
 
 if (Number.isFinite(ganho)) {
   ga.sumGanho += ganho;
