@@ -47,3 +47,15 @@ async function syncToSharePoint(rows){
 
   console.log("✅ Sync concluído");
 }
+async function spGetAnimal(animalId, token){
+
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$filter=fields/animal_id eq '${animalId}'`;
+
+  const r = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const j = await r.json();
+
+  return j.value.length > 0;
+}
