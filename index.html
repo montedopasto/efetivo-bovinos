@@ -660,7 +660,7 @@ function buildRiskBadge(risk){
 
         statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
         renderAll(st);
-await syncToSharePoint(st.rows);
+await syncToSharePoint(st.animalsOut);
       }catch(err){
         console.error(err);
         alert("Falha ao importar o CSV. Confirma o formato/colunas.\n\nDetalhe: " + (err?.message || err));
