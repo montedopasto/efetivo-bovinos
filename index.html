@@ -758,10 +758,16 @@ renderAll(Core.loadState() || null);
 startClock();
 loadWeather();
 setInterval(loadWeather, 10 * 60 * 1000);
-// 🔐 LOGIN MICROSOFT
-setTimeout(() => {
+// 🔐 LOGIN MICROSOFT AUTOMÁTICO
+setTimeout(async () => {
   if (typeof Auth !== "undefined") {
-    Auth.init();
+
+    const account = msalInstance.getActiveAccount();
+
+    if (!account) {
+      await Auth.loginMicrosoft();
+    }
+
   } else {
     console.error("Auth não carregado");
   }
