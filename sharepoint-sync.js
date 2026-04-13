@@ -72,3 +72,28 @@ async function spCreateAnimal(data, token){
     body: JSON.stringify({ fields: data })
   });
 }
+async function spGetPesagem(animalId, data, token){
+
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=fields/animal_id eq '${animalId}' and fields/data eq '${data}'`;
+
+  const r = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const j = await r.json();
+
+  return j.value.length > 0;
+}
+async function spCreatePesagem(data, token){
+
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`;
+
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ fields: data })
+  });
+}
