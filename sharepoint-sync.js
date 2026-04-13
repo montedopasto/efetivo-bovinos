@@ -33,11 +33,14 @@ const pesagens = [
 
     if(!existsAnimal){
       await spCreateAnimal({
-        Title: animalId,
-        nif: r.nif || "",
-        raca: r.raca || "",
-        data_entrada: r.data_entrada || null
-      }, token);
+  Title: animalId,
+  NIF: r.nif || "",
+  Raca: r.raca || "",
+  DataEntrada: r.dataEntrada || null,
+  DataNascimento: r.dNasc ? r.dNasc.toISOString() : null,
+  Sexo: r.sexo || "",
+  GrupoAtual: r.grupo || ""
+}, token);
     }
 
     // 2. Verifica pesagem
