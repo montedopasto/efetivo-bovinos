@@ -766,7 +766,6 @@ renderAll(Core.loadState() || null);
 startClock();
 loadWeather();
 setInterval(loadWeather, 10 * 60 * 1000);
-  initAuthUI();
 async function initAuthUI(){
 
   if (typeof Auth === "undefined") {
