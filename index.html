@@ -855,7 +855,52 @@ async function initAuthUI(){
 }
 
 initAuthUI();
+async function syncPesagensToSharePoint(animals){
 
+  for(const a of animals){
+
+    // PESO ATUAL
+    if(a.dataAtual && a.pesoAtualNum){
+      await criarPesagem({
+        Titulo: a.animal,
+        DataPesagem: a.dataAtual,
+        Peso: a.pesoAtualNum,
+        Origem: "Atual"
+      });
+    }
+
+    // PESO ANTERIOR
+    if(a.dataAnterior && a.pesoAnteriorNum){
+      await criarPesagem({
+        Titulo: a.animal,
+        DataPesagem: a.dataAnterior,
+        Peso: a.pesoAnteriorNum,
+        Origem: "Anterior"
+      });
+    }
+  }
+}
+  async function criarPesagem(item){
+
+  const url = `${_spPageContextInfo.webAbsoluteUrl}/_api/web/lists/getbytitle('Pesagens')/items`;
+
+  const body = {
+    Title: item.Titulo,
+    DataPesagem: item.DataPesagem,
+    Peso: item.Peso,
+    Origem: item.Origem
+  };
+
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json;odata=verbose",
+      "Content-Type": "application/json;odata=verbose",
+      "X-RequestDigest": document.getElementById("__REQUESTDIGEST").value
+    },
+    body: JSON.stringify(body)
+  });
+}
 })();
 </script>
 
