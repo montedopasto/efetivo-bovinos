@@ -758,7 +758,14 @@ renderAll(Core.loadState() || null);
 startClock();
 loadWeather();
 setInterval(loadWeather, 10 * 60 * 1000);
-
+// 🔐 LOGIN MICROSOFT
+setTimeout(() => {
+  if (typeof Auth !== "undefined") {
+    Auth.init();
+  } else {
+    console.error("Auth não carregado");
+  }
+}, 500);
 })();
 </script>
 
