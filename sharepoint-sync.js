@@ -49,7 +49,7 @@ const pesagens = [
 
   if(!existsPeso){
     await spCreatePesagem({
-      animal_id: animalId,
+      Title: animalId,
       data: p.data,
       peso: p.peso
     }, token);
