@@ -573,7 +573,7 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
 
   nif: r.nif || "—",
   raca: r.raca || "—",
-  dataEntrada: r.dataEntrada ? fmtDate(r.dataEntrada) : "—",
+  dataEntrada: r.dataEntrada ? r.dataEntrada.toISOString() : null
           dataAnterior: r.dAnt ? isoDateUTC(r.dAnt) : null,
   pesoAnterior: Number.isFinite(r.pAnt) ? `${r.pAnt} kg` : null,
 pesoAnteriorNum: Number.isFinite(r.pAnt) ? r.pAnt : null,
