@@ -91,7 +91,7 @@ async function spCreateAnimal(data, token){
 }
 async function spGetPesagem(animalId, data, token){
 
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=fields/animal_id eq '${animalId}' and fields/data eq '${data}'`;
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=ffields/Title eq '${animalId}' and fields/data eq '${data}'`;
 
   const r = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }
