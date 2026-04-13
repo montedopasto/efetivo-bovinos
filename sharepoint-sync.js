@@ -59,3 +59,16 @@ async function spGetAnimal(animalId, token){
 
   return j.value.length > 0;
 }
+async function spCreateAnimal(data, token){
+
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items`;
+
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ fields: data })
+  });
+}
