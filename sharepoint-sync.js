@@ -33,7 +33,7 @@ const pesagens = [
 
     if(!existsAnimal){
       await spCreateAnimal({
-        animal_id: animalId,
+        Title: animalId,
         nif: r.nif || "",
         raca: r.raca || "",
         data_entrada: r.data_entrada || null
