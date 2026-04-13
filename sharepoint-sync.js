@@ -70,7 +70,11 @@ async function spGetAnimal(animalId, token){
 
   const j = await r.json();
 
-  return j.value.length > 0;
+  if(!j.value){
+  console.error("Erro Graph (Animal):", j);
+  return false;
+}
+return j.value.length > 0;
 }
 async function spCreateAnimal(data, token){
 
