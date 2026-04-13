@@ -2,7 +2,7 @@
 // CONFIG SHAREPOINT
 // =============================
 
-const SITE_ID = "montedopastopt.sharepoint.com,30b32348-8df0-4dbe-9244-45126c5cbec7,3a90922f-7a65-44d9-ae1e-ef11c749a820";
+const SITE_ID = "montedopastopt.sharepoint.com,37408cfe-6b54-4cad-a7b7-c735c2a1adec,8fb9c4d3-c9b7-4d95-b563-9a81f2dd4f76";
 const LIST_ANIMAIS_ID = "COLOCA_AQUI";
 const LIST_PESAGENS_ID = "COLOCA_AQUI";
 
