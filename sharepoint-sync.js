@@ -19,12 +19,12 @@ async function syncToSharePoint(rows){
     const animalId = r.animal;
 const pesagens = [
   {
-    data: formatDateToISO(r.dataAnterior),
-    peso: parseFloat((r.pesoAnterior || "").replace(" kg",""))
+    data: r.dataAnterior ? formatDateToISO(r.dataAnterior) : null,
+    peso: r.pesoAnteriorNum
   },
   {
     data: formatDateToISO(r.dataAtual),
-    peso: parseFloat((r.pesoAtual || "").replace(" kg",""))
+    peso: r.pesoAtualNum
   }
 ];
 
@@ -116,4 +116,3 @@ function formatDateToISO(ptDate){
   const [d,m,y] = ptDate.split("-");
   return `${y}-${m}-${d}`;
 }
-const data = formatDateToISO(r.dataAtual);
