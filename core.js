@@ -574,6 +574,8 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
   nif: r.nif || "—",
   raca: r.raca || "—",
   dataEntrada: r.dataEntrada ? fmtDate(r.dataEntrada) : "—",
+          dataAnterior: r.dAnt ? fmtDate(r.dAnt) : null,
+  pesoAnterior: Number.isFinite(r.pAnt) ? `${r.pAnt} kg` : null,
         pesoAtual:`${r.pAtual.toFixed(1)} kg`,
         dataAtual:fmtDate(r.dAtual),
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
