@@ -576,6 +576,7 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
   dataEntrada: r.dataEntrada ? fmtDate(r.dataEntrada) : "—",
           dataAnterior: r.dAnt ? fmtDate(r.dAnt) : null,
   pesoAnterior: Number.isFinite(r.pAnt) ? `${r.pAnt} kg` : null,
+pesoAnteriorNum: Number.isFinite(r.pAnt) ? r.pAnt : null,
         pesoAtual:`${r.pAtual.toFixed(1)} kg`,
         dataAtual:fmtDate(r.dAtual),
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
