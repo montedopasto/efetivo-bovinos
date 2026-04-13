@@ -6,7 +6,7 @@ const msalConfig = {
   auth: {
     clientId: "c067304f-7176-4e3f-a5fb-202bbc3a2ec7",
     authority: "https://login.microsoftonline.com/common",
-    redirectUri: "https://montedopasto.github.io/efetivo-bovinos/"
+    redirectUri: window.location.origin + "/efetivo-bovinos/"
   },
   cache: {
     cacheLocation: "localStorage"
