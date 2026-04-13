@@ -97,3 +97,10 @@ async function spCreatePesagem(data, token){
     body: JSON.stringify({ fields: data })
   });
 }
+function formatDateToISO(ptDate){
+  if(!ptDate) return null;
+
+  const [d,m,y] = ptDate.split("-");
+  return `${y}-${m}-${d}`;
+}
+const data = formatDateToISO(r.dataAtual);
