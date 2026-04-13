@@ -41,15 +41,20 @@ const pesagens = [
     }
 
     // 2. Verifica pesagem
-    const existsPeso = await spGetPesagem(animalId, data, token);
+    for(const p of pesagens){
 
-    if(!existsPeso){
-      await spCreatePesagem({
-        animal_id: animalId,
-        data: data,
-        peso: peso
-      }, token);
-    }
+  if(!p.data || !Number.isFinite(p.peso)) continue;
+
+  const existsPeso = await spGetPesagem(animalId, p.data, token);
+
+  if(!existsPeso){
+    await spCreatePesagem({
+      animal_id: animalId,
+      data: p.data,
+      peso: p.peso
+    }, token);
+  }
+}
 
   }
 
