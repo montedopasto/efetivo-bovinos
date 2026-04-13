@@ -764,10 +764,15 @@ setInterval(loadWeather, 10 * 60 * 1000);
 setTimeout(async () => {
   if (typeof Auth !== "undefined") {
 
-    const account = msalInstance.getActiveAccount();
+    let account = msalInstance.getActiveAccount();
 
     if (!account) {
-      await Auth.loginMicrosoft();
+      account = await Auth.loginMicrosoft();
+    }
+
+    // 👇 MOSTRAR UTILIZADOR
+    if (account && userInfoEl) {
+      userInfoEl.innerHTML = `👤 ${account.username}`;
     }
 
   } else {
