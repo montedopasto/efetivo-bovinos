@@ -766,7 +766,6 @@ renderAll(Core.loadState() || null);
 startClock();
 loadWeather();
 setInterval(loadWeather, 10 * 60 * 1000);
-// 🔐 LOGIN MICROSOFT AUTOMÁTICO
 setTimeout(async () => {
   if (typeof Auth !== "undefined") {
 
@@ -778,7 +777,68 @@ setTimeout(async () => {
 
     // 👇 MOSTRAR UTILIZADOR
     if (account && userInfoEl) {
-      userInfoEl.innerHTML = `👤 ${account.username}`;
+
+      const nome = account.name || account.username;
+      const email = account.username;
+
+      const iniciais = nome
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .substring(0,2)
+        .toUpperCase();
+
+      userInfoEl.innerHTML = `
+        <div style="
+          display:flex;
+          align-items:center;
+          gap:10px;
+          background:#ffffff;
+          border:1px solid #d9e3dc;
+          border-radius:999px;
+          padding:6px 10px;
+          box-shadow:0 4px 10px rgba(0,0,0,.08);
+        ">
+
+          <div style="
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            background:#2f9e44;
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+            font-weight:700;
+          ">
+            ${iniciais}
+          </div>
+
+          <div style="display:flex;flex-direction:column;line-height:1.1">
+            <span style="font-size:12px;font-weight:600">${nome}</span>
+            <span style="font-size:10px;color:#64748b">${email}</span>
+          </div>
+
+          <button id="btnLogout" style="
+            margin-left:8px;
+            background:#ef4444;
+            border:none;
+            color:#fff;
+            border-radius:8px;
+            padding:4px 8px;
+            font-size:10px;
+            cursor:pointer;
+          ">
+            sair
+          </button>
+
+        </div>
+      `;
+
+      document.getElementById("btnLogout").onclick = () => {
+        msalInstance.logoutPopup();
+      };
     }
 
   } else {
