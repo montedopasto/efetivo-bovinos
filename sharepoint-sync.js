@@ -16,9 +16,9 @@ async function syncToSharePoint(rows){
 
   for(const r of rows){
 
-    const animalId = r.animal_id;
-    const data = r.data;
-    const peso = parseFloat(r.peso);
+    const animalId = r.animal;
+const data = r.dataAtual; // depois ajustamos formato se quiseres
+const peso = parseFloat((r.pesoAtual || "").replace(" kg",""));
 
     // 1. Verifica animal
     const existsAnimal = await spGetAnimal(animalId, token);
