@@ -420,23 +420,17 @@ console.log("INDICES:", {
     .split(delim)
     .map(c => c.trim());
 
-  // DEBUG (só na primeira linha)
   if(li === 1){
     console.log("COLS:", cols);
     console.log("Nº COLS:", cols.length);
     console.log("Nº HEADER:", header.length);
   }
 
-  // VALIDAÇÃO
   if(cols.length !== header.length){
     console.warn("Linha com colunas erradas:", cols);
     continue;
   }
-  .split(delim)
-  .map(c => c.trim());
-if(li === 1){
-  console.log("COLS:", cols);
-}
+
   const animal = clean(cols[i_animal]) || "—";
   const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
   const grupo  = clean(cols[i_grupo]) || "—";
