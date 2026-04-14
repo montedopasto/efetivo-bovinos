@@ -390,9 +390,10 @@ else{
     const i_datual = idx("data_peso_atual") >= 0 ? idx("data_peso_atual") : 6;
     const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
     const findCol = (names) => {
-  return header.findIndex(h =>
-    names.includes(h.toLowerCase().replace(/\s/g, ""))
-  );
+  return header.findIndex(h => {
+    const col = h.toLowerCase().trim();
+    return names.some(n => col === n);
+  });
 };
 
 const i_nif = findCol(["nif"]);
