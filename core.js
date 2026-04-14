@@ -525,23 +525,37 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
     for(const r of rows){
       const hasAtual = r.dAtual && Number.isFinite(r.pAtual);
       if(!hasAtual){
-        badRows++;
-        animalsOut.push({
-  sortKey: 99,
-  animal:r.animal, grupo:r.grupo, sexo:r.sexo,
-  pesoAtual:"—", dataAtual:"—",
-  temp:"—", fatorClima: NaN,
-  estimado:"—",
-  dmi: "—",
-  fcr: "—",
-  eficiencia: "—",
-  conf:"—", confClass:"muted",
-  estado:"—", estadoClass:"muted",
-  bucket:"none",
-  estKg: NaN
-});
-        continue;
-      }
+  badRows++;
+
+  animalsOut.push({
+    sortKey: 99,
+    animal: r.animal,
+    grupo: r.grupo,
+    sexo: r.sexo,
+
+    nif: r.nif || "—",
+    raca: r.raca || "—",
+    dataEntrada: r.dataEntrada ? r.dataEntrada.toISOString() : null,
+    dNasc: r.dNasc ? r.dNasc.toISOString() : null,
+
+    pesoAtual:"—",
+    dataAtual:"—",
+    temp:"—",
+    fatorClima: NaN,
+    estimado:"—",
+    dmi: "—",
+    fcr: "—",
+    eficiencia: "—",
+    conf:"—",
+    confClass:"muted",
+    estado:"—",
+    estadoClass:"muted",
+    bucket:"none",
+    estKg: NaN
+  });
+
+  continue;
+}
 
       const today = todayUTC;
       const daysSince = daysBetweenUTC(r.dAtual, today);
