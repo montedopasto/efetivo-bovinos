@@ -536,7 +536,7 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
     nif: r.nif || "—",
     raca: r.raca || "—",
     dataEntrada: r.dataEntrada ? r.dataEntrada.toISOString() : null,
-    dNasc: r.dNasc ? r.dNasc.toISOString() : null,
+    dataNascimento: r.dNasc ? isoDateUTC(r.dNasc) : null,
 
     pesoAtual:"—",
     dataAtual:"—",
