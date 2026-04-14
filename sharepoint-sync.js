@@ -16,48 +16,30 @@ async function syncToSharePoint(rows){
 
   for(const r of rows){
 
-    const animalId = r.animal;
-const pesagens = [
-  {
-    data: r.dataAnterior ? formatDateToISO(r.dataAnterior) : null,
-    peso: r.pesoAnteriorNum
-  },
-  {
-    data: formatDateToISO(r.dataAtual),
-    peso: r.pesoAtualNum
-  }
-];
+    const animalId = r.Titulo;
 
     // 1. Verifica animal
     const existsAnimal = await spGetAnimal(animalId, token);
 
     if(!existsAnimal){
       await spCreateAnimal({
-  Title: animalId,
-  NIF: r.nif || "",
-  Raca: r.raca || "",
-  DataEntrada: r.dataEntrada || null,
-  DataNascimento: r.dNasc ? r.dNasc.toISOString() : null,
-  Sexo: r.sexo || "",
-  GrupoAtual: r.grupo || ""
-}, token);
+        Title: animalId,
+        Sexo: "",
+        GrupoAtual: ""
+      }, token);
     }
 
     // 2. Verifica pesagem
-    for(const p of pesagens){
+    const existsPeso = await spGetPesagem(animalId, r.DataPesagem, token);
 
-  if(!p.data || !Number.isFinite(p.peso)) continue;
-
-  const existsPeso = await spGetPesagem(animalId, p.data, token);
-
-  if(!existsPeso){
-    await spCreatePesagem({
-      Title: animalId,
-      data: p.data,
-      peso: p.peso
-    }, token);
-  }
-}
+    if(!existsPeso){
+      await spCreatePesagem({
+        Title: animalId,
+        DataPesagem: r.DataPesagem,
+        Peso: r.Peso,
+        Origem: r.Origem
+      }, token);
+    }
 
   }
 
@@ -94,7 +76,7 @@ async function spCreateAnimal(data, token){
 }
 async function spGetPesagem(animalId, data, token){
 
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=ffields/Title eq '${animalId}' and fields/data eq '${data}'`;
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=fields/Title eq '${animalId}' and fields/DataPesagem eq '${data}'`;
 
   const r = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }
