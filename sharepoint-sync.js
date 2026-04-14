@@ -82,23 +82,6 @@ async function spCreateAnimal(data, token){
     body: JSON.stringify({ fields: data })
   });
 }
-async function spGetPesagem(animalId, data, token){
-
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$filter=fields/Title eq '${animalId}' and fields/DataPesagem eq '${data}'`;
-
-  const r = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const j = await r.json();
-
-  if(!j.value){
-    console.error("Erro Graph (Pesagem):", j);
-    return false;
-  }
-
-  return j.value.length > 0;
-}
 async function spCreatePesagem(data, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`;
