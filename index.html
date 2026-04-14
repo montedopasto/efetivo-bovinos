@@ -660,7 +660,13 @@ function buildRiskBadge(risk){
 
         statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
         renderAll(st);
-// 1. Animais
+
+// ENVIAR ANIMAIS
+await syncToSharePoint(
+  st.animalsOut.map(a => ({
+    Titulo: a.animal
+  }))
+);
 
 // CRIAR PESAGENS
 const pesagens = [];
