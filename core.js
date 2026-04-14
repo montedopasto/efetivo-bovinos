@@ -397,9 +397,9 @@ else{
 };
 
 const i_nif = findCol(["nif"]);
-const i_raca = findCol(["raca", "raça"]);
-const i_dataEntrada = findCol(["dataentrada", "data_entrada"]);
-const i_nasc = findCol(["datanascimento", "data_nasc"]);
+const i_raca = findCol(["raca"]);
+const i_dataEntrada = findCol(["data_entrada"]);
+const i_nasc = findCol(["data_nasc"]);
 
     if(onProgress) onProgress({ phase:"parse", message:`A ler dados…`, done:0, total:st.meta.lines });
 
