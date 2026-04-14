@@ -16,32 +16,40 @@ async function syncToSharePoint(rows){
 
   for(const r of rows){
 
-    const animalId = r.Titulo;
+  const animalId = r.animal;
 
-    // 1. Verifica animal
-    const existsAnimal = await spGetAnimal(animalId, token);
+  // 1. Criar animal se não existir
+  const existsAnimal = await spGetAnimal(animalId, token);
 
-    if(!existsAnimal){
-      await spCreateAnimal({
-        Title: animalId,
-        Sexo: "",
-        GrupoAtual: ""
-      }, token);
-    }
-
-    // 2. Verifica pesagem
-    const existsPeso = await spGetPesagem(animalId, r.DataPesagem, token);
-
-    if(!existsPeso){
-      await spCreatePesagem({
-        Title: animalId,
-        DataPesagem: r.DataPesagem,
-        Peso: r.Peso,
-        Origem: r.Origem
-      }, token);
-    }
-
+  if(!existsAnimal){
+    await spCreateAnimal({
+      Title: animalId,
+      Sexo: r.sexo || "",
+      GrupoAtual: r.grupo || ""
+    }, token);
   }
+
+  // 2. PESO ATUAL
+  if(r.dataAtual && r.pesoAtualNum){
+    await spCreatePesagem({
+      Title: animalId,
+      DataPesagem: r.dataAtual,
+      Peso: r.pesoAtualNum,
+      Origem: "Atual"
+    }, token);
+  }
+
+  // 3. PESO ANTERIOR
+  if(r.dataAnterior && r.pesoAnteriorNum){
+    await spCreatePesagem({
+      Title: animalId,
+      DataPesagem: r.dataAnterior,
+      Peso: r.pesoAnteriorNum,
+      Origem: "Anterior"
+    }, token);
+  }
+
+}
 
   console.log("✅ Sync concluído");
 }
