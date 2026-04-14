@@ -390,9 +390,16 @@ else{
     const i_datual = idx("data_peso_atual") >= 0 ? idx("data_peso_atual") : 6;
     const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
     const i_nasc = idx("data_nasc") >= 0 ? idx("data_nasc") : -1;
-    const i_nif = idx("nif");
-const i_raca = idx("raca");
-const i_dataEntrada = idx("data_entrada");
+    const findCol = (names) => {
+  return header.findIndex(h =>
+    names.includes(h.toLowerCase())
+  );
+};
+
+const i_nif = findCol(["nif"]);
+const i_raca = findCol(["raca", "raça"]);
+const i_dataEntrada = findCol(["dataentrada", "data_entrada"]);
+const i_nasc = findCol(["datanascimento", "data_nasc"]);
 
     if(onProgress) onProgress({ phase:"parse", message:`A ler dados…`, done:0, total:st.meta.lines });
 
