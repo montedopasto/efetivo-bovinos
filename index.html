@@ -669,8 +669,8 @@ for (const a of st.animalsOut) {
   Title: a.animal,
   NIF: a.nif || "",
   Raca: a.raca || "",
-  DataEntrada: a.dataEntrada ? new Date(a.dataEntrada).toISOString() : null,
-  DataNascimento: a.dNasc ? new Date(a.dNasc).toISOString() : null,
+  DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
+  DataNascimento: a.dNasc ? new Date(a.dNasc).toISOString().split("T")[0] : null,
   Sexo: a.sexo || "",
   GrupoAtual: a.grupo || ""
 }, await Auth.getAccessToken());
