@@ -380,6 +380,14 @@ else{
     st.todayUTC = todayUTC.toISOString();
 
     const header = lines[0].split(delim).map(clean);
+    console.log("HEADER:", header);
+
+console.log("INDICES:", {
+  i_nif,
+  i_raca,
+  i_dataEntrada,
+  i_nasc
+});
     const idx = (name) => header.indexOf(name);
 
     const i_animal = idx("animal_id") >= 0 ? idx("animal_id") : 0;
