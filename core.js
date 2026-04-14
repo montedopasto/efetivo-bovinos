@@ -416,7 +416,9 @@ console.log("INDICES:", {
 
     for(let li=1; li<lines.length; li++){
   const cols = lines[li].split(delim);
-
+if(li === 1){
+  console.log("COLS:", cols);
+}
   const animal = clean(cols[i_animal]) || "—";
   const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
   const grupo  = clean(cols[i_grupo]) || "—";
