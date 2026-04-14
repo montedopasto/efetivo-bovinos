@@ -384,13 +384,28 @@ else{
 
     const idx = (name) => header.indexOf(name);
 
-    const i_animal = idx("animal_id") >= 0 ? idx("animal_id") : 0;
-    const i_sexo   = idx("sexo") >= 0 ? idx("sexo") : 2;
-    const i_grupo  = idx("grupo") >= 0 ? idx("grupo") : 3;
-    const i_dant   = idx("data_peso_anterior") >= 0 ? idx("data_peso_anterior") : 4;
-    const i_pant   = idx("peso_anterior") >= 0 ? idx("peso_anterior") : 5;
-    const i_datual = idx("data_peso_atual") >= 0 ? idx("data_peso_atual") : 6;
-    const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
+    const getIndex = (name) => {
+  const i = header.findIndex(h => h.toLowerCase().trim() === name);
+  if(i === -1){
+    console.error("Coluna não encontrada:", name);
+  }
+  return i;
+};
+
+const i_animal = getIndex("animal_id");
+const i_grupo = getIndex("grupo");
+const i_sexo = getIndex("sexo");
+const i_nasc = getIndex("data_nasc");
+
+const i_pant = getIndex("peso_anterior");
+const i_dant = getIndex("data_peso_anterior");
+
+const i_patual = getIndex("peso_atual");
+const i_datual = getIndex("data_peso_atual");
+
+const i_raca = getIndex("raca");
+const i_nif = getIndex("nif");
+const i_dataEntrada = getIndex("data_entrada");
     const findCol = (names) => {
   return header.findIndex(h => {
     const col = h.toLowerCase().trim();
