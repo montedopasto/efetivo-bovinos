@@ -665,7 +665,12 @@ function buildRiskBadge(risk){
 // ENVIAR ANIMAIS
 for (const a of st.animalsOut) {
 
-  if(!a.animal || a.animal === "—") continue;
+  if(
+  !a.animal ||
+  a.animal === "—" ||
+  !a.pesoAtualNum ||
+  !a.dataAtual
+) continue;
 
   console.log({
     nif: a.nif,
