@@ -666,10 +666,14 @@ function buildRiskBadge(risk){
 for (const a of st.animalsOut) {
 
   await spCreateAnimal({
-    Title: a.animal,
-    Sexo: a.sexo || "",
-    GrupoAtual: a.grupo || ""
-  }, await Auth.getAccessToken());
+  Title: a.animal,
+  NIF: a.nif || "",
+  Raca: a.raca || "",
+  DataEntrada: a.dataEntrada ? new Date(a.dataEntrada).toISOString() : null,
+  DataNascimento: a.dNasc ? new Date(a.dNasc).toISOString() : null,
+  Sexo: a.sexo || "",
+  GrupoAtual: a.grupo || ""
+}, await Auth.getAccessToken());
 
 }
 
