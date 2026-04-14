@@ -664,6 +664,11 @@ function buildRiskBadge(risk){
 
 // ENVIAR ANIMAIS
 for (const a of st.animalsOut) {
+
+  // 🔥 FILTRO SIMPLES (mata linhas vazias)
+  if(!a.animal || a.animal === "—") continue;
+
+  await spCreateAnimal({
 console.log({
   nif: a.nif,
   raca: a.raca,
