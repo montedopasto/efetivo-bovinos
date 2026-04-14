@@ -661,8 +661,37 @@ function buildRiskBadge(risk){
         statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
         renderAll(st);
 // 1. Animais
-await syncToSharePoint(st.animalsOut);
+renderAll(st);
 
+// CRIAR PESAGENS
+const pesagens = [];
+
+st.animalsOut.forEach(a => {
+
+  // PESO ATUAL
+  if (a.dataAtual && a.pesoAtualNum) {
+    pesagens.push({
+      Titulo: a.animal,
+      DataPesagem: formatDateToISO(a.dataAtual),
+      Peso: a.pesoAtualNum,
+      Origem: "Atual"
+    });
+  }
+
+  // PESO ANTERIOR
+  if (a.dataAnterior && a.pesoAnteriorNum) {
+    pesagens.push({
+      Titulo: a.animal,
+      DataPesagem: formatDateToISO(a.dataAnterior),
+      Peso: a.pesoAnteriorNum,
+      Origem: "Anterior"
+    });
+  }
+
+});
+
+// ENVIAR PARA SHAREPOINT
+await syncToSharePoint(pesagens);
 
 // 2. Pesagens
 
