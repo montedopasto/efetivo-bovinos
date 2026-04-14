@@ -662,11 +662,19 @@ function buildRiskBadge(risk){
         renderAll(st);
 
 // ENVIAR ANIMAIS
-await syncToSharePoint(
-  st.animalsOut.map(a => ({
-    Titulo: a.animal
-  }))
-);
+for (const a of st.animalsOut) {
+
+  await spCreateAnimal({
+    Title: a.animal,
+    NIF: a.nif || "",
+    Raca: a.raca || "",
+    DataEntrada: formatDateToISO(a.dataEntrada),
+    DataNascimento: formatDateToISO(a.dataNascimento),
+    Sexo: a.sexo || "",
+    GrupoAtual: a.grupo || ""
+  }, await Auth.getAccessToken());
+
+}
 
 // CRIAR PESAGENS
 const pesagens = [];
