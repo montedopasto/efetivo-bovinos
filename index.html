@@ -664,7 +664,12 @@ function buildRiskBadge(risk){
 
 // ENVIAR ANIMAIS
 for (const a of st.animalsOut) {
-
+console.log({
+  nif: a.nif,
+  raca: a.raca,
+  dataEntrada: a.dataEntrada,
+  dNasc: a.dNasc
+});
   await spCreateAnimal({
   Title: a.animal,
   NIF: a.nif || "",
