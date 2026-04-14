@@ -415,7 +415,23 @@ console.log("INDICES:", {
     const periodKeys = new Set();
 
     for(let li=1; li<lines.length; li++){
+
   const cols = lines[li]
+    .split(delim)
+    .map(c => c.trim());
+
+  // DEBUG (só na primeira linha)
+  if(li === 1){
+    console.log("COLS:", cols);
+    console.log("Nº COLS:", cols.length);
+    console.log("Nº HEADER:", header.length);
+  }
+
+  // VALIDAÇÃO
+  if(cols.length !== header.length){
+    console.warn("Linha com colunas erradas:", cols);
+    continue;
+  }
   .split(delim)
   .map(c => c.trim());
 if(li === 1){
