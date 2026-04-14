@@ -435,7 +435,13 @@ console.log("INDICES:", {
     continue;
   }
 
-  const animal = clean(cols[i_animal]) || "—";
+  const animal = clean(cols[i_animal]);
+
+// 🔥 BLOQUEIO REAL
+if(!animal){
+  console.warn("Linha ignorada (sem animal_id):", cols);
+  continue;
+}
   const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
   const grupo  = clean(cols[i_grupo]) || "—";
       const nif = i_nif >= 0 ? clean(cols[i_nif]) : "";
