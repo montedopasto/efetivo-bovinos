@@ -415,7 +415,9 @@ console.log("INDICES:", {
     const periodKeys = new Set();
 
     for(let li=1; li<lines.length; li++){
-  const cols = lines[li].split(delim);
+  const cols = lines[li]
+  .split(delim)
+  .map(c => c.trim());
 if(li === 1){
   console.log("COLS:", cols);
 }
