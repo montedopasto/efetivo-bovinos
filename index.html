@@ -663,21 +663,23 @@ function buildRiskBadge(risk){
         renderAll(st);
 
 // ENVIAR ANIMAIS
+const animaisUnicos = new Map();
+
 for (const a of st.animalsOut) {
 
   if(
-  !a.animal ||
-  a.animal === "—" ||
-  !a.pesoAtualNum ||
-  !a.dataAtual
-) continue;
+    !a.animal ||
+    a.animal === "—" ||
+    !a.pesoAtualNum ||
+    !a.dataAtual
+  ) continue;
 
-  console.log({
-    nif: a.nif,
-    raca: a.raca,
-    dataEntrada: a.dataEntrada,
-    dataNascimento: a.dataNascimento
-  });
+  // 🔥 evitar duplicados
+  if(animaisUnicos.has(a.animal)) continue;
+
+  animaisUnicos.set(a.animal, true);
+
+  console.log("ENVIAR:", a.animal);
 
   await spCreateAnimal({
     Title: a.animal,
