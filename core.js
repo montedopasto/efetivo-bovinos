@@ -406,17 +406,6 @@ const i_datual = getIndex("data_peso_atual");
 const i_raca = getIndex("raca");
 const i_nif = getIndex("nif");
 const i_dataEntrada = getIndex("data_entrada");
-    const findCol = (names) => {
-  return header.findIndex(h => {
-    const col = h.toLowerCase().trim();
-    return names.some(n => col === n);
-  });
-};
-
-const i_nif = findCol(["nif"]);
-const i_raca = findCol(["raca"]);
-const i_dataEntrada = findCol(["data_entrada"]);
-const i_nasc = findCol(["data_nasc"]);
 console.log("INDICES:", {
   i_nif,
   i_raca,
