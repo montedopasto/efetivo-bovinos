@@ -536,8 +536,13 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
     for(const r of rows){
       const hasAtual = r.dAtual && Number.isFinite(r.pAtual);
       if(!hasAtual){
+  console.warn("Animal ignorado (sem dados atuais):", r);
+
+  // 🔥 em vez de ignorar totalmente, mete no sistema com fallback
+  r.pAtual = Number.isFinite(r.pAtual) ? r.pAtual : 0;
+  r.dAtual = r.dAtual || todayUTC;
+
   badRows++;
-  continue;
 }
 
       const today = todayUTC;
