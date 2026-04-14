@@ -526,34 +526,6 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
       const hasAtual = r.dAtual && Number.isFinite(r.pAtual);
       if(!hasAtual){
   badRows++;
-
-  animalsOut.push({
-    sortKey: 99,
-    animal: r.animal,
-    grupo: r.grupo,
-    sexo: r.sexo,
-
-    nif: r.nif || "—",
-    raca: r.raca || "—",
-    dataEntrada: r.dataEntrada ? isoDateUTC(r.dataEntrada) : null,
-    dataNascimento: r.dNasc ? isoDateUTC(r.dNasc) : null,
-
-    pesoAtual:"—",
-    dataAtual:"—",
-    temp:"—",
-    fatorClima: NaN,
-    estimado:"—",
-    dmi: "—",
-    fcr: "—",
-    eficiencia: "—",
-    conf:"—",
-    confClass:"muted",
-    estado:"—",
-    estadoClass:"muted",
-    bucket:"none",
-    estKg: NaN
-  });
-
   continue;
 }
 
