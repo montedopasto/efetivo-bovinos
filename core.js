@@ -391,7 +391,7 @@ else{
     const i_patual = idx("peso_atual") >= 0 ? idx("peso_atual") : 7;
     const findCol = (names) => {
   return header.findIndex(h =>
-    names.includes(h.toLowerCase())
+    names.includes(h.toLowerCase().replace(/\s/g, ""))
   );
 };
 
