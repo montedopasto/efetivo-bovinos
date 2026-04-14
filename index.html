@@ -675,7 +675,7 @@ console.log({
   NIF: a.nif || "",
   Raca: a.raca || "",
   DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
-  DataNascimento: a.dNasc ? new Date(a.dNasc).toISOString().split("T")[0] : null,
+  DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
   Sexo: a.sexo || "",
   GrupoAtual: a.grupo || ""
 }, await Auth.getAccessToken());
