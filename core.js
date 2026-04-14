@@ -435,12 +435,17 @@ console.log("INDICES:", {
     continue;
   }
 
-  const animal = clean(cols[i_animal]);
+  const animalRaw = cols[i_animal];
+const animal = clean(animalRaw);
 
-// 🔥 BLOQUEIO REAL
-if(!animal){
-  console.warn("Linha ignorada (sem animal_id):", cols);
+// 🚨 ignorar apenas linhas MESMO vazias
+if(cols.every(c => !c)){
   continue;
+}
+
+// 🚨 se animal vazio mas resto da linha tem dados → logar mas NÃO matar
+if(!animal){
+  console.warn("Linha com animal vazio mas com dados:", cols);
 }
   const sexo   = clean(cols[i_sexo]).toUpperCase() || "—";
   const grupo  = clean(cols[i_grupo]) || "—";
