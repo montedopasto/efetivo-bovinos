@@ -382,12 +382,6 @@ else{
     const header = lines[0].split(delim).map(clean);
     console.log("HEADER:", header);
 
-console.log("INDICES:", {
-  i_nif,
-  i_raca,
-  i_dataEntrada,
-  i_nasc
-});
     const idx = (name) => header.indexOf(name);
 
     const i_animal = idx("animal_id") >= 0 ? idx("animal_id") : 0;
@@ -408,7 +402,12 @@ const i_nif = findCol(["nif"]);
 const i_raca = findCol(["raca"]);
 const i_dataEntrada = findCol(["data_entrada"]);
 const i_nasc = findCol(["data_nasc"]);
-
+console.log("INDICES:", {
+  i_nif,
+  i_raca,
+  i_dataEntrada,
+  i_nasc
+});
     if(onProgress) onProgress({ phase:"parse", message:`A ler dados…`, done:0, total:st.meta.lines });
 
     const rows = [];
