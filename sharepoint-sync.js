@@ -118,8 +118,16 @@ async function spCreatePesagem(data, token){
 function formatDateToISO(ptDate){
   if(!ptDate) return null;
 
-  const [d,m,y] = ptDate.split("-");
-  return `${y}-${m}-${d}`;
+  // já vem em ISO? não mexe
+  if(ptDate.includes("T")) return ptDate.split("T")[0];
+
+  const parts = ptDate.split("-");
+
+  if(parts.length !== 3) return null;
+
+  const [d,m,y] = parts;
+
+  return `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
 }
 async function spGetAllPesagens(token){
 
