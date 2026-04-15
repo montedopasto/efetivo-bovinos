@@ -74,7 +74,8 @@ console.log("📦 EXISTE?", existentesPesagens.has(key));
       if(dataNorm){
 
         const key = `${animalId}|${dataNorm}`;
-
+console.log("🆕 KEY NOVA (ANTERIOR):", key);
+console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
         if(!existentesPesagens.has(key)){
 
           await spCreatePesagem({
