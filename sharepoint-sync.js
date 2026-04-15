@@ -101,6 +101,29 @@ function formatDateToISO(ptDate){
   const [d,m,y] = ptDate.split("-");
   return `${y}-${m}-${d}`;
 }
+async function spGetAllPesagens(token){
+
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?expand=fields&$top=5000`;
+
+  const r = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const j = await r.json();
+
+  const set = new Set();
+
+  (j.value || []).forEach(item => {
+    const animal = item.fields?.Title;
+    const data = item.fields?.DataPesagem;
+
+    if(animal && data){
+      set.add(`${animal}|${data}`);
+    }
+  });
+
+  return set;
+}
 async function spGetAllAnimais(token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?expand=fields&$top=5000`;
