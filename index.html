@@ -699,12 +699,16 @@ const pesagens = [];
 
 st.animalsOut.forEach(a => {
 
+  if(!a.animal || a.animal === "—") return;
+
+  const animalId = a.animal.trim();
+
   // PESO ATUAL
   if (a.dataAtual && a.pesoAtualNum) {
     pesagens.push({
-      Titulo: a.animal,
-      DataPesagem: formatDateToISO(a.dataAtual),
-      Peso: a.pesoAtualNum,
+      Title: animalId,
+      DataPesagem: formatDateToISO(a.dataAtual) + "T00:00:00Z",
+      Peso: Number(a.pesoAtualNum),
       Origem: "Atual"
     });
   }
@@ -712,9 +716,9 @@ st.animalsOut.forEach(a => {
   // PESO ANTERIOR
   if (a.dataAnterior && a.pesoAnteriorNum) {
     pesagens.push({
-      Titulo: a.animal,
-      DataPesagem: formatDateToISO(a.dataAnterior),
-      Peso: a.pesoAnteriorNum,
+      Title: animalId,
+      DataPesagem: formatDateToISO(a.dataAnterior) + "T00:00:00Z",
+      Peso: Number(a.pesoAnteriorNum),
       Origem: "Anterior"
     });
   }
