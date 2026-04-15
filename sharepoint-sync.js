@@ -86,10 +86,17 @@ async function spCreatePesagem(data, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`;
 
+  const dataISO = formatDateToISO(data.DataPesagem);
+
+  if(!dataISO){
+    console.error("❌ Data inválida:", data.DataPesagem);
+    return;
+  }
+
   const body = {
     fields: {
-      Title: String(data.Title),
-      DataPesagem: formatDateToISO(data.DataPesagem) + "T00:00:00",
+      Title: String(data.Title).trim(),
+      DataPesagem: dataISO + "T00:00:00",
       Peso: Number(data.Peso),
       Origem: String(data.Origem)
     }
