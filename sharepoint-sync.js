@@ -127,22 +127,14 @@ async function spCreatePesagem(data, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`;
 
-  const dataISO = formatDateToISO(data.DataPesagem);
+const dataNorm = normalizeDate(data.DataPesagem);
 
-  if(!dataISO){
-    console.error("❌ Data inválida:", data.DataPesagem);
-    return;
-  }
-
-  // 🔥 CONVERSÃO CERTA PARA SHAREPOINT
-  const dateObj = new Date(dataISO + "T00:00:00");
-
-if(isNaN(dateObj.getTime())){
-  console.error("❌ Data inválida após conversão:", dataISO);
+if(!dataNorm){
+  console.error("❌ Data inválida:", data.DataPesagem);
   return;
 }
 
-const dataFinal = dateObj.toISOString();
+const dataFinal = `${dataNorm}T00:00:00Z`;
 
   const body = {
     fields: {
