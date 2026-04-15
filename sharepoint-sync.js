@@ -214,15 +214,20 @@ async function spGetAllPesagens(token){
   const set = new Set();
 
   (j.value || []).forEach(item => {
+
     const animal = item.fields?.Title?.trim();
     const data = item.fields?.DataPesagem;
 
     if(animal && data){
-     const dataNorm = normalizeDate(data);
 
-if(dataNorm){
-  set.add(`${animal}|${dataNorm}`);
-}
+      const dataNorm = normalizeDate(data);
+
+      if(dataNorm){
+        set.add(`${animal}|${dataNorm}`);
+      }
+
+    } // 🔥 ESTA CHAVE FALTAVA
+
   });
 
   return set;
