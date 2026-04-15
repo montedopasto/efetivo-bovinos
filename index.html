@@ -664,12 +664,14 @@ function buildRiskBadge(risk){
 
 // ENVIAR ANIMAIS
 const animaisUnicos = new Map();
-
+const token = await Auth.getAccessToken();
+const existentes = await spGetAllAnimais(token);
 for (const a of st.animalsOut) {
 
   if(!a.animal || a.animal === "—") continue;
 
-  console.log("ENVIAR:", a.animal);
+// 🚫 NÃO DUPLICAR
+if(!existentes.has(a.animal)){
 
   await spCreateAnimal({
     Title: a.animal,
@@ -679,8 +681,9 @@ for (const a of st.animalsOut) {
     DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
     Sexo: a.sexo || "",
     GrupoAtual: a.grupo || ""
-  }, await Auth.getAccessToken());
+  }, token);
 
+  existentes.add(a.animal); // evita duplicar no mesmo CSV
 }
 
 /*
