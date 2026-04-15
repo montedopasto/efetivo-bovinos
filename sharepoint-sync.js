@@ -207,3 +207,13 @@ async function spGetAllAnimais(token){
 
   return set;
 }
+function normalizeDate(dateStr){
+
+  if(!dateStr) return null;
+
+  const d = new Date(dateStr);
+
+  if(isNaN(d)) return null;
+
+  return d.toISOString(); // formato único
+}
