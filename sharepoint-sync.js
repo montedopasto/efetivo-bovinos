@@ -89,7 +89,7 @@ async function spCreatePesagem(data, token){
   const body = {
     fields: {
       Title: String(data.Title),
-      DataPesagem: formatDateToISO(data.DataPesagem) + "T00:00:00Z",
+      DataPesagem: formatDateToISO(data.DataPesagem) + "T00:00:00",
       Peso: Number(data.Peso),
       Origem: String(data.Origem)
     }
