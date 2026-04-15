@@ -686,8 +686,10 @@ if(!existentes.has(a.animal)){
   existentes.add(a.animal); // evita duplicar no mesmo CSV
 }
 
-/*
+
 // CRIAR PESAGENS
+const token = await Auth.getAccessToken();
+const existentesPesagens = await spGetAllPesagens(token);
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
@@ -715,8 +717,18 @@ st.animalsOut.forEach(a => {
 });
 
 // ENVIAR PARA SHAREPOINT
-await syncToSharePoint(pesagens);
-*/
+for(const p of pesagens){
+
+  const key = `${p.Titulo}|${p.DataPesagem}`;
+
+  // não criar duplicado
+  if(existentesPesagens.has(key)) continue;
+
+  await spCreatePesagem(p, token);
+
+  existentesPesagens.add(key);
+}
+
 
 // 2. Pesagens
 
