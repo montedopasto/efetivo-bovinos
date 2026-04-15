@@ -127,7 +127,7 @@ async function spGetAllPesagens(token){
 }
 async function spGetAllAnimais(token){
 
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?expand=fields&$top=5000`;
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$expand=fields&$top=5000`;
 
   const r = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }
@@ -138,8 +138,9 @@ async function spGetAllAnimais(token){
   const set = new Set();
 
   (j.value || []).forEach(i => {
-    if(i.fields?.Title){
-      set.add(i.fields.Title);
+    const title = i.fields?.Title?.trim();
+    if(title){
+      set.add(title);
     }
   });
 
