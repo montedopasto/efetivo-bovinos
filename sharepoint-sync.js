@@ -50,7 +50,8 @@ console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
       if(dataNorm){
 
         const key = `${animalId}|${dataNorm}`;
-
+console.log("🆕 KEY NOVA:", key);
+console.log("📦 EXISTE?", existentesPesagens.has(key));
         if(!existentesPesagens.has(key)){
 
           await spCreatePesagem({
