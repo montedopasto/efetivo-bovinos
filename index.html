@@ -728,7 +728,7 @@ st.animalsOut.forEach(a => {
 // ENVIAR PARA SHAREPOINT
 for(const p of pesagens){
 
-  const key = `${p.Titulo}|${p.DataPesagem}`;
+  const key = `${p.Title}|${p.DataPesagem}`;
 
   // não criar duplicado
   if(existentesPesagens.has(key)) continue;
