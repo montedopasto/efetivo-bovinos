@@ -179,9 +179,11 @@ async function spGetAllPesagens(token){
     const data = item.fields?.DataPesagem;
 
     if(animal && data){
-      const dataNorm = new Date(data).toISOString();
-      set.add(`${animal}|${dataNorm}`);
-    }
+     const dataNorm = normalizeDate(data);
+
+if(dataNorm){
+  set.add(`${animal}|${dataNorm}`);
+}
   });
 
   return set;
