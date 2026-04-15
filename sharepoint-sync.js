@@ -43,7 +43,7 @@ console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
     // =============================
 
     // 👉 PESO ATUAL
-    if(r.pesoAtualNum){
+if(r.pesoAtualNum){
 
   const key = `${animalId}|${Number(r.pesoAtualNum)}`;
 
@@ -62,21 +62,6 @@ console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
     existentesPesagens.add(key);
   }
 }
-console.log("🆕 KEY NOVA:", key);
-console.log("📦 EXISTE?", existentesPesagens.has(key));
-        if(!existentesPesagens.has(key)){
-
-          await spCreatePesagem({
-            Title: animalId,
-            DataPesagem: dataNorm,
-            Peso: r.pesoAtualNum,
-            Origem: "Atual"
-          }, token);
-
-          existentesPesagens.add(key);
-        }
-      }
-    }
 
     // 👉 PESO ANTERIOR
     if(r.pesoAnteriorNum){
