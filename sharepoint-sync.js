@@ -234,65 +234,16 @@ async function spGetAllPesagens(token){
   (j.value || []).forEach(item => {
 
     const animal = item.fields?.Title?.trim();
-    const data = item.fields?.DataPesagem;
+    const peso = item.fields?.Peso;
 
-    if(animal && data){
+    if(animal && peso != null){
 
-      const dataNorm = normalizeDate(data);
+      const key = `${animal}|${Number(peso)}`;
+      set.add(key);
 
-      if(dataNorm){
-        set.add(`${animal}|${dataNorm}`);
-      }
-
-    } // 🔥 ESTA CHAVE FALTAVA
-
-  });
-
-  return set;
-}
-async function spGetAllAnimais(token){
-
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$expand=fields&$top=5000`;
-
-  const r = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const j = await r.json();
-
-  const set = new Set();
-
-  (j.value || []).forEach(i => {
-    const title = i.fields?.Title?.trim();
-    if(title){
-      set.add(title);
     }
+
   });
 
   return set;
-}
-function normalizeDate(dateStr){
-
-  if(!dateStr) return null;
-
-  dateStr = String(dateStr).trim();
-
-  // Se vier com data e hora, fica só com a data
-  if(dateStr.includes("T")){
-    return dateStr.split("T")[0];
-  }
-
-  // Se já vier em YYYY-MM-DD
-  if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){
-    return dateStr;
-  }
-
-  // Se vier em DD-MM-YYYY
-  if(/^\d{2}-\d{2}-\d{4}$/.test(dateStr)){
-    const [d,m,y] = dateStr.split("-");
-    return `${y}-${m}-${d}`;
-  }
-
-  console.error("❌ Data inválida:", dateStr);
-  return null;
 }
