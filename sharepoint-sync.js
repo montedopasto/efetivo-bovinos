@@ -86,14 +86,34 @@ async function spCreatePesagem(data, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`;
 
-  await fetch(url, {
+  const body = {
+    fields: {
+      Title: String(data.Title),
+      DataPesagem: new Date(data.DataPesagem).toISOString(),
+      Peso: Number(data.Peso),
+      Origem: String(data.Origem)
+    }
+  };
+
+  console.log("🚀 A enviar pesagem:", body);
+
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ fields: data })
+    body: JSON.stringify(body)
   });
+
+  const txt = await res.text();
+
+  if(!res.ok){
+    console.error("❌ ERRO SHAREPOINT PESAGEM:", txt);
+    throw new Error("Erro ao criar pesagem");
+  }
+
+  console.log("✅ Pesagem criada:", txt);
 }
 function formatDateToISO(ptDate){
   if(!ptDate) return null;
