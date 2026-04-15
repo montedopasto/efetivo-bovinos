@@ -257,9 +257,26 @@ function normalizeDate(dateStr){
 
   if(!dateStr) return null;
 
-  const d = new Date(dateStr);
+  dateStr = String(dateStr).trim();
 
-  if(isNaN(d)) return null;
+  // já vem ISO → usa direto
+  if(dateStr.includes("T")){
+    const d = new Date(dateStr);
+    if(isNaN(d)) return null;
+    return d.toISOString();
+  }
 
-  return d.toISOString(); // formato único
+  // formato YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){
+    return dateStr + "T00:00:00.000Z";
+  }
+
+  // formato DD-MM-YYYY
+  if(/^\d{2}-\d{2}-\d{4}$/.test(dateStr)){
+    const [d,m,y] = dateStr.split("-");
+    return `${y}-${m}-${d}T00:00:00.000Z`;
+  }
+
+  console.error("❌ Data inválida normalize:", dateStr);
+  return null;
 }
