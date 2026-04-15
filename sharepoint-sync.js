@@ -93,10 +93,13 @@ async function spCreatePesagem(data, token){
     return;
   }
 
+  // 🔥 CONVERSÃO CERTA PARA SHAREPOINT
+  const dataFinal = new Date(dataISO + "T00:00:00").toISOString();
+
   const body = {
     fields: {
       Title: String(data.Title).trim(),
-      DataPesagem: dataISO + "T00:00:00",
+      DataPesagem: dataFinal,
       Peso: Number(data.Peso),
       Origem: String(data.Origem)
     }
