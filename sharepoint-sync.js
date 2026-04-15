@@ -79,13 +79,25 @@ console.log("📦 EXISTE?", existentesPesagens.has(key));
     }
 
     // 👉 PESO ANTERIOR
-    if(r.dataAnterior && r.pesoAnteriorNum){
+    if(r.pesoAnteriorNum){
 
-      const dataNorm = normalizeDate(r.dataAnterior);
+  const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
 
-      if(dataNorm){
+  console.log("🆕 KEY NOVA (ANTERIOR):", key);
+  console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
 
-        const key = `${animalId}|${dataNorm}`;
+  if(!existentesPesagens.has(key)){
+
+    await spCreatePesagem({
+      Title: animalId,
+      DataPesagem: r.dataAnterior,
+      Peso: r.pesoAnteriorNum,
+      Origem: "Anterior"
+    }, token);
+
+    existentesPesagens.add(key);
+  }
+}
 console.log("🆕 KEY NOVA (ANTERIOR):", key);
 console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
         if(!existentesPesagens.has(key)){
