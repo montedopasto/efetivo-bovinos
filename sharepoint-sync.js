@@ -138,12 +138,22 @@ function formatDateToISO(ptDate){
 
   ptDate = String(ptDate).trim();
 
-  // 🔥 já vem em formato ISO (YYYY-MM-DD)
+  // 🔥 CASO 1: já vem com T (ISO completo)
+  if(ptDate.includes("T")){
+    const d = new Date(ptDate);
+    if(isNaN(d.getTime())){
+      console.error("❌ Data inválida:", ptDate);
+      return null;
+    }
+    return d.toISOString().split("T")[0];
+  }
+
+  // 🔥 CASO 2: ISO simples (YYYY-MM-DD)
   if(/^\d{4}-\d{2}-\d{2}$/.test(ptDate)){
     return ptDate;
   }
 
-  // 🔥 formato português (DD-MM-YYYY)
+  // 🔥 CASO 3: formato PT (DD-MM-YYYY)
   if(/^\d{2}-\d{2}-\d{4}$/.test(ptDate)){
     const [d,m,y] = ptDate.split("-");
     return `${y}-${m}-${d}`;
