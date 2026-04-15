@@ -14,44 +14,83 @@ async function syncToSharePoint(rows){
 
   const token = await Auth.getAccessToken();
 
+  // 🔥 carregar existentes (IMPORTANTÍSSIMO)
+  const existentesAnimais = await spGetAllAnimais(token);
+  const existentesPesagens = await spGetAllPesagens(token);
+
   for(const r of rows){
 
-  const animalId = r.animal;
+    const animalId = String(r.animal).trim();
 
-  // 1. Criar animal se não existir
-  const existsAnimal = await spGetAnimal(animalId, token);
+    if(!animalId || animalId === "—") continue;
 
-  if(!existsAnimal){
-    await spCreateAnimal({
-      Title: animalId,
-      Sexo: r.sexo || "",
-      GrupoAtual: r.grupo || ""
-    }, token);
+    // =============================
+    // ANIMAIS (sem duplicados)
+    // =============================
+    if(!existentesAnimais.has(animalId)){
+
+      await spCreateAnimal({
+        Title: animalId,
+        Sexo: r.sexo || "",
+        GrupoAtual: r.grupo || ""
+      }, token);
+
+      existentesAnimais.add(animalId);
+    }
+
+    // =============================
+    // PESAGENS
+    // =============================
+
+    // 👉 PESO ATUAL
+    if(r.dataAtual && r.pesoAtualNum){
+
+      const dataNorm = normalizeDate(r.dataAtual);
+
+      if(dataNorm){
+
+        const key = `${animalId}|${dataNorm}`;
+
+        if(!existentesPesagens.has(key)){
+
+          await spCreatePesagem({
+            Title: animalId,
+            DataPesagem: dataNorm,
+            Peso: r.pesoAtualNum,
+            Origem: "Atual"
+          }, token);
+
+          existentesPesagens.add(key);
+        }
+      }
+    }
+
+    // 👉 PESO ANTERIOR
+    if(r.dataAnterior && r.pesoAnteriorNum){
+
+      const dataNorm = normalizeDate(r.dataAnterior);
+
+      if(dataNorm){
+
+        const key = `${animalId}|${dataNorm}`;
+
+        if(!existentesPesagens.has(key)){
+
+          await spCreatePesagem({
+            Title: animalId,
+            DataPesagem: dataNorm,
+            Peso: r.pesoAnteriorNum,
+            Origem: "Anterior"
+          }, token);
+
+          existentesPesagens.add(key);
+        }
+      }
+    }
+
   }
 
-  // 2. PESO ATUAL
-  if(r.dataAtual && r.pesoAtualNum){
-    await spCreatePesagem({
-      Title: animalId,
-      DataPesagem: r.dataAtual,
-      Peso: r.pesoAtualNum,
-      Origem: "Atual"
-    }, token);
-  }
-
-  // 3. PESO ANTERIOR
-  if(r.dataAnterior && r.pesoAnteriorNum){
-    await spCreatePesagem({
-      Title: animalId,
-      DataPesagem: r.dataAnterior,
-      Peso: r.pesoAnteriorNum,
-      Origem: "Anterior"
-    }, token);
-  }
-
-}
-
-  console.log("✅ Sync concluído");
+  console.log("✅ Sync concluído (sem duplicados)");
 }
 async function spGetAnimal(animalId, token){
 
