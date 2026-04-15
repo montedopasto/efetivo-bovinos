@@ -94,7 +94,14 @@ async function spCreatePesagem(data, token){
   }
 
   // 🔥 CONVERSÃO CERTA PARA SHAREPOINT
-  const dataFinal = new Date(dataISO + "T00:00:00").toISOString();
+  const dateObj = new Date(dataISO + "T00:00:00");
+
+if(isNaN(dateObj.getTime())){
+  console.error("❌ Data inválida após conversão:", dataISO);
+  return;
+}
+
+const dataFinal = dateObj.toISOString();
 
   const body = {
     fields: {
@@ -126,18 +133,36 @@ async function spCreatePesagem(data, token){
   console.log("✅ Pesagem criada:", txt);
 }
 function formatDateToISO(ptDate){
+
   if(!ptDate) return null;
 
-  // já vem em ISO? não mexe
+  // limpar espaços
+  ptDate = String(ptDate).trim();
+
+  // formato já ISO
   if(ptDate.includes("T")) return ptDate.split("T")[0];
 
+  // formato esperado: DD-MM-YYYY
   const parts = ptDate.split("-");
 
   if(parts.length !== 3) return null;
 
-  const [d,m,y] = parts;
+  let [d,m,y] = parts;
 
-  return `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
+  d = d.padStart(2,"0");
+  m = m.padStart(2,"0");
+
+  const iso = `${y}-${m}-${d}`;
+
+  // validar se é data válida
+  const test = new Date(iso);
+
+  if(isNaN(test.getTime())){
+    console.error("❌ Data inválida no CSV:", ptDate);
+    return null;
+  }
+
+  return iso;
 }
 async function spGetAllPesagens(token){
 
