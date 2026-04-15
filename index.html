@@ -667,17 +667,7 @@ const animaisUnicos = new Map();
 
 for (const a of st.animalsOut) {
 
-  if(
-    !a.animal ||
-    a.animal === "—" ||
-    !a.pesoAtualNum ||
-    !a.dataAtual
-  ) continue;
-
-  // 🔥 evitar duplicados
-  if(animaisUnicos.has(a.animal)) continue;
-
-  animaisUnicos.set(a.animal, true);
+  if(!a.animal || a.animal === "—") continue;
 
   console.log("ENVIAR:", a.animal);
 
