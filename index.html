@@ -668,13 +668,16 @@ const token = await Auth.getAccessToken();
 const existentes = await spGetAllAnimais(token);
 for (const a of st.animalsOut) {
 
-  if(!a.animal || a.animal === "—") continue;
+if(!a.animal || a.animal === "—") continue;
+
+// 🔥 limpar espaços (EVITA DUPLICADOS INVISÍVEIS)
+const animalId = a.animal.trim();
 
 // 🚫 NÃO DUPLICAR
-if(!existentes.has(a.animal)){
+if(!existentes.has(animalId)){
 
   await spCreateAnimal({
-    Title: a.animal,
+    Title: animalId,
     NIF: a.nif || "",
     Raca: a.raca || "",
     DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
@@ -683,7 +686,7 @@ if(!existentes.has(a.animal)){
     GrupoAtual: a.grupo || ""
   }, token);
 
-  existentes.add(a.animal); // evita duplicar no mesmo CSV
+  existentes.add(animalId); // 🔥 IMPORTANTÍSSIMO
 }
 
 
