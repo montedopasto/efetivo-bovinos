@@ -261,22 +261,20 @@ function normalizeDate(dateStr){
 
   dateStr = String(dateStr).trim();
 
-  // ISO completo → devolver igual normalizado
+  // Se vier com data e hora, fica só com a data
   if(dateStr.includes("T")){
-    const d = new Date(dateStr);
-    if(isNaN(d)) return null;
-    return d.toISOString();
+    return dateStr.split("T")[0];
   }
 
-  // YYYY-MM-DD → converter para ISO completo
+  // Se já vier em YYYY-MM-DD
   if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){
-    return dateStr + "T00:00:00.000Z";
+    return dateStr;
   }
 
-  // DD-MM-YYYY → converter para ISO completo
+  // Se vier em DD-MM-YYYY
   if(/^\d{2}-\d{2}-\d{4}$/.test(dateStr)){
     const [d,m,y] = dateStr.split("-");
-    return `${y}-${m}-${d}T00:00:00.000Z`;
+    return `${y}-${m}-${d}`;
   }
 
   console.error("❌ Data inválida:", dateStr);
