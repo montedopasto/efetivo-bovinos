@@ -103,7 +103,7 @@ function formatDateToISO(ptDate){
 }
 async function spGetAllPesagens(token){
 
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?expand=fields&$top=5000`;
+  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$expand=fields&$top=5000`;
 
   const r = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }
@@ -114,11 +114,12 @@ async function spGetAllPesagens(token){
   const set = new Set();
 
   (j.value || []).forEach(item => {
-    const animal = item.fields?.Title;
+    const animal = item.fields?.Title?.trim();
     const data = item.fields?.DataPesagem;
 
     if(animal && data){
-      set.add(`${animal}|${data}`);
+      const dataNorm = new Date(data).toISOString();
+      set.add(`${animal}|${dataNorm}`);
     }
   });
 
