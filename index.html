@@ -668,25 +668,27 @@ const token = await Auth.getAccessToken();
 const existentes = await spGetAllAnimais(token);
 for (const a of st.animalsOut) {
 
-if(!a.animal || a.animal === "—") continue;
+  if(!a.animal || a.animal === "—") continue;
 
-// 🔥 limpar espaços (EVITA DUPLICADOS INVISÍVEIS)
-const animalId = a.animal.trim();
+  // 🔥 normalizar ID
+  const animalId = a.animal.trim();
 
-// 🚫 NÃO DUPLICAR
-if(!existentes.has(animalId)){
+  // 🚫 NÃO DUPLICAR
+  if(!existentes.has(animalId)){
 
-  await spCreateAnimal({
-    Title: animalId,
-    NIF: a.nif || "",
-    Raca: a.raca || "",
-    DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
-    DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
-    Sexo: a.sexo || "",
-    GrupoAtual: a.grupo || ""
-  }, token);
+    await spCreateAnimal({
+      Title: animalId,
+      NIF: a.nif || "",
+      Raca: a.raca || "",
+      DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
+      DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
+      Sexo: a.sexo || "",
+      GrupoAtual: a.grupo || ""
+    }, token);
 
-  existentes.add(animalId); // 🔥 IMPORTANTÍSSIMO
+    existentes.add(animalId); // evita duplicados no mesmo ciclo
+  }
+
 }
 
 
