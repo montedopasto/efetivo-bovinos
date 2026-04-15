@@ -136,33 +136,21 @@ function formatDateToISO(ptDate){
 
   if(!ptDate) return null;
 
-  // limpar espaços
   ptDate = String(ptDate).trim();
 
-  // formato já ISO
-  if(ptDate.includes("T")) return ptDate.split("T")[0];
-
-  // formato esperado: DD-MM-YYYY
-  const parts = ptDate.split("-");
-
-  if(parts.length !== 3) return null;
-
-  let [d,m,y] = parts;
-
-  d = d.padStart(2,"0");
-  m = m.padStart(2,"0");
-
-  const iso = `${y}-${m}-${d}`;
-
-  // validar se é data válida
-  const test = new Date(iso);
-
-  if(isNaN(test.getTime())){
-    console.error("❌ Data inválida no CSV:", ptDate);
-    return null;
+  // 🔥 já vem em formato ISO (YYYY-MM-DD)
+  if(/^\d{4}-\d{2}-\d{2}$/.test(ptDate)){
+    return ptDate;
   }
 
-  return iso;
+  // 🔥 formato português (DD-MM-YYYY)
+  if(/^\d{2}-\d{2}-\d{4}$/.test(ptDate)){
+    const [d,m,y] = ptDate.split("-");
+    return `${y}-${m}-${d}`;
+  }
+
+  console.error("❌ Formato inválido:", ptDate);
+  return null;
 }
 async function spGetAllPesagens(token){
 
