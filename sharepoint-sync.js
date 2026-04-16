@@ -16,6 +16,7 @@ async function syncToSharePoint(rows){
 
   // 🔥 carregar existentes (IMPORTANTÍSSIMO)
   const existentesAnimais = await spGetAllAnimais(token);
+  const pesagensParaEnviar = [];
   for(const r of rows){
 
     const animalId = String(r.animal).trim();
@@ -43,25 +44,24 @@ async function syncToSharePoint(rows){
 // 👉 PESO ATUAL
 if(r.pesoAtualNum && r.dataAtual){
 
-  await spCreatePesagem({
+ // PESO ATUAL
+if(r.pesoAtualNum && r.dataAtual){
+  pesagensParaEnviar.push({
     Title: animalId,
     DataPesagem: r.dataAtual,
     Peso: normalizePeso(r.pesoAtualNum),
     Origem: "Atual"
-  }, token);
-
+  });
 }
 
-// 👉 PESO ANTERIOR
+// PESO ANTERIOR
 if(r.pesoAnteriorNum && r.dataAnterior){
-
-  await spCreatePesagem({
+  pesagensParaEnviar.push({
     Title: animalId,
     DataPesagem: r.dataAnterior,
     Peso: normalizePeso(r.pesoAnteriorNum),
     Origem: "Anterior"
-  }, token);
-
+  });
 }
 
   } // fecha o for
