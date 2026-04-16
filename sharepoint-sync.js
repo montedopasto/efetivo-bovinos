@@ -53,7 +53,7 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA:", key);
   console.log("📦 EXISTE?", existentesPesagens.has(key));
 
-  if(!existentesPesagens.has(key) && !keysProcessadas.has(key)){
+  if(!keysProcessadas.has(key) && !existentesPesagens.has(key)){
 
     await spCreatePesagem({
       Title: animalId,
@@ -76,7 +76,7 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
 
-  if(!existentesPesagens.has(key) && !keysProcessadas.has(key)){
+  if(!keysProcessadas.has(key) && !existentesPesagens.has(key)){
 
     await spCreatePesagem({
       Title: animalId,
