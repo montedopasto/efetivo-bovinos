@@ -194,31 +194,37 @@ function formatDateToISO(ptDate){
 }
 async function spGetAllPesagens(token){
 
-  const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$expand=fields&$top=5000`;
-
-  const r = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const j = await r.json();
+  let url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$expand=fields&$top=999`;
 
   const set = new Set();
 
-  (j.value || []).forEach(item => {
+  while(url){
 
-    const animal = item.fields?.Title?.trim();
-    const peso = item.fields?.Peso;
+    const r = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-    if(animal && peso != null){
+    const j = await r.json();
 
-      const data = item.fields?.DataPesagem;
-const pesoNorm = normalizePeso(peso);
-const key = `${animal}|${pesoNorm}`;
-      set.add(key);
+    (j.value || []).forEach(item => {
 
-    }
+      const animal = item.fields?.Title?.trim();
+      const peso = item.fields?.Peso;
 
-  });
+      if(animal && peso != null){
+
+        const pesoNorm = normalizePeso(peso);
+        const key = `${animal}|${pesoNorm}`;
+
+        set.add(key);
+      }
+
+    });
+
+    url = j['@odata.nextLink'] || null;
+  }
+
+  console.log("📊 TOTAL PESAGENS SHAREPOINT:", set.size);
 
   return set;
 }
