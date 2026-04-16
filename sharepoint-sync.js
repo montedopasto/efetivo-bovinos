@@ -45,7 +45,8 @@ console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
     // 👉 PESO ATUAL
 if(r.pesoAtualNum && r.dataAtual){
 
- const key = `${animalId}|${Number(r.pesoAtualNum)}|${normalizeDate(r.dataAtual)}`;
+ const pesoNorm = normalizePeso(r.pesoAtualNum);
+const key = `${animalId}|${pesoNorm}`;
 
   console.log("🆕 KEY NOVA:", key);
   console.log("📦 EXISTE?", existentesPesagens.has(key));
