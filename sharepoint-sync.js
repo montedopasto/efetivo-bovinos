@@ -62,7 +62,7 @@ const key = `${animalId}|${pesoNorm}`;
       Origem: "Atual"
     }, token);
 
-    existentesPesagens.add(key);
+    keysProcessadas.add(key);
   }
 }
 
@@ -84,7 +84,7 @@ const key = `${animalId}|${pesoNorm}`;
       Origem: "Anterior"
     }, token);
 
-    existentesPesagens.add(key);
+    keysProcessadas.add(key);
   }
 }
 
