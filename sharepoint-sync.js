@@ -66,7 +66,7 @@ if(r.pesoAtualNum){
     // 👉 PESO ANTERIOR
 if(r.pesoAnteriorNum){
 
-  const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
+  const key = `${animalId}|${Number(r.pesoAnteriorNum)}|${normalizeDate(r.dataAnterior)}`;
 
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
