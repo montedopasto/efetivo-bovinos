@@ -56,7 +56,7 @@ const key = `${animalId}|${pesoNorm}`;
     await spCreatePesagem({
       Title: animalId,
       DataPesagem: r.dataAtual,
-      Peso: r.pesoAtualNum,
+      Peso: pesoNorm,
       Origem: "Atual"
     }, token);
 
@@ -67,7 +67,8 @@ const key = `${animalId}|${pesoNorm}`;
     // 👉 PESO ANTERIOR
 if(r.pesoAnteriorNum && r.dataAnterior){
 
-  const key = `${animalId}|${Number(r.pesoAnteriorNum)}|${normalizeDate(r.dataAnterior)}`;
+  const pesoNorm = normalizePeso(r.pesoAnteriorNum);
+const key = `${animalId}|${pesoNorm}`;
 
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
@@ -77,7 +78,7 @@ if(r.pesoAnteriorNum && r.dataAnterior){
     await spCreatePesagem({
       Title: animalId,
       DataPesagem: r.dataAnterior,
-      Peso: r.pesoAnteriorNum,
+      Peso: pesoNorm,
       Origem: "Anterior"
     }, token);
 
@@ -210,7 +211,8 @@ async function spGetAllPesagens(token){
     if(animal && peso != null){
 
       const data = item.fields?.DataPesagem;
-const key = `${animal}|${Number(peso)}|${normalizeDate(data)}`;
+const pesoNorm = normalizePeso(peso);
+const key = `${animal}|${pesoNorm}`;
       set.add(key);
 
     }
