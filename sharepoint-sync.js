@@ -62,7 +62,13 @@ async function syncToSharePoint(rows){
 
   await spBatchCreatePesagens(pesagensParaEnviar, token);
 
-  console.log("✅ Sync concluído (batch)");
+    console.log("✅ Sync concluído (batch)");
+
+  isSyncRunning = false;
+
+  if(typeof carregarMeteo === "function"){
+    carregarMeteo();
+  }
 }
 async function spGetAnimal(animalId, token){
 
