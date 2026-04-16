@@ -43,7 +43,7 @@ console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
     // =============================
 
     // 👉 PESO ATUAL
-if(r.pesoAtualNum){
+if(r.pesoAtualNum && r.dataAtual){
 
  const key = `${animalId}|${Number(r.pesoAtualNum)}|${normalizeDate(r.dataAtual)}`;
 
@@ -217,4 +217,29 @@ const key = `${animal}|${Number(peso)}|${normalizeDate(data)}`;
   });
 
   return set;
+}
+function normalizeDate(dateStr){
+
+  if(!dateStr) return null;
+
+  dateStr = String(dateStr).trim();
+
+  // já vem ISO com hora
+  if(dateStr.includes("T")){
+    return dateStr.split("T")[0];
+  }
+
+  // formato YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(dateStr)){
+    return dateStr;
+  }
+
+  // formato PT DD-MM-YYYY
+  if(/^\d{2}-\d{2}-\d{4}$/.test(dateStr)){
+    const [d,m,y] = dateStr.split("-");
+    return `${y}-${m}-${d}`;
+  }
+
+  console.error("❌ Data inválida:", dateStr);
+  return null;
 }
