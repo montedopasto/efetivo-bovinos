@@ -137,9 +137,15 @@ fields: {
   const txt = await res.text();
 
   if(!res.ok){
-    console.error("❌ ERRO SHAREPOINT PESAGEM:", txt);
-    throw new Error("Erro ao criar pesagem");
+
+  if(txt.toLowerCase().includes("duplicate") || txt.toLowerCase().includes("unique")){
+    console.warn("⚠️ Duplicado ignorado:", data.Title, data.Peso);
+    return;
   }
+
+  console.error("❌ ERRO SHAREPOINT PESAGEM:", txt);
+  throw new Error("Erro ao criar pesagem");
+}
 
   console.log("✅ Pesagem criada:", txt);
 }
