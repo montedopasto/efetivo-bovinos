@@ -86,6 +86,7 @@ const key = `${animalId}|${pesoNorm}`;
     }, token);
 
     keysProcessadas.add(key);
+existentesPesagens.add(key); // 🔥 ESTA LINHA FALTAVA
   }
 }
 
