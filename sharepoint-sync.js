@@ -195,8 +195,7 @@ function formatDateToISO(ptDate){
   console.error("❌ Formato inválido:", ptDate);
   return null;
 }
-const pesoNorm = Math.round(Number(peso));
-const key = `${animal}|${pesoNorm}`;
+async function spGetAllPesagens(token){
 
   let url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$expand=fields&$top=999`;
 
@@ -217,7 +216,7 @@ const key = `${animal}|${pesoNorm}`;
 
       if(animal && peso != null){
 
-        const pesoNorm = normalizePeso(peso);
+        const pesoNorm = Math.round(Number(peso));
         const key = `${animal}|${pesoNorm}`;
 
         set.add(key);
