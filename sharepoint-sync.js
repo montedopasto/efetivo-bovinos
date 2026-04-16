@@ -266,3 +266,53 @@ async function spGetAllAnimais(token){
 function normalizePeso(p){
   return Math.round(Number(p));
 }
+async function spBatchCreatePesagens(pesagens, token){
+
+  const BATCH_SIZE = 20;
+
+  for(let i = 0; i < pesagens.length; i += BATCH_SIZE){
+
+    const chunk = pesagens.slice(i, i + BATCH_SIZE);
+
+    const requests = chunk.map((p, index) => {
+
+      const dataNorm = normalizeDate(p.DataPesagem);
+      if(!dataNorm) return null;
+
+      const dataFinal = `${dataNorm}T00:00:00Z`;
+      const chave = `${p.Title}|${Math.round(Number(p.Peso))}`;
+
+      return {
+        id: String(index),
+        method: "POST",
+        url: `/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items`,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: {
+          fields: {
+            Title: String(p.Title).trim(),
+            DataPesagem: dataFinal,
+            Peso: Number(p.Peso),
+            Origem: String(p.Origem),
+            Chave: chave
+          }
+        }
+      };
+    }).filter(Boolean);
+
+    if(requests.length === 0) continue;
+
+    await fetch("https://graph.microsoft.com/v1.0/$batch", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ requests })
+    });
+
+  }
+
+  console.log("🚀 Batch concluído");
+}
