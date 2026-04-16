@@ -64,7 +64,7 @@ if(r.pesoAtualNum && r.dataAtual){
 }
 
     // 👉 PESO ANTERIOR
-if(r.pesoAnteriorNum){
+if(r.pesoAnteriorNum && r.dataAnterior){
 
   const key = `${animalId}|${Number(r.pesoAnteriorNum)}|${normalizeDate(r.dataAnterior)}`;
 
