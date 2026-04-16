@@ -314,9 +314,11 @@ async function spBatchCreatePesagens(pesagens, token){
   },
   body: JSON.stringify({ requests })
 });
+
 if(!res.ok){
   console.error("❌ Erro no batch request:", res.status);
 }
+
 let json = {};
 try {
   json = await res.json();
