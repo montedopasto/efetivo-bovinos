@@ -14,18 +14,15 @@ async function syncToSharePoint(rows){
 
   const token = await Auth.getAccessToken();
 
-  // 🔥 carregar existentes (IMPORTANTÍSSIMO)
   const existentesAnimais = await spGetAllAnimais(token);
   const pesagensParaEnviar = [];
+
   for(const r of rows){
 
     const animalId = String(r.animal).trim();
-
     if(!animalId || animalId === "—") continue;
 
-    // =============================
-    // ANIMAIS (sem duplicados)
-    // =============================
+    // ANIMAIS
     if(!existentesAnimais.has(animalId)){
 
       await spCreateAnimal({
@@ -37,37 +34,34 @@ async function syncToSharePoint(rows){
       existentesAnimais.add(animalId);
     }
 
-    // =============================
-// PESAGENS
-// =============================
+    // PESO ATUAL
+    if(r.pesoAtualNum && r.dataAtual){
+      pesagensParaEnviar.push({
+        Title: animalId,
+        DataPesagem: r.dataAtual,
+        Peso: normalizePeso(r.pesoAtualNum),
+        Origem: "Atual"
+      });
+    }
 
-// 👉 PESO ATUAL
-if(r.pesoAtualNum && r.dataAtual){
+    // PESO ANTERIOR
+    if(r.pesoAnteriorNum && r.dataAnterior){
+      pesagensParaEnviar.push({
+        Title: animalId,
+        DataPesagem: r.dataAnterior,
+        Peso: normalizePeso(r.pesoAnteriorNum),
+        Origem: "Anterior"
+      });
+    }
+  }
 
- // PESO ATUAL
-if(r.pesoAtualNum && r.dataAtual){
-  pesagensParaEnviar.push({
-    Title: animalId,
-    DataPesagem: r.dataAtual,
-    Peso: normalizePeso(r.pesoAtualNum),
-    Origem: "Atual"
-  });
+  // 🔥 AQUI É QUE ACONTECE A MAGIA
+  console.log("TOTAL PESAGENS:", pesagensParaEnviar.length);
+
+  await spBatchCreatePesagens(pesagensParaEnviar, token);
+
+  console.log("✅ Sync concluído (batch)");
 }
-
-// PESO ANTERIOR
-if(r.pesoAnteriorNum && r.dataAnterior){
-  pesagensParaEnviar.push({
-    Title: animalId,
-    DataPesagem: r.dataAnterior,
-    Peso: normalizePeso(r.pesoAnteriorNum),
-    Origem: "Anterior"
-  });
-}
-
-  } // fecha o for
-
-  console.log("✅ Sync concluído (sem duplicados)");
-} // 🔥 fecha a função syncToSharePoint
 async function spGetAnimal(animalId, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$filter=fields/Title eq '${animalId}'`;
