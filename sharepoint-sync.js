@@ -326,6 +326,9 @@ const json = await res.json();
 
 });
 
+// 🔥 PAUSA ENTRE BATCHES (MUITO IMPORTANTE)
+await new Promise(r => setTimeout(r, 50));
+
   }
 
   console.log("🚀 Batch concluído");
