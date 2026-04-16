@@ -16,10 +16,6 @@ async function syncToSharePoint(rows){
 
   // 🔥 carregar existentes (IMPORTANTÍSSIMO)
   const existentesAnimais = await spGetAllAnimais(token);
-  const existentesPesagens = await spGetAllPesagens(token);
-  const keysProcessadas = new Set();
-  console.log("TOTAL EXISTENTES:", existentesPesagens.size);
-console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
   for(const r of rows){
 
     const animalId = String(r.animal).trim();
@@ -53,8 +49,6 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA:", key);
   console.log("📦 EXISTE?", existentesPesagens.has(key));
 
-  if(!keysProcessadas.has(key) && !existentesPesagens.has(key)){
-
     await spCreatePesagem({
       Title: animalId,
       DataPesagem: r.dataAtual,
@@ -62,8 +56,6 @@ const key = `${animalId}|${pesoNorm}`;
       Origem: "Atual"
     }, token);
 
-    keysProcessadas.add(key);
-existentesPesagens.add(key); // 🔥 ESTA LINHA FALTAVA
   }
 }
 
@@ -76,7 +68,6 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
 
-  if(!keysProcessadas.has(key) && !existentesPesagens.has(key)){
 
     await spCreatePesagem({
       Title: animalId,
@@ -85,8 +76,6 @@ const key = `${animalId}|${pesoNorm}`;
       Origem: "Anterior"
     }, token);
 
-    keysProcessadas.add(key);
-existentesPesagens.add(key); // 🔥 ESTA LINHA FALTAVA
   }
 }
 
