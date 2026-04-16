@@ -25,11 +25,11 @@ async function syncToSharePoint(rows){
     // ANIMAIS
     if(!existentesAnimais.has(animalId)){
 
-      await spCreateAnimal({
-        Title: animalId,
-        Sexo: r.sexo || "",
-        GrupoAtual: r.grupo || ""
-      }, token);
+      spCreateAnimal({
+  Title: animalId,
+  Sexo: r.sexo || "",
+  GrupoAtual: r.grupo || ""
+}, token).catch(e => console.error("Erro animal:", e));
 
       existentesAnimais.add(animalId);
     }
@@ -297,14 +297,33 @@ async function spBatchCreatePesagens(pesagens, token){
 
     if(requests.length === 0) continue;
 
-    await fetch("https://graph.microsoft.com/v1.0/$batch", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ requests })
-    });
+    const res = await fetch("https://graph.microsoft.com/v1.0/$batch", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ requests })
+});
+
+const json = await res.json();
+
+// 🔥 validar respostas
+(json.responses || []).forEach(r => {
+
+  if(r.status >= 400){
+
+    const msg = JSON.stringify(r.body || "").toLowerCase();
+
+    if(msg.includes("duplicate") || msg.includes("unique")){
+      console.warn("⚠️ Duplicado ignorado");
+    } else {
+      console.error("❌ Erro no batch:", r);
+    }
+
+  }
+
+});
 
   }
 
