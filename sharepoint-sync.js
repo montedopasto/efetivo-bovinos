@@ -281,5 +281,5 @@ async function spGetAllAnimais(token){
   return set;
 }
 function normalizePeso(p){
-  return Number(Number(p).toFixed(1));
+  return Math.round(Number(p));
 }
