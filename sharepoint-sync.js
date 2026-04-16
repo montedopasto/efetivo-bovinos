@@ -111,17 +111,17 @@ if(!dataNorm){
 
 const dataFinal = `${dataNorm}T00:00:00Z`;
 
-  const body = {
-    const chave = `${data.Title}|${Math.round(Number(data.Peso))}`;
+  const chave = `${data.Title}|${Math.round(Number(data.Peso))}`;
 
-fields: {
-  Title: String(data.Title).trim(),
-  DataPesagem: dataFinal,
-  Peso: Number(data.Peso),
-  Origem: String(data.Origem),
-  Chave: chave
-}
-  };
+const body = {
+  fields: {
+    Title: String(data.Title).trim(),
+    DataPesagem: dataFinal,
+    Peso: Number(data.Peso),
+    Origem: String(data.Origem),
+    Chave: chave
+  }
+};
 
   console.log("🚀 A enviar pesagem:", body);
 
