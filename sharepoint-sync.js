@@ -17,6 +17,7 @@ async function syncToSharePoint(rows){
   // 🔥 carregar existentes (IMPORTANTÍSSIMO)
   const existentesAnimais = await spGetAllAnimais(token);
   const existentesPesagens = await spGetAllPesagens(token);
+  const keysProcessadas = new Set();
   console.log("TOTAL EXISTENTES:", existentesPesagens.size);
 console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
   for(const r of rows){
@@ -52,7 +53,7 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA:", key);
   console.log("📦 EXISTE?", existentesPesagens.has(key));
 
-  if(!existentesPesagens.has(key)){
+  if(!existentesPesagens.has(key) && !keysProcessadas.has(key)){
 
     await spCreatePesagem({
       Title: animalId,
@@ -74,7 +75,7 @@ const key = `${animalId}|${pesoNorm}`;
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
 
-  if(!existentesPesagens.has(key)){
+  if(!existentesPesagens.has(key) && !keysProcessadas.has(key)){
 
     await spCreatePesagem({
       Title: animalId,
