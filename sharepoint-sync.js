@@ -63,7 +63,6 @@ if(r.pesoAnteriorNum && r.dataAnterior){
   }, token);
 
 }
-}
 
   } // fecha o for
 
