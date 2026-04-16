@@ -265,6 +265,7 @@ async function spBatchCreatePesagens(pesagens, token){
   const BATCH_SIZE = 20;
 
   for(let i = 0; i < pesagens.length; i += BATCH_SIZE){
+    console.log(`🚀 Batch ${i / BATCH_SIZE + 1} de ${Math.ceil(pesagens.length / BATCH_SIZE)}`);
 
     const chunk = pesagens.slice(i, i + BATCH_SIZE);
 
