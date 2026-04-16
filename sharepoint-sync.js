@@ -12,6 +12,8 @@ let isSyncRunning = false;
 
 async function syncToSharePoint(rows){
 
+  isSyncRunning = true;
+
   const token = await Auth.getAccessToken();
 
   const existentesAnimais = await spGetAllAnimais(token);
