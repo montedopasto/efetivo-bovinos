@@ -68,6 +68,10 @@ if(r.pesoAtualNum){
 
   const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
 
+  if(r.pesoAnteriorNum){
+
+  const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
+
   console.log("🆕 KEY NOVA (ANTERIOR):", key);
   console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
 
@@ -83,25 +87,10 @@ if(r.pesoAtualNum){
     existentesPesagens.add(key);
   }
 }
-console.log("🆕 KEY NOVA (ANTERIOR):", key);
-console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
-        if(!existentesPesagens.has(key)){
 
-          await spCreatePesagem({
-            Title: animalId,
-            DataPesagem: dataNorm,
-            Peso: r.pesoAnteriorNum,
-            Origem: "Anterior"
-          }, token);
+} // fecha o for
 
-          existentesPesagens.add(key);
-        }
-      }
-    }
-
-  }
-
-  console.log("✅ Sync concluído (sem duplicados)");
+console.log("✅ Sync concluído (sem duplicados)");
 }
 async function spGetAnimal(animalId, token){
 
