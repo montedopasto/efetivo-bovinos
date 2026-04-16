@@ -315,7 +315,12 @@ async function spBatchCreatePesagens(pesagens, token){
   body: JSON.stringify({ requests })
 });
 
-const json = await res.json();
+let json = {};
+try {
+  json = await res.json();
+} catch(e) {
+  console.warn("⚠️ Resposta vazia no batch");
+}
 
 // 🔥 validar respostas
 (json.responses || []).forEach(r => {
