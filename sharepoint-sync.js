@@ -208,7 +208,8 @@ async function spGetAllPesagens(token){
 
     if(animal && peso != null){
 
-      const key = `${animal}|${Number(peso)}`;
+      const data = item.fields?.DataPesagem;
+const key = `${animal}|${Number(peso)}|${normalizeDate(data)}`;
       set.add(key);
 
     }
