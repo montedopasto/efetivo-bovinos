@@ -17,6 +17,7 @@ async function syncToSharePoint(rows){
   // 🔥 carregar existentes (IMPORTANTÍSSIMO)
   const existentesAnimais = await spGetAllAnimais(token);
   const existentesPesagens = await spGetAllPesagens(token);
+  console.log("TOTAL EXISTENTES:", existentesPesagens.size);
 console.log("📚 EXISTENTES (10):", [...existentesPesagens].slice(0,10));
   for(const r of rows){
 
