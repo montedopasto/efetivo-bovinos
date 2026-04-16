@@ -64,11 +64,7 @@ if(r.pesoAtualNum){
 }
 
     // 👉 PESO ANTERIOR
-    if(r.pesoAnteriorNum){
-
-  const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
-
-  if(r.pesoAnteriorNum){
+if(r.pesoAnteriorNum){
 
   const key = `${animalId}|${Number(r.pesoAnteriorNum)}`;
 
@@ -87,8 +83,6 @@ if(r.pesoAtualNum){
     existentesPesagens.add(key);
   }
 }
-
-} // fecha o for
 
 console.log("✅ Sync concluído (sem duplicados)");
 }
