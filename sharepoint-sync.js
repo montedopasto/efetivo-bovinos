@@ -37,46 +37,32 @@ async function syncToSharePoint(rows){
     }
 
     // =============================
-    // PESAGENS
-    // =============================
+// PESAGENS
+// =============================
 
-    // 👉 PESO ATUAL
+// 👉 PESO ATUAL
 if(r.pesoAtualNum && r.dataAtual){
 
- const pesoNorm = normalizePeso(r.pesoAtualNum);
-const key = `${animalId}|${pesoNorm}`;
+  await spCreatePesagem({
+    Title: animalId,
+    DataPesagem: r.dataAtual,
+    Peso: normalizePeso(r.pesoAtualNum),
+    Origem: "Atual"
+  }, token);
 
-  console.log("🆕 KEY NOVA:", key);
-  console.log("📦 EXISTE?", existentesPesagens.has(key));
-
-    await spCreatePesagem({
-      Title: animalId,
-      DataPesagem: r.dataAtual,
-      Peso: pesoNorm,
-      Origem: "Atual"
-    }, token);
-
-  }
 }
 
-    // 👉 PESO ANTERIOR
+// 👉 PESO ANTERIOR
 if(r.pesoAnteriorNum && r.dataAnterior){
 
-  const pesoNorm = normalizePeso(r.pesoAnteriorNum);
-const key = `${animalId}|${pesoNorm}`;
+  await spCreatePesagem({
+    Title: animalId,
+    DataPesagem: r.dataAnterior,
+    Peso: normalizePeso(r.pesoAnteriorNum),
+    Origem: "Anterior"
+  }, token);
 
-  console.log("🆕 KEY NOVA (ANTERIOR):", key);
-  console.log("📦 EXISTE? (ANTERIOR)", existentesPesagens.has(key));
-
-
-    await spCreatePesagem({
-      Title: animalId,
-      DataPesagem: r.dataAnterior,
-      Peso: pesoNorm,
-      Origem: "Anterior"
-    }, token);
-
-  }
+}
 }
 
   } // fecha o for
