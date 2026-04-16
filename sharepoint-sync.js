@@ -45,7 +45,7 @@ async function syncToSharePoint(rows){
     }
 
     // PESO ANTERIOR
-    if(r.pesoAnteriorNum && r.dataAnterior){
+    if(r.pesoAnteriorNum != null && r.dataAnterior){
       pesagensParaEnviar.push({
         Title: animalId,
         DataPesagem: r.dataAnterior,
