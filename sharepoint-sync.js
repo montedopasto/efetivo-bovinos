@@ -84,8 +84,10 @@ if(r.pesoAnteriorNum){
   }
 }
 
-console.log("✅ Sync concluído (sem duplicados)");
-}
+  } // fecha o for
+
+  console.log("✅ Sync concluído (sem duplicados)");
+} // 🔥 fecha a função syncToSharePoint
 async function spGetAnimal(animalId, token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$filter=fields/Title eq '${animalId}'`;
