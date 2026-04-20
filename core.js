@@ -822,8 +822,10 @@ animalsGrupo.forEach(a => {
         dateM, dateF,
         minDays,
         estadoTexto,
-        estadoClass
-      };
+        estadoClass,
+  prontos
+
+};
     });
 
     rows.sort((a,b)=>{
