@@ -241,6 +241,19 @@ function normalizeDate(dateStr){
   console.error("❌ Data inválida:", dateStr);
   return null;
 }
+function calcularMesesIdade(dataNasc){
+
+  const dataISO = normalizeDate(dataNasc);
+  if(!dataISO) return null;
+
+  const nascimento = new Date(dataISO);
+  const hoje = new Date();
+
+  let meses = (hoje.getFullYear() - nascimento.getFullYear()) * 12;
+  meses += hoje.getMonth() - nascimento.getMonth();
+
+  return meses;
+}
 async function spGetAllAnimais(token){
 
   const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_ANIMAIS_ID}/items?$expand=fields&$top=5000`;
