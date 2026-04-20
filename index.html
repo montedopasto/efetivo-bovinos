@@ -651,6 +651,17 @@ function buildRiskBadge(risk){
       statusEl.innerHTML = `Dados carregados e guardados. Podes ir a <b>Animais</b> e <b>Planeamento</b>.`;
     }
   }
+  (function(){
+
+function formatDatePT(dateStr){
+  if(!dateStr) return "—";
+
+  const d = new Date(dateStr);
+
+  if(isNaN(d)) return "—";
+
+  return d.toLocaleDateString("pt-PT");
+}
 function renderMais15(state){
 
   const tbody = document.getElementById("tbodyMais15");
