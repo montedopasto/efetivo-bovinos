@@ -650,7 +650,59 @@ function buildRiskBadge(risk){
       statusEl.innerHTML = `Dados carregados e guardados. Podes ir a <b>Animais</b> e <b>Planeamento</b>.`;
     }
   }
+function renderMais15(state){
 
+  const tbody = document.getElementById("tbodyMais15");
+  const resumo = document.getElementById("cardMais15Resumo");
+
+  if(!tbody || !resumo) return;
+
+  tbody.innerHTML = "";
+
+  const lista = [];
+
+  (state?.animalsOut || []).forEach(a => {
+
+    if(!a.dataNascimento) return;
+
+    const nasc = new Date(a.dataNascimento);
+    const hoje = new Date();
+
+    const meses =
+      (hoje.getFullYear() - nasc.getFullYear()) * 12 +
+      (hoje.getMonth() - nasc.getMonth());
+
+    if(meses >= 15){
+      lista.push({
+        animal: a.animal,
+        meses,
+        grupo: a.grupo || "-"
+      });
+    }
+
+  });
+
+  resumo.innerHTML = `<b>Total:</b> ${lista.length} animais`;
+
+  if(lista.length === 0){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="3">Sem animais com mais de 15 meses</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+
+  lista.sort((a,b)=> b.meses - a.meses);
+
+  lista.forEach(a => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="left">${a.animal}</td>
+      <td>${a.meses}</td>
+      <td>${a.grupo}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
   async function importFromFile(file){
     const reader = new FileReader();
     reader.onload = async (ev) => {
