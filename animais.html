@@ -100,7 +100,27 @@ const searchInput = document.getElementById("searchInput");
 const filterGrupo = document.getElementById("filterGrupo");
 const filterSexo = document.getElementById("filterSexo");
 const btnExcel = document.getElementById("btnExcel");
+btnExcel.addEventListener("click", exportExcel);
 
+function exportExcel(){
+
+  const state = Core.loadState();
+  if(!state || !state.animalsOut) return;
+
+  let csv = "Animal;Grupo;Sexo;Peso;Data;Estimado;Estado\n";
+
+  state.animalsOut.forEach(a=>{
+    csv += `${a.animal};${a.grupo};${a.sexo};${a.pesoAtual};${a.dataAtual};${a.estimado};${a.estado}\n`;
+  });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = "animais.xlsx";
+
+  link.click();
+}
 let currentSort = { key: null, asc: true };
   function setStamp(state){
     if(!state?.generated_at){
