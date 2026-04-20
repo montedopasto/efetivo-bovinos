@@ -23,7 +23,7 @@ const animaisMais15Meses = [];
 
     const animalId = String(r.animal).trim();
     if(!animalId || animalId === "—") continue;
-const meses = calcularMesesIdade(r.data_nasc);
+const meses = calcularMesesIdade(r.DataNascimento);
 
 if(meses !== null && meses >= 15){
 
