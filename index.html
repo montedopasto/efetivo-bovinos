@@ -727,7 +727,7 @@ maxDate.setHours(0,0,0,0);
       tbodyGroups.appendChild(tr);
       return;
     }
-    for(const g of groups) renderGroupRow(g);
+    for(const g of groups) renderGroupRow(g, state);
   }
 
   function renderAll(state){
