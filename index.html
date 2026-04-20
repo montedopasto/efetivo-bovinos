@@ -676,9 +676,9 @@ function renderMais15(state){
     if(meses >= 15){
       lista.push({
   animal: a.animal,
-  meses,
+  meses: meses,
   grupo: a.grupo || "-",
-  dataNascimento: a.dataNascimento
+  dataNascimento: a.dataNascimento || null
 });
     }
 
