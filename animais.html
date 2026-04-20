@@ -141,7 +141,16 @@ let currentSort = { key: null, asc: true };
     }
 
     setStamp(state);
+const grupos = [...new Set(state.animalsOut.map(a => a.grupo))];
 
+filterGrupo.innerHTML = '<option value="">Todos</option>';
+
+grupos.forEach(g => {
+  const opt = document.createElement("option");
+  opt.value = g;
+  opt.textContent = g;
+  filterGrupo.appendChild(opt);
+});
     let lista = state.animalsOut.filter(a => {
 
   const txt = searchInput.value.toLowerCase();
