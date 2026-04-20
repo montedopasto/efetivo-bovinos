@@ -18,12 +18,22 @@ async function syncToSharePoint(rows){
 
   const existentesAnimais = await spGetAllAnimais(token);
   const pesagensParaEnviar = [];
-
+const animaisMais15Meses = [];
   for(const r of rows){
 
     const animalId = String(r.animal).trim();
     if(!animalId || animalId === "—") continue;
+const meses = calcularMesesIdade(r.data_nasc);
 
+if(meses !== null && meses >= 15){
+
+  animaisMais15Meses.push({
+    animal: animalId,
+    meses: meses,
+    data_nasc: r.data_nasc
+  });
+
+}
     // ANIMAIS
     if(!existentesAnimais.has(animalId)){
 
@@ -61,7 +71,8 @@ async function syncToSharePoint(rows){
   console.log("TOTAL PESAGENS:", pesagensParaEnviar.length);
 
   await spBatchCreatePesagens(pesagensParaEnviar, token);
-
+console.log("🐂 Animais com +15 meses:", animaisMais15Meses.length);
+console.table(animaisMais15Meses);
     console.log("✅ Sync concluído (batch)");
 
   isSyncRunning = false;
