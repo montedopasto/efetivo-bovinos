@@ -675,10 +675,11 @@ function renderMais15(state){
 
     if(meses >= 15){
       lista.push({
-        animal: a.animal,
-        meses,
-        grupo: a.grupo || "-"
-      });
+  animal: a.animal,
+  meses,
+  grupo: a.grupo || "-",
+  dataNascimento: a.dataNascimento
+});
     }
 
   });
