@@ -174,14 +174,6 @@ grupos.forEach(g => {
   filterGrupo.appendChild(opt);
 });
 
-filterGrupo.value = selectedGrupo;
-
-grupos.forEach(g => {
-  const opt = document.createElement("option");
-  opt.value = g;
-  opt.textContent = g;
-  filterGrupo.appendChild(opt);
-});
     let lista = state.animalsOut.filter(a => {
 
  const txt = (searchInput.value || "").toLowerCase();
