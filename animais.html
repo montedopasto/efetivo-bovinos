@@ -153,7 +153,7 @@ grupos.forEach(g => {
 });
     let lista = state.animalsOut.filter(a => {
 
-  const txt = searchInput.value.toLowerCase();
+ const txt = (searchInput.value || "").toLowerCase();
 
   const matchText =
     !txt ||
