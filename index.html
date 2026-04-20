@@ -902,21 +902,33 @@ console.log("TOTAL DE PESAGENS A ENVIAR:", pesagens.length);
 console.log("EXEMPLO PESAGEM:", pesagens[0]);
 
 // ENVIAR PARA SHAREPOINT
+let criadas = 0;
+let ignoradas = 0;
+
 for(const p of pesagens){
 
   const key = `${p.Title}|${p.DataPesagem}`;
 
-  if(existentesPesagens.has(key)) continue;
+  if(existentesPesagens.has(key)){
+    ignoradas++;
+    continue;
+  }
+
+  console.log("A criar pesagem:", p);
 
   await spCreatePesagem(p, token);
 
   existentesPesagens.add(key);
+  criadas++;
 
   PESAGENS_CACHE.push({
     animal: p.Title.trim(),
     data: p.DataPesagem
   });
 }
+
+console.log("PESAGENS CRIADAS:", criadas);
+console.log("PESAGENS IGNORADAS:", ignoradas);
 
 renderAll(st);
 // 2. Pesagens
