@@ -238,7 +238,12 @@ renderSmartCards(state, targets);
         <td>${Core.escapeHtml(r.dateM || "—")}</td>
         <td>${dF}</td>
         <td>${Core.escapeHtml(r.dateF || "—")}</td>
-        <td class="left ${r.estadoClass || "muted"}"><b>${Core.escapeHtml(r.estadoTexto || "—")}</b></td>
+        <td class="left ${r.estadoClass || "muted"}">
+  <b>${Core.escapeHtml(r.estadoTexto || "—")}</b>
+  <div class="small">
+    Prontos: <b>${r.prontos ?? 0}</b> / ${(r.m || 0) + (r.f || 0)}
+  </div>
+</td>
       `;
       tbody.appendChild(tr);
     }
