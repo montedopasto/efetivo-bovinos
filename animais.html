@@ -169,7 +169,9 @@ grupos.forEach(g => {
   return matchText && matchGrupo && matchSexo;
 
 });
-  }
+for(const a of lista){
+  renderRow(a);
+}
 
   btnExport.addEventListener("click", ()=>{
     window.print();
