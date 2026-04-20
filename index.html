@@ -602,7 +602,6 @@ function buildRiskBadge(risk){
     const red = totalStatus ? ((g.bad||0)/totalStatus)*100 : 0;
 let ultimaPesagem = "—";
 
-const state = Core.loadState();
 const animaisGrupo = (state?.animalsOut || [])
   .filter(a => a.grupo === g.name);
 let avgDOF = "—";
