@@ -755,7 +755,23 @@ return st;
     const rows = (st?.groupsOut || []).map(g=>{
 
   const animalsGrupo = (st.animalsOut || []).filter(a => a.grupo === g.name);
+let prontos = 0;
 
+animalsGrupo.forEach(a => {
+
+  const peso = Number.isFinite(a.estKg) ? a.estKg : a.pesoAtualNum;
+
+  if(!Number.isFinite(peso)) return;
+
+  if(a.sexo === "M" && peso >= targetM){
+    prontos++;
+  }
+
+  if(a.sexo === "F" && peso >= targetF){
+    prontos++;
+  }
+
+});
   const pM = g.avgEstM;
   const pF = g.avgEstF;
 
