@@ -195,11 +195,16 @@ for(const a of lista){
 searchInput.addEventListener("input", render);
 filterGrupo.addEventListener("change", render);
 filterSexo.addEventListener("change", render);
-  btnExport.addEventListener("click", ()=>{
-    window.print();
-  });
+  // EVENTOS (FORA DO RENDER)
+searchInput.addEventListener("input", render);
+filterGrupo.addEventListener("change", render);
+filterSexo.addEventListener("change", render);
 
-  render();
+btnExport.addEventListener("click", ()=>{
+  window.print();
+});
+
+render();
 })();
 </script>
 
