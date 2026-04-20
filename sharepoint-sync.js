@@ -30,7 +30,7 @@ if(meses !== null && meses >= 15){
   animaisMais15Meses.push({
     animal: animalId,
     meses: meses,
-    data_nasc: r.data_nasc
+    data_nasc: r.DataNascimento
   });
 
 }
