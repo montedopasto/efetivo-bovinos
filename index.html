@@ -464,6 +464,7 @@ O alerta do grupo ativa quando:<br>
 <script src="core.js"></script>
 <script>
 (function(){
+  let PESAGENS_CACHE = [];
   const userInfoEl = document.getElementById("userInfo");
   const statusEl = document.getElementById("status");
   const stampEl = document.getElementById("stamp");
@@ -645,17 +646,17 @@ if(animaisGrupo.length){
 
   animaisGrupo.forEach(a => {
 
-    if(a.dataAtual){
+   let maxDate = null;
 
-  let data = new Date(a.dataAtual);
+const animaisGrupoIds = animaisGrupo
+  .map(a => a.animal?.trim())
+  .filter(Boolean);
 
-  // fallback se vier em formato DD-MM-YYYY
-  if(isNaN(data)){
-    const parts = a.dataAtual.split("-");
-    if(parts.length === 3){
-      data = new Date(parts[2], parts[1]-1, parts[0]);
-    }
-  }
+PESAGENS_CACHE.forEach(p => {
+
+  if(!animaisGrupoIds.includes(p.animal)) return;
+
+  const data = new Date(p.data);
 
   if(!isNaN(data)){
     if(!maxDate || data > maxDate){
@@ -663,9 +664,7 @@ if(animaisGrupo.length){
     }
   }
 
-}
-
-  });
+});
 
   if(maxDate){
 
@@ -868,6 +867,10 @@ for (const a of st.animalsOut) {
 // CRIAR PESAGENS
 // (usar o mesmo token já obtido acima)
 const existentesPesagens = await spGetAllPesagens(token);
+PESAGENS_CACHE = Array.from(existentesPesagens.keys()).map(k => {
+  const [animal, data] = k.split("|");
+  return { animal: animal.trim(), data };
+});
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
