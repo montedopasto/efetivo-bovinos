@@ -867,8 +867,7 @@ const existentesPesagens = await spGetAllPesagens(token);
 PESAGENS_CACHE = Array.from(existentesPesagens.keys()).map(k => {
   const [animal, data] = k.split("|");
   return { animal: animal.trim(), data };
-});
-renderAll(st);        
+});      
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
@@ -900,16 +899,21 @@ st.animalsOut.forEach(a => {
 });
 
 // ENVIAR PARA SHAREPOINT
-for(const p of pesagens){
+for(const p of pesagens){for(const p of pesagens){
 
   const key = `${p.Title}|${p.DataPesagem}`;
 
-  // não criar duplicado
   if(existentesPesagens.has(key)) continue;
 
   await spCreatePesagem(p, token);
 
   existentesPesagens.add(key);
+
+  // 🔥 ADICIONA AO CACHE EM TEMPO REAL
+  PESAGENS_CACHE.push({
+    animal: p.Title.trim(),
+    data: p.DataPesagem
+  });
 }
 
 
