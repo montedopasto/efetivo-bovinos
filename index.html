@@ -600,7 +600,33 @@ function buildRiskBadge(risk){
     const green = totalStatus ? ((g.ok||0)/totalStatus)*100 : 0;
     const orange = totalStatus ? ((g.warn||0)/totalStatus)*100 : 0;
     const red = totalStatus ? ((g.bad||0)/totalStatus)*100 : 0;
+let ultimaPesagem = "—";
 
+if(g.animals && g.animals.length){
+
+  let maxDate = null;
+
+  g.animals.forEach(a => {
+
+    const datas = [];
+
+    if(a.dataAtual) datas.push(new Date(a.dataAtual));
+    if(a.dataAnterior) datas.push(new Date(a.dataAnterior));
+
+    datas.forEach(d => {
+      if(!isNaN(d)){
+        if(!maxDate || d > maxDate){
+          maxDate = d;
+        }
+      }
+    });
+
+  });
+
+  if(maxDate){
+    ultimaPesagem = maxDate.toLocaleDateString("pt-PT");
+  }
+}
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td class="left"><b>${Core.escapeHtml(g.name)}</b></td>
