@@ -413,7 +413,7 @@ O alerta do grupo ativa quando:<br>
           <th>Temp. média (°C)</th>
 
 <th>Última pesagem</th>
-
+<th>DOF (dias)</th>
 <th>Consumo (kg/dia)</th>
 
 <th>Estado alimentação</th>
@@ -605,7 +605,41 @@ let ultimaPesagem = "—";
 const state = Core.loadState();
 const animaisGrupo = (state?.animalsOut || [])
   .filter(a => a.grupo === g.name);
+let avgDOF = "—";
 
+if(animaisGrupo.length){
+
+  let totalDOF = 0;
+  let countDOF = 0;
+
+  const hoje = new Date();
+
+  animaisGrupo.forEach(a => {
+
+    if(a.dataEntrada){
+
+      const dataEntrada = new Date(a.dataEntrada);
+
+      if(!isNaN(dataEntrada)){
+
+        const diffDias = Math.floor(
+          (hoje - dataEntrada) / (1000 * 60 * 60 * 24)
+        );
+
+        if(diffDias >= 0){
+          totalDOF += diffDias;
+          countDOF++;
+        }
+
+      }
+    }
+
+  });
+
+  if(countDOF > 0){
+    avgDOF = Math.round(totalDOF / countDOF);
+  }
+}
 if(animaisGrupo.length){
 
   let maxDate = null;
