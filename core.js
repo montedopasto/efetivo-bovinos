@@ -761,11 +761,6 @@ return st;
 
   const realM = g.avgGmdM;
   const realF = g.avgGmdF;
-      const pM = g.avgEstM;
-      const pF = g.avgEstF;
-
-      const realM = g.avgGmdM;
-      const realF = g.avgGmdF;
 
       const gmdUsedM = pickGmdUsed(realM, fallback);
       const gmdUsedF = pickGmdUsed(realF, fallback);
