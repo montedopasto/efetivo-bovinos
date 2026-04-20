@@ -830,7 +830,8 @@ function renderMais15(state){
 
         statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
         console.log(st.animalsOut[0]);
-
+console.log("PRIMEIRO ANIMAL COMPLETO:", st.animalsOut[0]);
+console.log("TOTAL ANIMAIS:", st.animalsOut.length);
 // ENVIAR ANIMAIS
 const animaisUnicos = new Map();
 const token = await Auth.getAccessToken();
