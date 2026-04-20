@@ -659,8 +659,22 @@ if(animaisGrupo.length){
   });
 
   if(maxDate){
-    ultimaPesagem = maxDate.toLocaleDateString("pt-PT");
+
+  const hoje = new Date();
+
+  const diffDias = Math.floor(
+    (hoje - maxDate) / (1000 * 60 * 60 * 24)
+  );
+
+  if(diffDias === 0){
+    ultimaPesagem = "hoje";
+  } else if(diffDias === 1){
+    ultimaPesagem = "há 1 dia";
+  } else {
+    ultimaPesagem = `há ${diffDias} dias`;
   }
+
+}
 }
     const tr = document.createElement("tr");
     tr.innerHTML = `
