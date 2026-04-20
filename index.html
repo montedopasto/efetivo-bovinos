@@ -899,7 +899,7 @@ st.animalsOut.forEach(a => {
 });
 
 // ENVIAR PARA SHAREPOINT
-for(const p of pesagens){for(const p of pesagens){
+for(const p of pesagens){
 
   const key = `${p.Title}|${p.DataPesagem}`;
 
@@ -909,7 +909,6 @@ for(const p of pesagens){for(const p of pesagens){
 
   existentesPesagens.add(key);
 
-  // 🔥 ADICIONA AO CACHE EM TEMPO REAL
   PESAGENS_CACHE.push({
     animal: p.Title.trim(),
     data: p.DataPesagem
