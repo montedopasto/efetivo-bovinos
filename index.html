@@ -877,7 +877,7 @@ st.animalsOut.forEach(a => {
   const animalId = a.animal.trim();
 
   // PESO ATUAL
-  if (a.dataAtual && a.pesoAtualNum) {
+  if (a.dataAtual && Number.isFinite(a.pesoAtualNum)) {
     pesagens.push({
       Title: animalId,
       DataPesagem: formatDateToISO(a.dataAtual) + "T00:00:00Z",
@@ -887,7 +887,7 @@ st.animalsOut.forEach(a => {
   }
 
   // PESO ANTERIOR
-  if (a.dataAnterior && a.pesoAnteriorNum) {
+  if (a.dataAnterior && Number.isFinite(a.pesoAnteriorNum)) {
     pesagens.push({
       Title: animalId,
       DataPesagem: formatDateToISO(a.dataAnterior) + "T00:00:00Z",
@@ -897,6 +897,9 @@ st.animalsOut.forEach(a => {
   }
 
 });
+
+console.log("TOTAL DE PESAGENS A ENVIAR:", pesagens.length);
+console.log("EXEMPLO PESAGEM:", pesagens[0]);
 
 // ENVIAR PARA SHAREPOINT
 for(const p of pesagens){
