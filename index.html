@@ -666,6 +666,7 @@ if(animaisGrupo.length){
   if(maxDate){
 
   const hoje = new Date();
+hoje.setHours(0,0,0,0);
 maxDate.setHours(0,0,0,0);
   const diffDias = Math.floor(
     (hoje - maxDate) / (1000 * 60 * 60 * 24)
