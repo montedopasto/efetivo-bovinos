@@ -878,7 +878,9 @@ st.animalsOut.forEach(a => {
   const animalId = a.animal.trim();
 
   // PESO ATUAL
-  if (a.dataAtual && Number.isFinite(a.pesoAtualNum)) {
+  const pesoAtual = parseFloat(String(a.pesoAtualNum).replace(",", "."));
+
+if (a.dataAtual && !isNaN(pesoAtual)) {
     pesagens.push({
       Title: animalId,
       DataPesagem: formatDateToISO(a.dataAtual) + "T00:00:00Z",
