@@ -647,7 +647,17 @@ if(animaisGrupo.length){
   animaisGrupo.forEach(a => {
 
     if(a.dataAtual){
-      const d = new Date(a.dataAtual);
+
+  const [y, m, d] = a.dataAtual.split("-");
+  const data = new Date(y, m - 1, d);
+
+  if(!isNaN(data)){
+    if(!maxDate || data > maxDate){
+      maxDate = data;
+    }
+  }
+
+}
 
       if(!isNaN(d)){
         if(!maxDate || d > maxDate){
