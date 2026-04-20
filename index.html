@@ -698,10 +698,11 @@ function renderMais15(state){
   lista.forEach(a => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td class="left">${a.animal}</td>
-      <td>${a.meses}</td>
-      <td>${a.grupo}</td>
-    `;
+  <td class="left">${a.animal}</td>
+  <td>${formatDatePT(a.dataNascimento)}</td>
+  <td>${a.meses}</td>
+  <td>${a.grupo}</td>
+`;
     tbody.appendChild(tr);
   });
 }
