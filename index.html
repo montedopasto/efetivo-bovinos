@@ -595,7 +595,7 @@ function buildRiskBadge(risk){
     </span>
   `;
 }
-  function renderGroupRow(g){
+  function renderGroupRow(g, state){
     const totalStatus = (g.ok||0) + (g.warn||0) + (g.bad||0);
     const green = totalStatus ? ((g.ok||0)/totalStatus)*100 : 0;
     const orange = totalStatus ? ((g.warn||0)/totalStatus)*100 : 0;
