@@ -642,6 +642,7 @@ function buildRiskBadge(risk){
     setMetaLine(state);
     renderAlerts(state);
     renderGroups(state);
+    renderMais15(state);
 
     if(!state?.generated_at){
       statusEl.innerHTML = `Carrega o teu <b>efetivo_bovinos.csv</b> (fica guardado até carregares outro)`;
