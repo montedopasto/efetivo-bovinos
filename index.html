@@ -602,24 +602,25 @@ function buildRiskBadge(risk){
     const red = totalStatus ? ((g.bad||0)/totalStatus)*100 : 0;
 let ultimaPesagem = "—";
 
-if(g.animals && g.animals.length){
+const state = Core.loadState();
+const animaisGrupo = (state?.animalsOut || [])
+  .filter(a => a.grupo === g.name);
+
+if(animaisGrupo.length){
 
   let maxDate = null;
 
-  g.animals.forEach(a => {
+  animaisGrupo.forEach(a => {
 
-    const datas = [];
+    if(a.dataAtual){
+      const d = new Date(a.dataAtual);
 
-    if(a.dataAtual) datas.push(new Date(a.dataAtual));
-    if(a.dataAnterior) datas.push(new Date(a.dataAnterior));
-
-    datas.forEach(d => {
       if(!isNaN(d)){
         if(!maxDate || d > maxDate){
           maxDate = d;
         }
       }
-    });
+    }
 
   });
 
