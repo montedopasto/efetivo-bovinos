@@ -37,6 +37,35 @@
 </div>
 
 <div class="card">
+
+<div style="margin-bottom:12px; display:flex; gap:12px; flex-wrap:wrap;">
+
+  <div>
+    <label>Pesquisar</label><br>
+    <input type="text" id="searchInput" placeholder="Animal ou grupo">
+  </div>
+
+  <div>
+    <label>Grupo</label><br>
+    <select id="filterGrupo">
+      <option value="">Todos</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Sexo</label><br>
+    <select id="filterSexo">
+      <option value="">Todos</option>
+      <option value="M">Macho</option>
+      <option value="F">Fêmea</option>
+    </select>
+  </div>
+
+  <div style="align-self:end;">
+    <button id="btnExcel">Exportar Excel</button>
+  </div>
+
+</div>
   <table>
     <thead>
       <tr>
