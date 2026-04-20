@@ -163,7 +163,18 @@ let currentSort = { key: null, asc: true };
     setStamp(state);
 const grupos = [...new Set(state.animalsOut.map(a => a.grupo))];
 
+const selectedGrupo = filterGrupo.value;
+
 filterGrupo.innerHTML = '<option value="">Todos</option>';
+
+grupos.forEach(g => {
+  const opt = document.createElement("option");
+  opt.value = g;
+  opt.textContent = g;
+  filterGrupo.appendChild(opt);
+});
+
+filterGrupo.value = selectedGrupo;
 
 grupos.forEach(g => {
   const opt = document.createElement("option");
@@ -192,9 +203,6 @@ grupos.forEach(g => {
 for(const a of lista){
   renderRow(a);
 }
-searchInput.addEventListener("input", render);
-filterGrupo.addEventListener("change", render);
-filterSexo.addEventListener("change", render);
   // EVENTOS (FORA DO RENDER)
 searchInput.addEventListener("input", render);
 filterGrupo.addEventListener("change", render);
