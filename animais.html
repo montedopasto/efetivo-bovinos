@@ -67,7 +67,12 @@
   const tbody = document.getElementById("tbodyAnimals");
   const stampEl = document.getElementById("stamp");
   const btnExport = document.getElementById("btnExport");
+const searchInput = document.getElementById("searchInput");
+const filterGrupo = document.getElementById("filterGrupo");
+const filterSexo = document.getElementById("filterSexo");
+const btnExcel = document.getElementById("btnExcel");
 
+let currentSort = { key: null, asc: true };
   function setStamp(state){
     if(!state?.generated_at){
       stampEl.textContent = "";
@@ -108,9 +113,24 @@
 
     setStamp(state);
 
-    for(const a of state.animalsOut){
-      renderRow(a);
-    }
+    let lista = state.animalsOut.filter(a => {
+
+  const txt = searchInput.value.toLowerCase();
+
+  const matchText =
+    !txt ||
+    a.animal.toLowerCase().includes(txt) ||
+    (a.grupo || "").toLowerCase().includes(txt);
+
+  const matchGrupo =
+    !filterGrupo.value || a.grupo === filterGrupo.value;
+
+  const matchSexo =
+    !filterSexo.value || a.sexo === filterSexo.value;
+
+  return matchText && matchGrupo && matchSexo;
+
+});
   }
 
   btnExport.addEventListener("click", ()=>{
