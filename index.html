@@ -648,16 +648,23 @@ if(animaisGrupo.length){
 
     if(a.dataAtual){
 
-      const [y, m, d] = a.dataAtual.split("-");
-      const data = new Date(y, m - 1, d);
+  let data = new Date(a.dataAtual);
 
-      if(!isNaN(data)){
-        if(!maxDate || data > maxDate){
-          maxDate = data;
-        }
-      }
-
+  // fallback se vier em formato DD-MM-YYYY
+  if(isNaN(data)){
+    const parts = a.dataAtual.split("-");
+    if(parts.length === 3){
+      data = new Date(parts[2], parts[1]-1, parts[0]);
     }
+  }
+
+  if(!isNaN(data)){
+    if(!maxDate || data > maxDate){
+      maxDate = data;
+    }
+  }
+
+}
 
   });
 
