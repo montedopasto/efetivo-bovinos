@@ -640,18 +640,14 @@ if(animaisGrupo.length){
     avgDOF = Math.round(totalDOF / countDOF);
   }
 }
-if(animaisGrupo.length){
+let maxDate = null;
 
-  let maxDate = null;
-
-  animaisGrupo.forEach(a => {
-
-   let maxDate = null;
-
+// ids dos animais do grupo
 const animaisGrupoIds = animaisGrupo
   .map(a => a.animal?.trim())
   .filter(Boolean);
 
+// procurar última pesagem no SharePoint
 PESAGENS_CACHE.forEach(p => {
 
   if(!animaisGrupoIds.includes(p.animal)) return;
@@ -663,6 +659,29 @@ PESAGENS_CACHE.forEach(p => {
       maxDate = data;
     }
   }
+
+});
+
+// calcular texto final
+if(maxDate){
+
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
+  maxDate.setHours(0,0,0,0);
+
+  const diffDias = Math.floor(
+    (hoje - maxDate) / (1000 * 60 * 60 * 24)
+  );
+
+  if(diffDias === 0){
+    ultimaPesagem = "hoje";
+  } else if(diffDias === 1){
+    ultimaPesagem = "há 1 dia";
+  } else {
+    ultimaPesagem = `há ${diffDias} dias`;
+  }
+
+}
 
 });
 
