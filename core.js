@@ -753,6 +753,14 @@ return st;
     const fallback = Number.isFinite(st?.config?.CONSERVATIVE_FALLBACK_GMD) ? st.config.CONSERVATIVE_FALLBACK_GMD : DEFAULTS.CONSERVATIVE_FALLBACK_GMD;
 
     const rows = (st?.groupsOut || []).map(g=>{
+
+  const animalsGrupo = (st.animalsOut || []).filter(a => a.grupo === g.name);
+
+  const pM = g.avgEstM;
+  const pF = g.avgEstF;
+
+  const realM = g.avgGmdM;
+  const realF = g.avgGmdF;
       const pM = g.avgEstM;
       const pF = g.avgEstF;
 
