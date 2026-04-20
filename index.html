@@ -868,6 +868,7 @@ PESAGENS_CACHE = Array.from(existentesPesagens.keys()).map(k => {
   const [animal, data] = k.split("|");
   return { animal: animal.trim(), data };
 });
+renderAll(st);        
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
