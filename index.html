@@ -905,7 +905,7 @@ console.log("EXEMPLO PESAGEM:", pesagens[0]);
 // ENVIAR PARA SHAREPOINT
 let criadas = 0;
 let ignoradas = 0;
-
+console.log("VOU ENVIAR PESAGENS:", pesagens.length);
 for(const p of pesagens){
 
   const key = `${p.Title}|${p.DataPesagem}`;
