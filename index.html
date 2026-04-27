@@ -835,31 +835,48 @@ console.log("TOTAL ANIMAIS:", st.animalsOut.length);
 // ENVIAR ANIMAIS
 const animaisUnicos = new Map();
 const token = await Auth.getAccessToken();
-const existentes = await spGetAllAnimais(token);
+// 🔥 1. Buscar todos os animais existentes
+const listaExistentes = await spGetAllAnimais(token);
+
+// 🔥 2. Criar MAP rápido
+const mapaExistentes = new Map();
+
+listaExistentes.forEach(item => {
+  const id = (item.Title || "").trim();
+  if(id) mapaExistentes.set(id, true);
+});
+
+// 🔥 3. Inserir apenas novos
+let criados = 0;
+let ignorados = 0;
+
 for (const a of st.animalsOut) {
 
   if(!a.animal || a.animal === "—") continue;
 
-  // 🔥 normalizar ID
   const animalId = a.animal.trim();
 
-  // 🚫 NÃO DUPLICAR
-  if(!existentes.has(animalId)){
-
-    await spCreateAnimal({
-      Title: animalId,
-      NIF: a.nif || "",
-      Raca: a.raca || "",
-      DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
-      DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
-      Sexo: a.sexo || "",
-      GrupoAtual: a.grupo || ""
-    }, token);
-
-    existentes.add(animalId); // evita duplicados no mesmo ciclo
+  if(mapaExistentes.has(animalId)){
+    ignorados++;
+    continue;
   }
 
+  await spCreateAnimal({
+    Title: animalId,
+    NIF: a.nif || "",
+    Raca: a.raca || "",
+    DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
+    DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
+    Sexo: a.sexo || "",
+    GrupoAtual: a.grupo || ""
+  }, token);
+
+  mapaExistentes.set(animalId, true);
+  criados++;
 }
+
+console.log("ANIMAIS CRIADOS:", criados);
+console.log("ANIMAIS IGNORADOS:", ignorados);
 
 
 // CRIAR PESAGENS
