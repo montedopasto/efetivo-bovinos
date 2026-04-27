@@ -911,7 +911,7 @@ let ignoradas = 0;
 console.log("VOU ENVIAR PESAGENS:", pesagens.length);
 for(const p of pesagens){
 
-  const key = `${p.Title}|${p.DataPesagem}`;
+  const key = `${p.Title}|${p.DataPesagem.split("T")[0]}`;
 
   if(existentesPesagens.has(key)){
     ignoradas++;
