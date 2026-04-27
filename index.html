@@ -926,9 +926,9 @@ for(const p of pesagens){
   criadas++;
 
   PESAGENS_CACHE.push({
-    animal: p.Title.trim(),
-    data: p.DataPesagem
-  });
+  animal: p.Title.trim(),
+  data: p.DataPesagem.split("T")[0]
+});
 }
 
 console.log("PESAGENS CRIADAS:", criadas);
