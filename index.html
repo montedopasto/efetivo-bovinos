@@ -897,25 +897,27 @@ st.animalsOut.forEach(a => {
 
   const animalId = a.animal.trim();
 
-  // PESO ATUAL
-const pesoAtual = parseFloat(String(a.pesoAtualNum).replace(",", "."));
-  pesagens.push({
-    Title: animalId,
-    DataPesagem: formatDateToISO(a.dataAtual), // 🔥 SEM T
-    Peso: Number(a.pesoAtualNum),
-    Origem: "Atual"
-  });
-}
+  // 🔥 PESO ATUAL
+  const pesoAtual = parseFloat(String(a.pesoAtualNum).replace(",", "."));
 
-// PESO ANTERIOR
-if (a.dataAnterior && Number.isFinite(a.pesoAnteriorNum)) {
-  pesagens.push({
-    Title: animalId,
-    DataPesagem: formatDateToISO(a.dataAnterior), // 🔥 SEM T
-    Peso: Number(a.pesoAnteriorNum),
-    Origem: "Anterior"
-  });
-}
+  if (a.dataAtual && !isNaN(pesoAtual)) {
+    pesagens.push({
+      Title: animalId,
+      DataPesagem: formatDateToISO(a.dataAtual),
+      Peso: pesoAtual,
+      Origem: "Atual"
+    });
+  }
+
+  // 🔥 PESO ANTERIOR (AGORA DENTRO DO LOOP)
+  if (a.dataAnterior && Number.isFinite(a.pesoAnteriorNum)) {
+    pesagens.push({
+      Title: animalId,
+      DataPesagem: formatDateToISO(a.dataAnterior),
+      Peso: Number(a.pesoAnteriorNum),
+      Origem: "Anterior"
+    });
+  }
 
 });
 
