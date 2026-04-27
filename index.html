@@ -886,7 +886,7 @@ st.animalsOut.forEach(a => {
 if (a.dataAtual && !isNaN(pesoAtual)) {
     pesagens.push({
       Title: animalId,
-      DataPesagem: formatDateToISO(a.dataAtual) + "T00:00:00Z",
+      DataPesagem: formatDateToISO(a.dataAtual),
       Peso: Number(a.pesoAtualNum),
       Origem: "Atual"
     });
