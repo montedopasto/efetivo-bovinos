@@ -865,6 +865,7 @@ for (const a of st.animalsOut) {
 // CRIAR PESAGENS
 // (usar o mesmo token já obtido acima)
 const existentesPesagens = await spGetAllPesagens(token);
+console.log("EXISTENTES PESAGENS RAW:", existentesPesagens);
 PESAGENS_CACHE = Array.from(existentesPesagens.values()).map(p => {
   return {
     animal: (p.Title || "").trim(),
