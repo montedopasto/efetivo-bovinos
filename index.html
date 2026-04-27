@@ -865,10 +865,12 @@ for (const a of st.animalsOut) {
 // CRIAR PESAGENS
 // (usar o mesmo token já obtido acima)
 const existentesPesagens = await spGetAllPesagens(token);
-PESAGENS_CACHE = Array.from(existentesPesagens.keys()).map(k => {
-  const [animal, data] = k.split("|");
-  return { animal: animal.trim(), data };
-});      
+PESAGENS_CACHE = Array.from(existentesPesagens.values()).map(p => {
+  return {
+    animal: (p.Title || "").trim(),
+    data: p.DataPesagem
+  };
+});   
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
