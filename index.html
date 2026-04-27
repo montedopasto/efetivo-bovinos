@@ -898,7 +898,7 @@ st.animalsOut.forEach(a => {
   const animalId = a.animal.trim();
 
   // PESO ATUAL
-if (a.dataAtual && !isNaN(pesoAtual)) {
+const pesoAtual = parseFloat(String(a.pesoAtualNum).replace(",", "."));
   pesagens.push({
     Title: animalId,
     DataPesagem: formatDateToISO(a.dataAtual), // 🔥 SEM T
