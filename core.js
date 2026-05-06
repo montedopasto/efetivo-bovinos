@@ -601,7 +601,9 @@ const dmi = Number.isFinite(r.pAtual)
 
 // 🔥 ESTADO DE ALIMENTAÇÃO (SIMPLES E CLARO)
 let estadoAlim = "—";
-const esperadoAlim = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
+const esperadoAlim = Number.isFinite(r.pAtual)
+  ? r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima
+  : NaN;
 
 if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
   const ratioAlim = dmi / esperadoAlim;
