@@ -595,7 +595,9 @@ if (r.dNasc) {
 const factorClima = fc;
 
 // DMI estimado (Consumo diário)
-const dmi = r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima;
+const dmi = Number.isFinite(r.pAtual)
+  ? r.pAtual * percBase * factorSexoAlim * factorIdade * factorClima
+  : NaN;
 
 // 🔥 ESTADO DE ALIMENTAÇÃO (SIMPLES E CLARO)
 let estadoAlim = "—";
