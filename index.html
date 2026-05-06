@@ -688,13 +688,7 @@ if(maxDate){
     (hoje - maxDate) / (1000 * 60 * 60 * 24)
   );
 
-  if(diffDias === 0){
-    ultimaPesagem = "hoje";
-  } else if(diffDias === 1){
-    ultimaPesagem = "há 1 dia";
-  } else {
-    ultimaPesagem = `há ${diffDias} dias`;
-  }
+  ultimaPesagem = maxDate.toLocaleDateString("pt-PT");
 
 }
 
