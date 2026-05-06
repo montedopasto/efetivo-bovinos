@@ -321,7 +321,9 @@ async function spBatchCreatePesagens(pesagens, token){
       if(!dataNorm) return null;
 
       const dataFinal = `${dataNorm}T00:00:00Z`;
-      const chave = `${p.Title}|${Math.round(Number(p.Peso))}`;
+      const pesoNorm = Math.round(Number(p.Peso));
+
+const chave = `${p.Title}|${dataNorm}|${pesoNorm}`;
 
       return {
         id: String(index),
