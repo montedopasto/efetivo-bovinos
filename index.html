@@ -961,7 +961,11 @@ if(existentesPesagens.has(key)){
 
   await spCreatePesagem(p, token);
 
-  existentesPesagens.add(key);
+  existentesPesagens.set(key, {
+  animal: p.Title.trim(),
+  data: dataNorm,
+  peso: pesoNorm
+});
   criadas++;
 
   PESAGENS_CACHE.push({
