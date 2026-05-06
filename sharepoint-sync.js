@@ -223,10 +223,10 @@ async function spGetAllPesagens(token){
       const key = `${animal}|${data}|${peso}`;
 
       map.set(key, {
-        animal,
-        data,
-        peso
-      });
+  animal,
+  data,
+  peso
+});
 
     });
 
