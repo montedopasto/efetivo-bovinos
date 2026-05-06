@@ -615,9 +615,9 @@ if(animaisGrupo.length){
 
   animaisGrupo.forEach(a => {
 
-    if(!a.data_entrada) return;
+    if(!a.dataEntrada) return;
 
-    const partes = String(a.data_entrada).split("/");
+const partes = String(a.dataEntrada).split("/");
 
     if(partes.length !== 3) return;
 
