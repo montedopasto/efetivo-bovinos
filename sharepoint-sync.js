@@ -195,12 +195,14 @@ async function spGetAllPesagens(token){
 
   let url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${LIST_PESAGENS_ID}/items?$expand=fields&$top=999`;
 
-  const set = new Set();
+  const mapa = new Map();
 
   while(url){
 
     const r = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
 
     const j = await r.json();
@@ -208,24 +210,28 @@ async function spGetAllPesagens(token){
     (j.value || []).forEach(item => {
 
       const animal = item.fields?.Title?.trim();
-      const peso = item.fields?.Peso;
 
-      if(animal && peso != null){
+      const dataRaw = item.fields?.DataPesagem;
 
-        const pesoNorm = Math.round(Number(peso));
-        const key = `${animal}|${pesoNorm}`;
+      if(!animal || !dataRaw) return;
 
-        set.add(key);
-      }
+      const data = String(dataRaw).split("T")[0];
+
+      const key = `${animal}|${data}`;
+
+      mapa.set(key, {
+        animal: animal,
+        data: data
+      });
 
     });
 
-    url = j['@odata.nextLink'] || null;
+    url = j["@odata.nextLink"] || null;
   }
 
-  console.log("📊 TOTAL PESAGENS SHAREPOINT:", set.size);
+  console.log("📊 TOTAL PESAGENS SHAREPOINT:", mapa.size);
 
-  return set;
+  return mapa;
 }
 function normalizeDate(dateStr){
 
