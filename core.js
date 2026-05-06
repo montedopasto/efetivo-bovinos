@@ -547,7 +547,9 @@ if(!hasAtual){
   : NaN;
       const [conf, confClass] = confidenceByDays(daysSince);
 
-      const meteo = await getTempMeanForPeriod(cfg.SITE, meteoCacheMap, r.dAtual, today, cfg.METEO_TIMEOUT_MS);
+      const meteo = r.dAtual
+  ? await getTempMeanForPeriod(cfg.SITE, meteoCacheMap, r.dAtual, today, cfg.METEO_TIMEOUT_MS)
+  : { tmean: NaN, factor: 0.95 };
       const fc = meteo.factor;
 
       const gmdBase = Number.isFinite(r.gmdInd) ? r.gmdInd : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
