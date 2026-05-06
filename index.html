@@ -897,8 +897,12 @@ console.log("ANIMAIS IGNORADOS:", ignorados);
 // CRIAR PESAGENS
 // (usar o mesmo token já obtido acima)
 const existentesPesagens = await spGetAllPesagens(token);
+
 console.log("EXISTENTES PESAGENS RAW:", existentesPesagens);
-PESAGENS_CACHE = Array.from(existentesPesagens.values());
+
+// 🔥 transformar Map em array simples
+PESAGENS_CACHE = [...existentesPesagens.values()];
+
 console.log("CACHE PESAGENS:", PESAGENS_CACHE);
 console.table(PESAGENS_CACHE);
 const pesagens = [];
