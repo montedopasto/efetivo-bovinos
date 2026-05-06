@@ -554,7 +554,9 @@ if(!hasAtual){
 
       const gmdBase = Number.isFinite(r.gmdInd) ? r.gmdInd : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
       const gmdFinal = gmdBase * factorSexo(r.sexo) * factorMaturidade(r.pAtual, r.sexo) * fc;
-      const estKg = r.pAtual + (gmdFinal * daysSince);
+      const estKg = Number.isFinite(r.pAtual) && Number.isFinite(daysSince)
+  ? r.pAtual + (gmdFinal * daysSince)
+  : NaN;
 // ===== ALIMENTAÇÃO INTELIGENTE =====
 
 // % base por peso
