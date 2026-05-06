@@ -940,12 +940,11 @@ tr.style.transition = ".15s ease";
 
         aberto = !aberto;
 
-        trGroup.cells[0].innerHTML = `
-          ${aberto ? "▼" : "▶"} ${grupo}
-          <span style="opacity:.7">
-            (${animais.length} animais)
-          </span>
-        `;
+        const icon = trGroup.querySelector(".toggleIcon");
+
+if(icon){
+  icon.textContent = aberto ? "▼" : "▶";
+}
 
         linhas.forEach(l => {
           l.style.display = aberto ? "" : "none";
