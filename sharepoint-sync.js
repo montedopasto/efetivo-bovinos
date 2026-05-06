@@ -285,7 +285,7 @@ async function spGetAllAnimais(token){
 
   const j = await r.json();
 
-  const set = new Set();
+  const lista = [];
 
   (j.value || []).forEach(i => {
 
