@@ -671,12 +671,25 @@ if (Number.isFinite(ganho)) {
 
 const sx = clean(r.sexo).toUpperCase();
       if(sx==="M"){
-        ga.m++; ga.sumPesoM += r.pAtual;
-        if(Number.isFinite(estKg)) ga.sumEstM += estKg;
-      }else if(sx==="F"){
-        ga.f++; ga.sumPesoF += r.pAtual;
-        if(Number.isFinite(estKg)) ga.sumEstF += estKg;
-      }
+  ga.m++;
+
+  if(Number.isFinite(r.pAtual) && r.pAtual > 0){
+    ga.sumPesoM += r.pAtual;
+    ga.nPesoM++;
+  }
+
+  if(Number.isFinite(estKg)) ga.sumEstM += estKg;
+}
+else if(sx==="F"){
+  ga.f++;
+
+  if(Number.isFinite(r.pAtual) && r.pAtual > 0){
+    ga.sumPesoF += r.pAtual;
+    ga.nPesoF++;
+  }
+
+  if(Number.isFinite(estKg)) ga.sumEstF += estKg;
+}
 
       if(Number.isFinite(meteo.tmean)){ ga.sumTemp += meteo.tmean; ga.nTemp++; }
 
