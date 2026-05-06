@@ -652,7 +652,17 @@ PESAGENS_CACHE.forEach((p) => {
 
   if(!p || !p.animal || !p.data) return;
 
-  if(!animaisGrupoIds.includes(p.animal)) return;
+  const animalSP = String(p.animal || "")
+  .trim()
+  .toUpperCase();
+
+const existeNoGrupo = animaisGrupoIds.some(id =>
+  String(id || "")
+    .trim()
+    .toUpperCase() === animalSP
+);
+
+if(!existeNoGrupo) return;
 
   const data = new Date(p.data);
 
