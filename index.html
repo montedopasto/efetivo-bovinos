@@ -654,8 +654,10 @@ animaisGrupo.forEach(a => {
 
   if(!d) return;
 
-  // converter DD/MM/YYYY
-  const partes = String(d).split("/");
+  const dataStr = String(d).trim();
+
+  // formato DD/MM/YYYY
+  const partes = dataStr.split("/");
 
   if(partes.length !== 3) return;
 
@@ -663,11 +665,16 @@ animaisGrupo.forEach(a => {
   const mes = partes[1];
   const ano = partes[2];
 
-  const data = new Date(`${ano}-${mes}-${dia}`);
+  // converter corretamente
+  const data = new Date(
+    Number(ano),
+    Number(mes) - 1,
+    Number(dia)
+  );
 
   if(isNaN(data.getTime())) return;
 
-  // guardar a mais recente
+  // guardar mais recente
   if(maxDate === null || data > maxDate){
     maxDate = data;
   }
