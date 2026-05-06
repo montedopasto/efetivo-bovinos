@@ -601,7 +601,6 @@ function buildRiskBadge(risk){
     const green = totalStatus ? ((g.ok||0)/totalStatus)*100 : 0;
     const orange = totalStatus ? ((g.warn||0)/totalStatus)*100 : 0;
     const red = totalStatus ? ((g.bad||0)/totalStatus)*100 : 0;
-let ultimaPesagem = "—";
 
 const animaisGrupo = (state?.animalsOut || [])
   .filter(a => a.grupo === g.name);
