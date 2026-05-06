@@ -928,7 +928,9 @@ let ignoradas = 0;
 console.log("VOU ENVIAR PESAGENS:", pesagens.length);
 for(const p of pesagens){
 
-  const key = `${p.Title}|${p.DataPesagem.split("T")[0]}`;
+  const pesoNorm = Math.round(Number(p.Peso));
+
+  const key = `${p.Title}|${pesoNorm}`;
 
   if(existentesPesagens.has(key)){
     ignoradas++;
