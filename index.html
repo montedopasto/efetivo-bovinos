@@ -664,7 +664,7 @@ const existeNoGrupo = animaisGrupoIds.some(id =>
 
 if(!existeNoGrupo) return;
 
-  const data = new Date(p.data);
+  const data = new Date(String(p.data).split("T")[0]);
 
   if(isNaN(data.getTime())) return;
 
