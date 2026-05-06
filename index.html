@@ -652,42 +652,54 @@ let maxDate = null;
 animaisGrupo.forEach(a => {
 
   const datas = [
-  a.dataAtual,
-  a.dataAnterior,
-  a.data_peso_atual,
-  a.data_peso_anterior
-];
+    a.dataAtual,
+    a.dataAnterior,
+    a.data_peso_atual,
+    a.data_peso_anterior
+  ];
 
   datas.forEach(d => {
 
-  if(!d) return;
+    if(!d) return;
 
-  const dataStr = String(d).trim();
+    const dataStr = String(d).trim();
 
-  // formato DD/MM/YYYY
-  const partes = dataStr.split("/");
+    let data = null;
 
-  if(partes.length !== 3) return;
+    // FORMATO 04/05/26 ou 04/05/2026
+    if(dataStr.includes("/")){
 
-  const dia = partes[0];
-  const mes = partes[1];
-  const ano = partes[2];
+      const partes = dataStr.split("/");
 
-  // converter corretamente
-  const data = new Date(
-    Number(ano),
-    Number(mes) - 1,
-    Number(dia)
-  );
+      if(partes.length === 3){
 
-  if(isNaN(data.getTime())) return;
+        let dia = Number(partes[0]);
+        let mes = Number(partes[1]);
+        let ano = Number(partes[2]);
 
-  // guardar mais recente
-  if(maxDate === null || data > maxDate){
-    maxDate = data;
-  }
+        // corrigir ano curto
+        if(ano < 100){
+          ano += 2000;
+        }
 
-});
+        data = new Date(ano, mes - 1, dia);
+      }
+    }
+
+    // FORMATO YYYY-MM-DD
+    else if(dataStr.includes("-")){
+
+      data = new Date(dataStr);
+    }
+
+    if(!data || isNaN(data.getTime())) return;
+
+    // guardar mais recente
+    if(maxDate === null || data > maxDate){
+      maxDate = data;
+    }
+
+  });
 
 });
 
