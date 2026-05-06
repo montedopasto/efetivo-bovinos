@@ -840,14 +840,51 @@ function renderMais15(state){
       const trGroup = document.createElement("tr");
 
       trGroup.innerHTML = `
-        <td colspan="5"
-            style="
-              background:#dfeee4;
-              font-weight:700;
-              cursor:pointer;
-              padding:14px;
-              border-top:2px solid #c7d7cb;
-            ">
+<td colspan="5"
+    style="
+      background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+      font-weight:700;
+      cursor:pointer;
+      padding:10px 16px;
+      border-top:1px solid #d1fae5;
+      border-bottom:1px solid #d1fae5;
+      transition:.2s ease;
+    "
+    onmouseover="this.style.background='linear-gradient(135deg,#dcfce7,#bbf7d0)'"
+    onmouseout="this.style.background='linear-gradient(135deg,#f0fdf4,#dcfce7)'"
+>
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  ">
+
+    <div style="
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:15px;
+    ">
+      <span style="font-size:14px">
+        ▶
+      </span>
+
+      <span>
+        ${grupo}
+      </span>
+    </div>
+
+    <div style="
+      font-size:12px;
+      color:#475569;
+      font-weight:600;
+    ">
+      ${animais.length} animais
+    </div>
+
+  </div>
+</td>
+`;
           ▶ ${grupo}
           <span style="opacity:.7">
             (${animais.length} animais)
