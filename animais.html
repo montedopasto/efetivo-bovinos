@@ -157,10 +157,42 @@ let currentSort = { key: null, asc: true };
       <td>${Core.escapeHtml(a.dataAtual)}</td>
       <td>${Core.escapeHtml(a.temp)}</td>
       <td>
+  <td>
   ${
-    Number.isFinite(a.gmdFinal)
-      ? a.gmdFinal.toFixed(2)
-      : "—"
+    (() => {
+
+      const pesoAtual =
+        parseFloat(String(a.pesoAtual).replace(" kg",""));
+
+      const pesoEstimado =
+        parseFloat(String(a.estimado).replace(" kg",""));
+
+      const dataPeso = new Date(a.dataAtual);
+
+      if(
+        isNaN(pesoAtual) ||
+        isNaN(pesoEstimado) ||
+        isNaN(dataPeso)
+      ){
+        return "—";
+      }
+
+      const hoje = new Date();
+
+      const dias =
+        Math.max(
+          1,
+          Math.floor(
+            (hoje - dataPeso) / (1000 * 60 * 60 * 24)
+          )
+        );
+
+      const gmd =
+        (pesoEstimado - pesoAtual) / dias;
+
+      return gmd.toFixed(2);
+
+    })()
   }
 </td>
       <td><b>${Core.escapeHtml(a.estimado)}</b></td>
