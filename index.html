@@ -665,7 +665,7 @@ if(isNaN(dataEntrada.getTime())) return;
 let ultimaPesagem = "—";
 
 const datasGrupo = animaisGrupo
-  .map(a => a.data_peso_atual)
+  .map(a => a.dataAtual)
   .filter(Boolean);
 
 if(datasGrupo.length){
