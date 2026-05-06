@@ -709,8 +709,8 @@ else if(sx==="F"){
     // gruposOut
     const groupsOut = Object.values(groupAgg).map(g => {
 
-  g.avgPesoM = g.m ? g.sumPesoM/g.m : NaN;
-  g.avgPesoF = g.f ? g.sumPesoF/g.f : NaN;
+  g.avgPesoM = g.nPesoM ? g.sumPesoM / g.nPesoM : NaN;
+g.avgPesoF = g.nPesoF ? g.sumPesoF / g.nPesoF : NaN;
   g.avgEstM  = g.m ? g.sumEstM/g.m : NaN;
   g.avgEstF  = g.f ? g.sumEstF/g.f : NaN;
 
