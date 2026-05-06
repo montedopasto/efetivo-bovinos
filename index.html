@@ -642,18 +642,27 @@ if(animaisGrupo.length){
 }
 let maxDate = null;
 
-// procurar última pesagem diretamente no CSV
+// procurar datas das pesagens do grupo
 animaisGrupo.forEach(a => {
 
-  if(!a.dataAtual) return;
+  const datas = [
+    a.dataAtual,
+    a.dataAnterior
+  ];
 
-  const data = new Date(a.dataAtual);
+  datas.forEach(d => {
 
-  if(isNaN(data.getTime())) return;
+    if(!d) return;
 
-  if(maxDate === null || data > maxDate){
-    maxDate = data;
-  }
+    const data = new Date(d);
+
+    if(isNaN(data.getTime())) return;
+
+    if(maxDate === null || data > maxDate){
+      maxDate = data;
+    }
+
+  });
 
 });
 
