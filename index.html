@@ -618,14 +618,26 @@ if(animaisGrupo.length){
   let countDOF = 0;
 
   const hoje = new Date();
+  hoje.setHours(0,0,0,0);
 
   animaisGrupo.forEach(a => {
 
     if(!a.dataEntrada) return;
 
-const dataEntrada = new Date(a.dataEntrada);
+    const dataEntrada = new Date(a.dataEntrada);
 
-if(isNaN(dataEntrada.getTime())) return;
+    if(isNaN(dataEntrada.getTime())) return;
+
+    dataEntrada.setHours(0,0,0,0);
+
+    const diffDias = Math.floor(
+      (hoje.getTime() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if(diffDias >= 0){
+      totalDOF += diffDias;
+      countDOF++;
+    }
 
   });
 
