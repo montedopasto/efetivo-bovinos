@@ -906,7 +906,33 @@ function renderMais15(state){
           tr.style.display = "none";
 
           tr.innerHTML = `
-            <td class="left">${a.animal}</td>
+  <td class="left" style="padding-left:28px">
+    ${a.animal}
+  </td>
+
+  <td>${formatDatePT(a.dataNascimento)}</td>
+
+  <td>
+    <span style="
+      background:#ecfdf5;
+      color:#166534;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    ">
+      ${a.meses} meses
+    </span>
+  </td>
+
+  <td>
+    ${a.sexo === "M"
+      ? "🐂 M"
+      : "🐄 F"}
+  </td>
+
+  <td>${grupo}</td>
+`;
             <td>${formatDatePT(a.dataNascimento)}</td>
             <td>${a.meses}</td>
             <td>${a.sexo}</td>
