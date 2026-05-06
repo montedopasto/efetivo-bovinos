@@ -674,19 +674,7 @@ if(datasGrupo.length){
 
   datasGrupo.forEach(d => {
 
-    const partes = String(d).split("/");
-
-    if(partes.length !== 3) return;
-
-    const dia = Number(partes[0]);
-    const mes = Number(partes[1]);
-    let ano = Number(partes[2]);
-
-    if(ano < 100){
-      ano += 2000;
-    }
-
-    const data = new Date(ano, mes - 1, dia);
+    const data = new Date(d);
 
     if(isNaN(data.getTime())) return;
 
