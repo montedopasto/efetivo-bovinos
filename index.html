@@ -689,7 +689,16 @@ animaisGrupo.forEach(a => {
     // FORMATO YYYY-MM-DD
     else if(dataStr.includes("-")){
 
-      data = new Date(dataStr);
+      const partesIso = dataStr.split("-");
+
+if(partesIso.length === 3){
+
+  const ano = Number(partesIso[0]);
+  const mes = Number(partesIso[1]);
+  const dia = Number(partesIso[2]);
+
+  data = new Date(ano, mes - 1, dia);
+}
     }
 
     if(!data || isNaN(data.getTime())) return;
