@@ -123,7 +123,9 @@ if(!dataNorm){
 
 const dataFinal = `${dataNorm}T00:00:00Z`;
 
-  const chave = `${data.Title}|${Math.round(Number(data.Peso))}`;
+  const pesoNorm = Math.round(Number(data.Peso));
+
+const chave = `${data.Title}|${dataNorm}|${pesoNorm}`;
 
 const body = {
   fields: {
