@@ -931,12 +931,12 @@ for(const p of pesagens){
 
   const pesoNorm = Math.round(Number(p.Peso));
 
-  const key = `${p.Title}|${pesoNorm}`;
+const key = `${p.Title}|${pesoNorm}`;
 
-  if(existentesPesagens.has(key)){
-    ignoradas++;
-    continue;
-  }
+if(existentesPesagens.has(key)){
+  ignoradas++;
+  continue;
+}
 
   console.log("A criar pesagem:", p);
 
