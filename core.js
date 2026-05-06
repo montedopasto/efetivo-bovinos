@@ -567,8 +567,17 @@ const gmdFinal =
 
 // % base por peso
 let percBase = 0.025;
-if (r.pAtual < 300) percBase = 0.028;
-else if (r.pAtual > 500) percBase = 0.022;
+
+if (Number.isFinite(r.pAtual)) {
+
+  if (r.pAtual < 300) {
+    percBase = 0.028;
+  }
+  else if (r.pAtual > 500) {
+    percBase = 0.022;
+  }
+
+}
 
 // sexo
 const sexoNorm = clean(r.sexo).toUpperCase();
