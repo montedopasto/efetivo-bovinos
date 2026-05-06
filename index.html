@@ -617,15 +617,7 @@ if(animaisGrupo.length){
 
     if(!a.dataEntrada) return;
 
-const partes = String(a.dataEntrada).split("/");
-
-    if(partes.length !== 3) return;
-
-    const dataEntrada = new Date(
-      Number(partes[2]),
-      Number(partes[1]) - 1,
-      Number(partes[0])
-    );
+    const dataEntrada = new Date(a.dataEntrada);
 
     if(isNaN(dataEntrada.getTime())) return;
 
