@@ -220,7 +220,7 @@ async function spGetAllPesagens(token){
       if(!animal || !data) return;
 
       // chave para evitar duplicados
-      const key = `${animal}|${peso}`;
+      const key = `${animal}|${data}|${peso}`;
 
       map.set(key, {
         animal,
