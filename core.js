@@ -381,7 +381,7 @@ else{
 
     const header = lines[0].split(delim).map(clean);
     console.log("HEADER:", header);
-
+    console.log(header.map(h => `[${h}]`));
     const idx = (name) => header.indexOf(name);
 
     const getIndex = (name) => {
