@@ -948,7 +948,9 @@ for(const p of pesagens){
 
   const pesoNorm = Math.round(Number(p.Peso));
 
-const key = `${p.Title}|${pesoNorm}`;
+const dataNorm = String(p.DataPesagem).split("T")[0];
+
+const key = `${p.Title}|${dataNorm}|${pesoNorm}`;
 
 if(existentesPesagens.has(key)){
   ignoradas++;
