@@ -641,7 +641,7 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
 pesoAnteriorNum: Number.isFinite(r.pAnt) ? r.pAnt : null,
         pesoAtual:`${r.pAtual.toFixed(1)} kg`,
 pesoAtualNum: r.pAtual,
-        dataAtual: isoDateUTC(r.dAtual),
+        dataAtual: r.dAtual ? isoDateUTC(r.dAtual) : null,
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
         fatorClima: fc,
         estimado: Number.isFinite(estKg) ? `${estKg.toFixed(1)} kg` : "—",
