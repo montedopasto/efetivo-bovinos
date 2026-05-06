@@ -621,9 +621,11 @@ if(animaisGrupo.length){
 
   animaisGrupo.forEach(a => {
 
-    if(!a.data_entrada) return;
+    if(!a.dataEntrada) return;
 
-    const partes = String(a.data_entrada).split("/");
+const dataEntrada = new Date(a.dataEntrada);
+
+if(isNaN(dataEntrada.getTime())) return;
 
     if(partes.length !== 3) return;
 
