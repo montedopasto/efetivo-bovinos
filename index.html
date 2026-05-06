@@ -616,22 +616,27 @@ if(animaisGrupo.length){
 
   animaisGrupo.forEach(a => {
 
-    if(a.dataEntrada){
+    if(!a.data_entrada) return;
 
-      const dataEntrada = new Date(a.dataEntrada);
+    const partes = String(a.data_entrada).split("/");
 
-      if(!isNaN(dataEntrada)){
+    if(partes.length !== 3) return;
 
-        const diffDias = Math.floor(
-          (hoje - dataEntrada) / (1000 * 60 * 60 * 24)
-        );
+    const dataEntrada = new Date(
+      Number(partes[2]),
+      Number(partes[1]) - 1,
+      Number(partes[0])
+    );
 
-        if(diffDias >= 0){
-          totalDOF += diffDias;
-          countDOF++;
-        }
+    if(isNaN(dataEntrada.getTime())) return;
 
-      }
+    const diffDias = Math.floor(
+      (hoje - dataEntrada) / (1000 * 60 * 60 * 24)
+    );
+
+    if(diffDias >= 0){
+      totalDOF += diffDias;
+      countDOF++;
     }
 
   });
@@ -639,6 +644,7 @@ if(animaisGrupo.length){
   if(countDOF > 0){
     avgDOF = Math.round(totalDOF / countDOF);
   }
+
 }
 let maxDate = null;
 
