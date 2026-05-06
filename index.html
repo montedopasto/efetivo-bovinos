@@ -641,15 +641,15 @@ if(animaisGrupo.length){
   }
 }
 let maxDate = null;
-console.log("GRUPO:", g.name);
-console.log("ANIMAIS GRUPO:", animaisGrupoIds);
-console.log("CACHE:", PESAGENS_CACHE);
+
 
 // ids dos animais do grupo
 const animaisGrupoIds = animaisGrupo
   .map(a => a.animal?.trim())
   .filter(Boolean);
-
+console.log("GRUPO:", g.name);
+console.log("ANIMAIS GRUPO:", animaisGrupoIds);
+console.log("CACHE:", PESAGENS_CACHE);
 // procurar última pesagem no SharePoint
 PESAGENS_CACHE.forEach((p) => {
 
