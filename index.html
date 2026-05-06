@@ -775,7 +775,7 @@ function renderMais15(state){
 
   tbody.innerHTML = "";
 
-  const lista = [];
+  const grupos = {};
 
   (state?.animalsOut || []).forEach(a => {
 
@@ -788,38 +788,120 @@ function renderMais15(state){
       (hoje.getFullYear() - nasc.getFullYear()) * 12 +
       (hoje.getMonth() - nasc.getMonth());
 
-    if(meses >= 15){
-      lista.push({
-  animal: a.animal,
-  meses: meses,
-  grupo: a.grupo || "-",
-  dataNascimento: a.dataNascimento || null
-});
+    if(meses < 15) return;
+
+    const grupo = a.grupo || "SEM GRUPO";
+
+    if(!grupos[grupo]){
+      grupos[grupo] = [];
     }
+
+    grupos[grupo].push({
+      animal: a.animal,
+      sexo: a.sexo || "—",
+      meses,
+      dataNascimento: a.dataNascimento
+    });
 
   });
 
-  resumo.innerHTML = `<b>Total:</b> ${lista.length} animais`;
+  const totalAnimais =
+    Object.values(grupos)
+      .reduce((acc, arr) => acc + arr.length, 0);
 
-  if(lista.length === 0){
+  resumo.innerHTML = `
+    <b>Total:</b> ${totalAnimais} animais
+    ·
+    <b>Grupos:</b> ${Object.keys(grupos).length}
+  `;
+
+  if(totalAnimais === 0){
+
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="3">Sem animais com mais de 15 meses</td>`;
+
+    tr.innerHTML = `
+      <td colspan="5">
+        Sem animais com mais de 15 meses
+      </td>
+    `;
+
     tbody.appendChild(tr);
     return;
   }
 
-  lista.sort((a,b)=> b.meses - a.meses);
+  Object.keys(grupos)
+    .sort()
+    .forEach(grupo => {
 
-  lista.forEach(a => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-  <td class="left">${a.animal}</td>
-  <td>${formatDatePT(a.dataNascimento)}</td>
-  <td>${a.meses}</td>
-  <td>${a.grupo}</td>
-`;
-    tbody.appendChild(tr);
-  });
+      const animais = grupos[grupo];
+
+      // HEADER DO GRUPO
+      const trGroup = document.createElement("tr");
+
+      trGroup.innerHTML = `
+        <td colspan="5"
+            style="
+              background:#dfeee4;
+              font-weight:700;
+              cursor:pointer;
+              padding:14px;
+              border-top:2px solid #c7d7cb;
+            ">
+          ▶ ${grupo}
+          <span style="opacity:.7">
+            (${animais.length} animais)
+          </span>
+        </td>
+      `;
+
+      tbody.appendChild(trGroup);
+
+      // CONTAINER LINHAS
+      const linhas = [];
+
+      animais
+        .sort((a,b)=> b.meses - a.meses)
+        .forEach(a => {
+
+          const tr = document.createElement("tr");
+
+          tr.style.display = "none";
+
+          tr.innerHTML = `
+            <td class="left">${a.animal}</td>
+            <td>${formatDatePT(a.dataNascimento)}</td>
+            <td>${a.meses}</td>
+            <td>${a.sexo}</td>
+            <td>${grupo}</td>
+          `;
+
+          tbody.appendChild(tr);
+
+          linhas.push(tr);
+        });
+
+      // TOGGLE
+      let aberto = false;
+
+      trGroup.onclick = () => {
+
+        aberto = !aberto;
+
+        trGroup.cells[0].innerHTML = `
+          ${aberto ? "▼" : "▶"} ${grupo}
+          <span style="opacity:.7">
+            (${animais.length} animais)
+          </span>
+        `;
+
+        linhas.forEach(l => {
+          l.style.display = aberto ? "" : "none";
+        });
+
+      };
+
+    });
+
 }
   async function importFromFile(file){
     const reader = new FileReader();
