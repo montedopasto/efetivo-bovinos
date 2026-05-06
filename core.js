@@ -639,7 +639,9 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
   dataAnterior: r.dAnt ? isoDateUTC(r.dAnt) : null,
   pesoAnterior: Number.isFinite(r.pAnt) ? `${r.pAnt} kg` : null,
 pesoAnteriorNum: Number.isFinite(r.pAnt) ? r.pAnt : null,
-        pesoAtual:`${r.pAtual.toFixed(1)} kg`,
+        pesoAtual: Number.isFinite(r.pAtual)
+  ? `${r.pAtual.toFixed(1)} kg`
+  : "—",
 pesoAtualNum: r.pAtual,
         dataAtual: r.dAtual ? isoDateUTC(r.dAtual) : null,
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
