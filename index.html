@@ -648,50 +648,52 @@ if(animaisGrupo.length){
 }
 
 /* =========================
-   ÚLTIMA PESAGEM
+   ÚLTIMA PESAGEM MÉDIA
 ========================= */
 
 let ultimaPesagem = "—";
 
-const datasGrupo = animaisGrupo
-  .map(a => a.dataAtual)
-  .filter(Boolean);
+if(animaisGrupo.length){
 
-if(datasGrupo.length){
+  const hoje = new Date();
+  hoje.setHours(0,0,0,0);
 
-  let maxDate = null;
+  let totalDias = 0;
+  let countDias = 0;
 
-  datasGrupo.forEach(d => {
+  animaisGrupo.forEach(a => {
 
-    const data = new Date(d);
+    if(!a.dataAtual) return;
+
+    const data = new Date(a.dataAtual);
 
     if(isNaN(data.getTime())) return;
 
     data.setHours(0,0,0,0);
 
-    if(maxDate === null || data.getTime() > maxDate.getTime()){
-      maxDate = data;
+    const diffDias = Math.floor(
+      (hoje - data) / (1000 * 60 * 60 * 24)
+    );
+
+    if(diffDias >= 0){
+      totalDias += diffDias;
+      countDias++;
     }
 
   });
 
-  if(maxDate){
+  if(countDias > 0){
 
-    const hoje = new Date();
-    hoje.setHours(0,0,0,0);
+    const mediaDias = Math.round(totalDias / countDias);
 
-    const diffDias = Math.floor(
-      (hoje.getTime() - maxDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if(diffDias <= 0){
+    if(mediaDias === 0){
       ultimaPesagem = "hoje";
     }
-    else if(diffDias === 1){
+    else if(mediaDias === 1){
       ultimaPesagem = "há 1 dia";
     }
     else{
-      ultimaPesagem = `há ${diffDias} dias`;
+      ultimaPesagem = `há ${mediaDias} dias`;
     }
 
   }
