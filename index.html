@@ -652,17 +652,27 @@ animaisGrupo.forEach(a => {
 
   datas.forEach(d => {
 
-    if(!d) return;
+  if(!d) return;
 
-    const data = new Date(d);
+  // converter DD/MM/YYYY
+  const partes = String(d).split("/");
 
-    if(isNaN(data.getTime())) return;
+  if(partes.length !== 3) return;
 
-    if(maxDate === null || data > maxDate){
-      maxDate = data;
-    }
+  const dia = partes[0];
+  const mes = partes[1];
+  const ano = partes[2];
 
-  });
+  const data = new Date(`${ano}-${mes}-${dia}`);
+
+  if(isNaN(data.getTime())) return;
+
+  // guardar a mais recente
+  if(maxDate === null || data > maxDate){
+    maxDate = data;
+  }
+
+});
 
 });
 
