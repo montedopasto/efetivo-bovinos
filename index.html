@@ -667,7 +667,9 @@ if(datasGrupo.length){
 
     if(isNaN(data.getTime())) return;
 
-    if(maxDate === null || data > maxDate){
+    data.setHours(0,0,0,0);
+
+    if(maxDate === null || data.getTime() > maxDate.getTime()){
       maxDate = data;
     }
 
@@ -676,15 +678,13 @@ if(datasGrupo.length){
   if(maxDate){
 
     const hoje = new Date();
-
     hoje.setHours(0,0,0,0);
-    maxDate.setHours(0,0,0,0);
 
     const diffDias = Math.floor(
-      (hoje - maxDate) / (1000 * 60 * 60 * 24)
+      (hoje.getTime() - maxDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if(diffDias === 0){
+    if(diffDias <= 0){
       ultimaPesagem = "hoje";
     }
     else if(diffDias === 1){
