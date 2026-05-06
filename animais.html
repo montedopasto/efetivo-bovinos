@@ -141,7 +141,13 @@ let currentSort = { key: null, asc: true };
       <td>${Core.escapeHtml(a.pesoAtual)}</td>
       <td>${Core.escapeHtml(a.dataAtual)}</td>
       <td>${Core.escapeHtml(a.temp)}</td>
-      <td>${a.fatorClima}</td>
+      <td>
+  ${
+    Number.isFinite(a.gmdFinal)
+      ? a.gmdFinal.toFixed(2)
+      : "—"
+  }
+</td>
       <td><b>${Core.escapeHtml(a.estimado)}</b></td>
       <td class="${a.confClass}">${Core.escapeHtml(a.conf)}</td>
       <td class="${a.estadoClass}">${Core.escapeHtml(a.estado)}</td>
