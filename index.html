@@ -604,6 +604,11 @@ function buildRiskBadge(risk){
 
 const animaisGrupo = (state?.animalsOut || [])
   .filter(a => a.grupo === g.name);
+
+/* =========================
+   DOF
+========================= */
+
 let avgDOF = "—";
 
 if(animaisGrupo.length){
@@ -615,9 +620,21 @@ if(animaisGrupo.length){
 
   animaisGrupo.forEach(a => {
 
-    if(!a.dataEntrada) return;
+    if(!a.data_entrada) return;
 
-    const dataEntrada = new Date(a.dataEntrada);
+    const partes = String(a.data_entrada).split("/");
+
+    if(partes.length !== 3) return;
+
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]);
+    let ano = Number(partes[2]);
+
+    if(ano < 100){
+      ano += 2000;
+    }
+
+    const dataEntrada = new Date(ano, mes - 1, dia);
 
     if(isNaN(dataEntrada.getTime())) return;
 
@@ -637,6 +654,11 @@ if(animaisGrupo.length){
   }
 
 }
+
+/* =========================
+   ÚLTIMA PESAGEM
+========================= */
+
 let ultimaPesagem = "—";
 
 const datasGrupo = animaisGrupo
@@ -653,8 +675,8 @@ if(datasGrupo.length){
 
     if(partes.length !== 3) return;
 
-    let dia = Number(partes[0]);
-    let mes = Number(partes[1]);
+    const dia = Number(partes[0]);
+    const mes = Number(partes[1]);
     let ano = Number(partes[2]);
 
     if(ano < 100){
