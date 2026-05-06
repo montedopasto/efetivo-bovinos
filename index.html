@@ -886,11 +886,6 @@ console.log("ANIMAIS IGNORADOS:", ignorados);
 const existentesPesagens = await spGetAllPesagens(token);
 console.log("EXISTENTES PESAGENS RAW:", existentesPesagens);
 PESAGENS_CACHE = Array.from(existentesPesagens.values());
-  return {
-    animal: (p.Title || "").trim(),
-    data: (p.DataPesagem || "").split("T")[0]
-  };
-});
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
