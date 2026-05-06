@@ -648,16 +648,18 @@ const animaisGrupoIds = animaisGrupo
   .filter(Boolean);
 
 // procurar última pesagem no SharePoint
-PESAGENS_CACHE.forEach(p => {
+PESAGENS_CACHE.forEach((p) => {
+
+  if(!p || !p.animal || !p.data) return;
 
   if(!animaisGrupoIds.includes(p.animal)) return;
 
   const data = new Date(p.data);
 
-  if(!isNaN(data)){
-    if(!maxDate || data > maxDate){
-      maxDate = data;
-    }
+  if(isNaN(data.getTime())) return;
+
+  if(!maxDate || data > maxDate){
+    maxDate = data;
   }
 
 });
