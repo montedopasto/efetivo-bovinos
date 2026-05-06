@@ -642,40 +642,20 @@ if(animaisGrupo.length){
 }
 let maxDate = null;
 
-// IDs dos animais do grupo
-const animaisGrupoIds = animaisGrupo
-  .map(a => String(a.animal || "").trim().toUpperCase())
-  .filter(Boolean);
+// procurar última pesagem diretamente no CSV
+animaisGrupo.forEach(a => {
 
-// procurar data mais recente
-for(const p of PESAGENS_CACHE){
+  if(!a.dataAtual) return;
 
-  if(!p) continue;
+  const data = new Date(a.dataAtual);
 
-  const animalPesagem = String(p.animal || "")
-    .trim()
-    .toUpperCase();
+  if(isNaN(data.getTime())) return;
 
-  // animal não pertence ao grupo
-  if(!animaisGrupoIds.includes(animalPesagem)){
-    continue;
-  }
-
-  // converter data
-  const dataStr = String(p.data || "").split("T")[0];
-
-  const data = new Date(dataStr);
-
-  if(isNaN(data.getTime())){
-    continue;
-  }
-
-  // guardar a mais recente
   if(maxDate === null || data > maxDate){
     maxDate = data;
   }
 
-}
+});
 
 // calcular texto final
 if(maxDate){
