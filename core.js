@@ -553,7 +553,13 @@ if(!hasAtual){
       const fc = meteo.factor;
 
       const gmdBase = Number.isFinite(r.gmdInd) ? r.gmdInd : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
-      const gmdFinal = gmdBase * factorSexo(r.sexo) * factorMaturidade(r.pAtual, r.sexo) * fc;
+      const pesoBase = Number.isFinite(r.pAtual) ? r.pAtual : 0;
+
+const gmdFinal =
+  gmdBase *
+  factorSexo(r.sexo) *
+  factorMaturidade(pesoBase, r.sexo) *
+  fc;
       const estKg = Number.isFinite(r.pAtual) && Number.isFinite(daysSince)
   ? r.pAtual + (gmdFinal * daysSince)
   : NaN;
