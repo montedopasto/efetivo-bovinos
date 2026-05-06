@@ -642,40 +642,40 @@ if(animaisGrupo.length){
 }
 let maxDate = null;
 
-
-// ids dos animais do grupo
+// IDs dos animais do grupo
 const animaisGrupoIds = animaisGrupo
-  .map(a => a.animal?.trim())
+  .map(a => String(a.animal || "").trim().toUpperCase())
   .filter(Boolean);
-console.log("GRUPO:", g.name);
-console.log("ANIMAIS GRUPO:", animaisGrupoIds);
-console.log("CACHE:", PESAGENS_CACHE);
-// procurar última pesagem no SharePoint
-PESAGENS_CACHE.forEach((p) => {
 
-  if(!p || !p.animal || !p.data) return;
+// procurar data mais recente
+for(const p of PESAGENS_CACHE){
 
-  const animalSP = String(p.animal || "")
-  .trim()
-  .toUpperCase();
+  if(!p) continue;
 
-const existeNoGrupo = animaisGrupoIds.some(id =>
-  String(id || "")
+  const animalPesagem = String(p.animal || "")
     .trim()
-    .toUpperCase() === animalSP
-);
+    .toUpperCase();
 
-if(!existeNoGrupo) return;
+  // animal não pertence ao grupo
+  if(!animaisGrupoIds.includes(animalPesagem)){
+    continue;
+  }
 
-  const data = new Date(String(p.data).split("T")[0]);
+  // converter data
+  const dataStr = String(p.data || "").split("T")[0];
 
-  if(isNaN(data.getTime())) return;
+  const data = new Date(dataStr);
 
-  if(!maxDate || data > maxDate){
+  if(isNaN(data.getTime())){
+    continue;
+  }
+
+  // guardar a mais recente
+  if(maxDate === null || data > maxDate){
     maxDate = data;
   }
 
-});
+}
 
 // calcular texto final
 if(maxDate){
