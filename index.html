@@ -1057,7 +1057,30 @@ function weatherIcon(code){
 
 // boot
 applyAdminMode();
-renderAll(Core.loadState() || null);
+
+(async ()=>{
+
+  try{
+
+    const token = await Auth.getAccessToken();
+
+    const existentesPesagens = await spGetAllPesagens(token);
+
+    console.log("🔥 EXISTENTES:", existentesPesagens);
+
+    PESAGENS_CACHE = Array.from(existentesPesagens.values());
+
+    console.log("🔥 CACHE FINAL:", PESAGENS_CACHE);
+
+  }catch(err){
+
+    console.error("❌ Erro ao carregar pesagens:", err);
+
+  }
+
+  renderAll(Core.loadState() || null);
+
+})();
 
 startClock();
 loadWeather();
