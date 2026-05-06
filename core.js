@@ -636,9 +636,10 @@ if(!groupAgg[g]){
   groupAgg[g] = {
     name:g,n:0,m:0,f:0,
     sumPesoM:0,sumPesoF:0,
-    sumEstM:0,sumEstF:0,
-    sumGmdM:0,sumGmdF:0,
-    nGmdM:0,nGmdF:0,
+nPesoM:0,nPesoF:0,
+sumEstM:0,sumEstF:0,
+sumGmdM:0,sumGmdF:0,
+nGmdM:0,nGmdF:0,
     sumTemp:0,nTemp:0,
 
     // 🔥 NOVO MODELO CORRETO
