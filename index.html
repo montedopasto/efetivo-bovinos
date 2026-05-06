@@ -646,92 +646,61 @@ if(animaisGrupo.length){
   }
 
 }
-let maxDate = null;
+let ultimaPesagem = "—";
 
-// procurar datas das pesagens do grupo
-animaisGrupo.forEach(a => {
+const datasGrupo = animaisGrupo
+  .map(a => a.data_peso_atual)
+  .filter(Boolean);
 
-  const datas = [
-    a.dataAtual,
-    a.dataAnterior,
-    a.data_peso_atual,
-    a.data_peso_anterior
-  ];
+if(datasGrupo.length){
 
-  datas.forEach(d => {
+  let maxDate = null;
 
-    if(!d) return;
+  datasGrupo.forEach(d => {
 
-    const dataStr = String(d).trim();
+    const partes = String(d).split("/");
 
-    let data = null;
+    if(partes.length !== 3) return;
 
-    // FORMATO 04/05/26 ou 04/05/2026
-    if(dataStr.includes("/")){
+    let dia = Number(partes[0]);
+    let mes = Number(partes[1]);
+    let ano = Number(partes[2]);
 
-      const partes = dataStr.split("/");
-
-      if(partes.length === 3){
-
-        let dia = Number(partes[0]);
-        let mes = Number(partes[1]);
-        let ano = Number(partes[2]);
-
-        // corrigir ano curto
-        if(ano < 100){
-          ano += 2000;
-        }
-
-        data = new Date(ano, mes - 1, dia);
-      }
+    if(ano < 100){
+      ano += 2000;
     }
 
-    // FORMATO YYYY-MM-DD
-    else if(dataStr.includes("-")){
+    const data = new Date(ano, mes - 1, dia);
 
-      const partesIso = dataStr.split("-");
+    if(isNaN(data.getTime())) return;
 
-if(partesIso.length === 3){
-
-  const ano = Number(partesIso[0]);
-  const mes = Number(partesIso[1]);
-  const dia = Number(partesIso[2]);
-
-  data = new Date(ano, mes - 1, dia);
-}
-    }
-
-    if(!data || isNaN(data.getTime())) return;
-
-    // guardar mais recente
     if(maxDate === null || data > maxDate){
       maxDate = data;
     }
 
   });
 
-});
+  if(maxDate){
 
-// calcular texto final
-if(maxDate){
+    const hoje = new Date();
 
-  const hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    maxDate.setHours(0,0,0,0);
 
-  hoje.setHours(0,0,0,0);
-  maxDate.setHours(0,0,0,0);
+    const diffDias = Math.floor(
+      (hoje - maxDate) / (1000 * 60 * 60 * 24)
+    );
 
-  const diffDias = Math.floor(
-    (hoje - maxDate) / (1000 * 60 * 60 * 24)
-  );
+    if(diffDias === 0){
+      ultimaPesagem = "hoje";
+    }
+    else if(diffDias === 1){
+      ultimaPesagem = "há 1 dia";
+    }
+    else{
+      ultimaPesagem = `há ${diffDias} dias`;
+    }
 
-  if(diffDias === 0){
-    ultimaPesagem = "hoje";
-  }
-  else if(diffDias === 1){
-    ultimaPesagem = "há 1 dia";
-  }
-  else{
-    ultimaPesagem = `há ${diffDias} dias`;
   }
 
 }
