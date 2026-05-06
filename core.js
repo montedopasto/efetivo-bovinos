@@ -535,16 +535,16 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
 
     for(const r of rows){
       const hasAtual = r.dAtual && Number.isFinite(r.pAtual);
-      if(!hasAtual){
 
+if(!hasAtual){
   console.warn("Animal sem pesagem atual válida:", r);
-
   badRows++;
-  continue;
 }
 
       const today = todayUTC;
-      const daysSince = daysBetweenUTC(r.dAtual, today);
+      const daysSince = r.dAtual
+  ? daysBetweenUTC(r.dAtual, today)
+  : NaN;
       const [conf, confClass] = confidenceByDays(daysSince);
 
       const meteo = await getTempMeanForPeriod(cfg.SITE, meteoCacheMap, r.dAtual, today, cfg.METEO_TIMEOUT_MS);
