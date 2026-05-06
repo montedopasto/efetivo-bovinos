@@ -887,6 +887,7 @@ const existentesPesagens = await spGetAllPesagens(token);
 console.log("EXISTENTES PESAGENS RAW:", existentesPesagens);
 PESAGENS_CACHE = Array.from(existentesPesagens.values());
 console.log("CACHE PESAGENS:", PESAGENS_CACHE);
+console.table(PESAGENS_CACHE);
 const pesagens = [];
 
 st.animalsOut.forEach(a => {
