@@ -1115,6 +1115,10 @@ console.log("PESAGENS IGNORADAS:", ignoradas);
 
 renderAll(st);
 await spSaveEstado(st, token);
+localStorage.setItem(
+  "bovitrack_state",
+  JSON.stringify(st)
+);
 // 2. Pesagens
 
       }catch(err){
