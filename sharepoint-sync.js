@@ -415,6 +415,7 @@ async function spSaveEstado(state, token){
 };
 
 const json = JSON.stringify(estadoCompacto);
+console.log("TAMANHO JSON:", json.length);
 
   // procurar item existente
   const urlFind =
