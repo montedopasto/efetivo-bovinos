@@ -586,6 +586,117 @@ div.innerHTML = `
 alertsEl.appendChild(div);
     }
   }
+/* =========================================
+   ALERTAS OPERACIONAIS
+========================================= */
+
+async function loadAlertasOperacionais(){
+
+  try{
+
+    const url =
+      "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec?type=alertas";
+
+    const r = await fetch(url);
+
+    ALERTAS_DB = await r.json();
+
+    console.log("ALERTAS:", ALERTAS_DB);
+
+  }catch(err){
+
+    console.error("Erro alertas:", err);
+
+    ALERTAS_DB = [];
+
+  }
+
+}
+
+async function createOperationalAlert(grupo, prioridade){
+
+  try{
+
+    const prazo = new Date();
+
+    prazo.setDate(
+      prazo.getDate() + 15
+    );
+
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          action:"create_alert",
+          grupo,
+          prioridade,
+          prazo:prazo.toISOString()
+        })
+      }
+    );
+
+    await loadAlertasOperacionais();
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+async function resolverAlerta(grupo){
+
+  const incidente =
+    ALERTAS_DB.find(a =>
+      a.grupo === grupo &&
+      a.estado !== "fechado"
+    );
+
+  if(!incidente){
+    alert("Incidente não encontrado");
+    return;
+  }
+
+  const acao =
+    prompt("Descreve a ação tomada:");
+
+  if(!acao || !acao.trim()){
+    alert("A descrição é obrigatória");
+    return;
+  }
+
+  const responsavel =
+    prompt("Responsável:");
+
+  await fetch(
+    "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        action:"update_alert",
+        id:incidente.id,
+        estado:"em_analise",
+        responsavel,
+        acao
+      })
+    }
+  );
+
+  await loadAlertasOperacionais();
+
+  renderAll(
+    Core.loadState()
+  );
+
+}    
 function buildRiskBadge(risk){
   const pct = (risk||0)*100;
 
