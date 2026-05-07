@@ -460,8 +460,6 @@ O alerta do grupo ativa quando:<br>
 </div>
 <script src="https://alcdn.msauth.net/browser/2.38.1/js/msal-browser.min.js"></script>
 
-<script src="auth.js"></script>
-<script src="sharepoint-sync.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="core.js"></script>
 <script>
@@ -981,145 +979,10 @@ if(icon){
         });
 
         statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
-        console.log(st.animalsOut[0]);
-console.log("PRIMEIRO ANIMAL COMPLETO:", st.animalsOut[0]);
-console.log("TOTAL ANIMAIS:", st.animalsOut.length);
-// ENVIAR ANIMAIS
-const animaisUnicos = new Map();
-const token = await Auth.getAccessToken();
-// 🔥 1. Buscar todos os animais existentes
-const listaExistentes = await spGetAllAnimais(token);
+        renderAll(st);
 
-// 🔥 2. Criar MAP rápido
-const mapaExistentes = new Map();
-
-listaExistentes.forEach(item => {
-  const id = (item.Title || "").trim();
-  if(id) mapaExistentes.set(id, true);
-});
-
-// 🔥 3. Inserir apenas novos
-let criados = 0;
-let ignorados = 0;
-
-for (const a of st.animalsOut) {
-
-  if(!a.animal || a.animal === "—") continue;
-
-  const animalId = a.animal.trim();
-
-  if(mapaExistentes.has(animalId)){
-    ignorados++;
-    continue;
-  }
-
-  await spCreateAnimal({
-    Title: animalId,
-    NIF: a.nif || "",
-    Raca: a.raca || "",
-    DataEntrada: a.dataEntrada ? a.dataEntrada.split("T")[0] : null,
-    DataNascimento: a.dataNascimento ? a.dataNascimento.split("T")[0] : null,
-    Sexo: a.sexo || "",
-    GrupoAtual: a.grupo || ""
-  }, token);
-
-  mapaExistentes.set(animalId, true);
-  criados++;
-}
-
-console.log("ANIMAIS CRIADOS:", criados);
-console.log("ANIMAIS IGNORADOS:", ignorados);
-
-
-// CRIAR PESAGENS
-// (usar o mesmo token já obtido acima)
-const existentesPesagens = await spGetAllPesagens(token);
-
-console.log("EXISTENTES PESAGENS RAW:", existentesPesagens);
-
-// 🔥 transformar Map em array simples
-PESAGENS_CACHE = [...existentesPesagens.values()];
-
-console.log("CACHE PESAGENS:", PESAGENS_CACHE);
-console.table(PESAGENS_CACHE);
-const pesagens = [];
-
-st.animalsOut.forEach(a => {
-
-  if(!a.animal || a.animal === "—") return;
-
-  const animalId = a.animal.trim();
-
-  // 🔥 PESO ATUAL
-  const pesoAtual = parseFloat(String(a.pesoAtualNum).replace(",", "."));
-
-  if (a.dataAtual && !isNaN(pesoAtual)) {
-    pesagens.push({
-      Title: animalId,
-      DataPesagem: formatDateToISO(a.dataAtual),
-      Peso: pesoAtual,
-      Origem: "Atual"
-    });
-  }
-
-  // 🔥 PESO ANTERIOR (AGORA DENTRO DO LOOP)
-  if (a.dataAnterior && Number.isFinite(a.pesoAnteriorNum)) {
-    pesagens.push({
-      Title: animalId,
-      DataPesagem: formatDateToISO(a.dataAnterior),
-      Peso: Number(a.pesoAnteriorNum),
-      Origem: "Anterior"
-    });
-  }
-
-});
-
-console.log("TOTAL DE PESAGENS A ENVIAR:", pesagens.length);
-console.log("EXEMPLO PESAGEM:", pesagens[0]);
-
-// ENVIAR PARA SHAREPOINT
-let criadas = 0;
-let ignoradas = 0;
-console.log("VOU ENVIAR PESAGENS:", pesagens.length);
-for(const p of pesagens){
-
-  const pesoNorm = Math.round(Number(p.Peso));
-
-const dataNorm = String(p.DataPesagem).split("T")[0];
-
-const key = `${p.Title}|${dataNorm}|${pesoNorm}`;
-
-if(existentesPesagens.has(key)){
-  ignoradas++;
-  continue;
-}
-
-  console.log("A criar pesagem:", p);
-
-  await spCreatePesagem(p, token);
-
-  existentesPesagens.set(key, {
-  animal: p.Title.trim(),
-  data: dataNorm,
-  peso: pesoNorm
-});
-  criadas++;
-
-  PESAGENS_CACHE.push({
-  animal: p.Title.trim(),
-  data: p.DataPesagem.split("T")[0]
-});
-}
-
-console.log("PESAGENS CRIADAS:", criadas);
-console.log("PESAGENS IGNORADAS:", ignoradas);
-
-renderAll(st);
-await spSaveEstado(st, token);
-localStorage.setItem(
-  "bovitrack_state",
-  JSON.stringify(st)
-);
+statusEl.innerHTML =
+  "Importação concluída ✅";
 // 2. Pesagens
 
       }catch(err){
