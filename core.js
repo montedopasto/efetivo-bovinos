@@ -569,7 +569,14 @@ if(!hasAtual){
   : { tmean: NaN, factor: 0.95 };
       const fc = meteo.factor;
 
-      const gmdBase = Number.isFinite(r.gmdInd) ? r.gmdInd : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
+      const gmdValido =
+  Number.isFinite(r.gmdInd) &&
+  r.gmdInd >= 0 &&
+  r.gmdInd <= 3;
+
+const gmdBase = gmdValido
+  ? r.gmdInd
+  : (gmdEstimativaGrupo[r.grupo] ?? cfg.CONSERVATIVE_FALLBACK_GMD);
       const pesoBase = Number.isFinite(r.pAtual) ? r.pAtual : 0;
 
 const gmdFinal =
