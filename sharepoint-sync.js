@@ -390,3 +390,103 @@ await new Promise(r => setTimeout(r, 50));
 
   console.log("🚀 Batch concluído");
 }
+/* =========================================
+   ESTADO GLOBAL BOVITRACK
+========================================= */
+
+const LIST_ESTADO = "BovitrackEstado";
+
+/* GUARDAR ESTADO */
+async function spSaveEstado(state, token){
+
+  const json = JSON.stringify(state);
+
+  // procurar registo existente
+  const urlFind =
+    `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items?$top=1`;
+
+  const rFind = await fetch(urlFind, {
+    headers:{
+      "Authorization":`Bearer ${token}`,
+      "Accept":"application/json;odata=nometadata"
+    }
+  });
+
+  const jFind = await rFind.json();
+
+  // já existe
+  if(jFind.value && jFind.value.length){
+
+    const itemId = jFind.value[0].Id;
+
+    const urlUpdate =
+      `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items(${itemId})`;
+
+    await fetch(urlUpdate,{
+      method:"POST",
+      headers:{
+        "Authorization":`Bearer ${token}`,
+        "Accept":"application/json;odata=nometadata",
+        "Content-Type":"application/json;odata=nometadata",
+        "IF-MATCH":"*",
+        "X-HTTP-Method":"MERGE"
+      },
+      body:JSON.stringify({
+        Title:"ESTADO_GLOBAL",
+        JSONEstado: json,
+        DataAtualizacao: new Date().toISOString()
+      })
+    });
+
+  }else{
+
+    // criar
+    const urlCreate =
+      `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items`;
+
+    await fetch(urlCreate,{
+      method:"POST",
+      headers:{
+        "Authorization":`Bearer ${token}`,
+        "Accept":"application/json;odata=nometadata",
+        "Content-Type":"application/json;odata=nometadata"
+      },
+      body:JSON.stringify({
+        Title:"ESTADO_GLOBAL",
+        JSONEstado: json,
+        DataAtualizacao: new Date().toISOString()
+      })
+    });
+
+  }
+
+  console.log("✅ Estado global guardado");
+}
+
+/* LER ESTADO */
+async function spLoadEstado(token){
+
+  const url =
+    `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items?$top=1`;
+
+  const r = await fetch(url,{
+    headers:{
+      "Authorization":`Bearer ${token}`,
+      "Accept":"application/json;odata=nometadata"
+    }
+  });
+
+  const j = await r.json();
+
+  if(!j.value || !j.value.length){
+    return null;
+  }
+
+  const item = j.value[0];
+
+  if(!item.JSONEstado){
+    return null;
+  }
+
+  return JSON.parse(item.JSONEstado);
+}
