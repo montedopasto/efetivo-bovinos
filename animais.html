@@ -174,9 +174,15 @@ if(a.dataEntrada){
       <td class="left">${Core.escapeHtml(a.animal)}</td>
       <td class="left">${Core.escapeHtml(a.grupo)}</td>
       <td>${Core.escapeHtml(a.sexo)}</td>
-      <td>${Core.escapeHtml(a.pesoAtual)}</td>
-      <td>${Core.escapeHtml(a.dataAtual)}</td>
-      <td>${Core.escapeHtml(a.temp)}</td>
+      <td>${Core.escapeHtml(a.pesoAnterior || "—")} kg</td>
+
+<td>${Core.escapeHtml(a.pesoAtual)}</td>
+
+<td>${dof}</td>
+
+<td>${Core.escapeHtml(a.dataAtual)}</td>
+
+<td>${Core.escapeHtml(a.temp)}</td>
       <td style="font-weight:700">
   ${
     (() => {
