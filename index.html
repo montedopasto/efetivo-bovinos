@@ -716,6 +716,10 @@ async function createOperationalAlert(grupo, prioridade){
   "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
   {
     method:"POST",
+    mode:"no-cors",
+    headers:{
+      "Content-Type":"text/plain"
+    },
     body:JSON.stringify({
       action:"create_alert",
       grupo,
