@@ -395,7 +395,7 @@ await new Promise(r => setTimeout(r, 50));
    ESTADO GLOBAL BOVITRACK
 ========================================= */
 
-const LIST_ESTADO = "BovitrackEstado";
+const LIST_ESTADO_ID = "f5edc1c3-3639-4c4f-b0ec-568a3a4cc23f";
 
 /* =========================================
    OBTER ID DA LISTA
