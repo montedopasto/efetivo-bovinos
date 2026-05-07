@@ -1114,6 +1114,7 @@ console.log("PESAGENS CRIADAS:", criadas);
 console.log("PESAGENS IGNORADAS:", ignoradas);
 
 renderAll(st);
+await spSaveEstado(st, token);
 // 2. Pesagens
 
       }catch(err){
