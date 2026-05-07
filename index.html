@@ -762,21 +762,19 @@ async function resolverAlerta(grupo){
   const responsavel =
     prompt("Responsável:");
 
- await fetch(
-  "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
-  {
-    method:"POST",
-    headers:{
-      "Content-Type":"text/plain;charset=utf-8"
-    },
-    body:JSON.stringify({
-      action:"update_alert",
-      id:incidente.id,
-      estado:"em_analise",
-      responsavel,
-      acao
-    })
-  }
+ const url =
+  "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec";
+
+const params = new URLSearchParams({
+  action:"update_alert",
+  id:incidente.id,
+  estado:"em_analise",
+  responsavel,
+  acao
+});
+
+await fetch(
+  `${url}?${params.toString()}`
 );
 
   await loadAlertasOperacionais();
