@@ -464,7 +464,6 @@ O alerta do grupo ativa quando:<br>
 <script src="core.js"></script>
 <script>
 (function(){
-  let PESAGENS_CACHE = [];
   const userInfoEl = document.getElementById("userInfo");
   const statusEl = document.getElementById("status");
   const stampEl = document.getElementById("stamp");
@@ -988,7 +987,7 @@ statusEl.innerHTML =
       }catch(err){
         console.error(err);
         alert("Falha ao importar o CSV. Confirma o formato/colunas.\n\nDetalhe: " + (err?.message || err));
-        renderAll(Core.loadState() || null);
+        renderAll(null);
       }finally{
         fileInput.disabled = false;
         btnClear.disabled = false;
@@ -1097,7 +1096,7 @@ applyAdminMode();
 
     console.error("❌ Erro inicial:", err);
 
-    renderAll(Core.loadState() || null);
+    renderAll(null);
 
   }
 
@@ -1106,91 +1105,6 @@ applyAdminMode();
 startClock();
 loadWeather();
 setInterval(loadWeather, 10 * 60 * 1000);
-async function initAuthUI(){
-
-  if (typeof Auth === "undefined") {
-    console.error("Auth não carregado");
-    return;
-  }
-
-  let account = msalInstance.getActiveAccount();
-
-  if (!account) {
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      account = accounts[0];
-      msalInstance.setActiveAccount(account);
-    }
-  }
-
-  if (!account) {
-    account = await Auth.loginMicrosoft();
-  }
-
-  if (account && userInfoEl) {
-
-    const nome = account.name || account.username;
-    const email = account.username;
-
-    const iniciais = nome
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .substring(0,2)
-      .toUpperCase();
-
-    userInfoEl.innerHTML = `
-      <div style="
-        display:flex;
-        align-items:center;
-        gap:10px;
-        background:#ffffff;
-        border:1px solid #d9e3dc;
-        border-radius:999px;
-        padding:6px 10px;
-      ">
-        <div style="
-          width:32px;
-          height:32px;
-          border-radius:50%;
-          background:#2f9e44;
-          color:#fff;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:12px;
-          font-weight:700;
-        ">
-          ${iniciais}
-        </div>
-
-        <div style="display:flex;flex-direction:column">
-          <span style="font-size:12px;font-weight:600">${nome}</span>
-          <span style="font-size:10px;color:#64748b">${email}</span>
-        </div>
-
-        <button id="btnLogout" style="
-          margin-left:8px;
-          background:#ef4444;
-          border:none;
-          color:#fff;
-          border-radius:8px;
-          padding:4px 8px;
-          font-size:10px;
-          cursor:pointer;
-        ">
-          sair
-        </button>
-      </div>
-    `;
-
-    document.getElementById("btnLogout").onclick = () => {
-      msalInstance.logoutPopup();
-    };
-  }
-}
-
-initAuthUI();
 
 /* =========================================
    GOOGLE SHEETS
@@ -1234,12 +1148,6 @@ async function loadGoogleSheet(){
 
     // render dashboard
     renderAll(st);
-
-    // guardar local
-    localStorage.setItem(
-      "bovitrack_state",
-      JSON.stringify(st)
-    );
 
     statusEl.innerHTML =
       "Google Sheets carregado ✅";
