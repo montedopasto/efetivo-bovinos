@@ -744,7 +744,15 @@ else if(sx==="F"){
 
       if(Number.isFinite(meteo.tmean)){ ga.sumTemp += meteo.tmean; ga.nTemp++; }
 
-      if(Number.isFinite(r.gmdInd)){
+      if(
+
+  Number.isFinite(r.gmdInd) &&
+
+  r.gmdInd >= 0 &&
+
+  r.gmdInd <= 3
+
+){
         if(sx==="M"){ ga.sumGmdM += r.gmdInd; ga.nGmdM++; }
         else if(sx==="F"){ ga.sumGmdF += r.gmdInd; ga.nGmdF++; }
 
