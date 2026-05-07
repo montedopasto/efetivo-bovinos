@@ -696,15 +696,21 @@ div.innerHTML = `
 
         <br>
 
-        <span class="alert-prazo">
-          prazo:
-          ${
-            incidente.prazo
-            ? new Date(incidente.prazo)
-                .toLocaleDateString("pt-PT")
-            : "—"
-          }
-        </span>
+        ${
+  incidente.estado === "em_analise"
+  ? `
+    <span class="alert-prazo">
+      prazo:
+      ${
+        incidente.prazo
+        ? new Date(incidente.prazo)
+            .toLocaleDateString("pt-PT")
+        : "—"
+      }
+    </span>
+  `
+  : ""
+}
 
       </div>
     `
