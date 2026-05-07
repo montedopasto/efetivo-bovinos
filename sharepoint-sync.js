@@ -398,33 +398,6 @@ await new Promise(r => setTimeout(r, 50));
 const LIST_ESTADO_ID = "f5edc1c3-3639-4c4f-b0ec-568a3a4cc23f";
 
 /* =========================================
-   OBTER ID DA LISTA
-========================================= */
-
-async function spGetEstadoListId(token){
-
-  const url =
-    `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists`;
-
-  const r = await fetch(url,{
-    headers:{
-      Authorization:`Bearer ${token}`
-    }
-  });
-
-  const j = await r.json();
-
-  const lista = (j.value || [])
-    .find(l => l.displayName === LIST_ESTADO);
-
-  if(!lista){
-    throw new Error("Lista BovitrackEstado não encontrada");
-  }
-
-  return lista.id;
-}
-
-/* =========================================
    GUARDAR ESTADO
 ========================================= */
 
@@ -432,7 +405,7 @@ async function spSaveEstado(state, token){
 
   console.log("🔥 A guardar estado global...");
 
-  const listId = await spGetEstadoListId(token);
+  const listId = LIST_ESTADO_ID;
 
   const json = JSON.stringify(state);
 
@@ -519,7 +492,7 @@ async function spSaveEstado(state, token){
 
 async function spLoadEstado(token){
 
-  const listId = await spGetEstadoListId(token);
+  const listId = LIST_ESTADO_ID;
 
   const url =
     `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${listId}/items?$expand=fields`;
