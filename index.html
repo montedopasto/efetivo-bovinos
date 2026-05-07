@@ -1238,7 +1238,29 @@ applyAdminMode();
 
   }
 
+  try{
+
+  const token = await Auth.getAccessToken();
+
+  const estadoSP = await spLoadEstado(token);
+
+  if(estadoSP){
+
+    renderAll(estadoSP);
+
+  }else{
+
+    renderAll(Core.loadState() || null);
+
+  }
+
+}catch(err){
+
+  console.error(err);
+
   renderAll(Core.loadState() || null);
+
+}
 
 })();
 
