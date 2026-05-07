@@ -1227,45 +1227,16 @@ applyAdminMode();
 
   try{
 
-    const token = await Auth.getAccessToken();
-
-    const existentesPesagens = await spGetAllPesagens(token);
-
-    console.log("🔥 EXISTENTES:", existentesPesagens);
-
-    PESAGENS_CACHE = Array.from(existentesPesagens.values());
-
-    console.log("🔥 CACHE FINAL:", PESAGENS_CACHE);
+    // carregar google sheets logo no arranque
+    await loadGoogleSheet();
 
   }catch(err){
 
-    console.error("❌ Erro ao carregar pesagens:", err);
-
-  }
-
-  try{
-
-  const token = await Auth.getAccessToken();
-
-  const estadoSP = await spLoadEstado(token);
-
-  if(estadoSP){
-
-    renderAll(estadoSP);
-
-  }else{
+    console.error("❌ Erro inicial:", err);
 
     renderAll(Core.loadState() || null);
 
   }
-
-}catch(err){
-
-  console.error(err);
-
-  renderAll(Core.loadState() || null);
-
-}
 
 })();
 
@@ -1420,8 +1391,6 @@ async function loadGoogleSheet(){
   }
 
 }
-
-loadGoogleSheet();
 
 })();
 </script>
