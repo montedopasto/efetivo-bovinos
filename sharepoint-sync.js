@@ -3,6 +3,7 @@
 // =============================
 
 const SITE_ID = "montedopastopt.sharepoint.com,37408cfe-6b54-4cad-a7b7-c735c2a1adec,8fb9c4d3-c9b7-4d95-b563-9a81f2dd4f76";
+const SP_SITE = "https://montedopastopt.sharepoint.com/sites/Bovitrack";
 const LIST_ANIMAIS_ID = "b15b7096-1e78-47ee-ad00-45afa575736a";
 const LIST_PESAGENS_ID = "b67fc146-880a-4eb1-b578-5d24de132853";
 let isSyncRunning = false;
