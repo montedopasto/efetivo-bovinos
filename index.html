@@ -713,20 +713,17 @@ async function createOperationalAlert(grupo, prioridade){
     );
 
     await fetch(
-      "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          action:"create_alert",
-          grupo,
-          prioridade,
-          prazo:prazo.toISOString()
-        })
-      }
-    );
+  "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
+  {
+    method:"POST",
+    body:JSON.stringify({
+      action:"create_alert",
+      grupo,
+      prioridade,
+      prazo:prazo.toISOString()
+    })
+  }
+);
 
     await loadAlertasOperacionais();
 
