@@ -563,6 +563,21 @@ document.addEventListener("keydown", e=>{
     }
     const gruposAtivos = new Set();
     for(const r of list){
+      const grupoNome =
+  r.text
+    .replace("🔥","")
+    .replace("⚠️","")
+    .replace("🟢","")
+    .split("—")[0]
+    .trim();
+
+gruposAtivos.add(grupoNome);
+
+let incidente =
+  ALERTAS_DB.find(a =>
+    a.grupo === grupoNome &&
+    a.estado !== "fechado"
+  );
       const div = document.createElement("div");
       div.className = `alert-row ${r.level}`;
       let action = "";
