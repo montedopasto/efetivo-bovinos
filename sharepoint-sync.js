@@ -396,40 +396,70 @@ await new Promise(r => setTimeout(r, 50));
 
 const LIST_ESTADO = "BovitrackEstado";
 
-/* GUARDAR ESTADO */
+/* =========================================
+   OBTER ID DA LISTA
+========================================= */
+
+async function spGetEstadoListId(token){
+
+  const url =
+    `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists`;
+
+  const r = await fetch(url,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  });
+
+  const j = await r.json();
+
+  const lista = (j.value || [])
+    .find(l => l.displayName === LIST_ESTADO);
+
+  if(!lista){
+    throw new Error("Lista BovitrackEstado não encontrada");
+  }
+
+  return lista.id;
+}
+
+/* =========================================
+   GUARDAR ESTADO
+========================================= */
+
 async function spSaveEstado(state, token){
+
+  console.log("🔥 A guardar estado global...");
+
+  const listId = await spGetEstadoListId(token);
 
   const json = JSON.stringify(state);
 
-  // procurar registo existente
+  // procurar item existente
   const urlFind =
-    `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items?$top=1`;
+    `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${listId}/items?$expand=fields`;
 
-  const rFind = await fetch(urlFind, {
+  const rFind = await fetch(urlFind,{
     headers:{
-      "Authorization":`Bearer ${token}`,
-      "Accept":"application/json;odata=nometadata"
+      Authorization:`Bearer ${token}`
     }
   });
 
   const jFind = await rFind.json();
 
-  // já existe
+  // UPDATE
   if(jFind.value && jFind.value.length){
 
-    const itemId = jFind.value[0].Id;
+    const itemId = jFind.value[0].id;
 
     const urlUpdate =
-      `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items(${itemId})`;
+      `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${listId}/items/${itemId}/fields`;
 
-    await fetch(urlUpdate,{
-      method:"POST",
+    const r = await fetch(urlUpdate,{
+      method:"PATCH",
       headers:{
-        "Authorization":`Bearer ${token}`,
-        "Accept":"application/json;odata=nometadata",
-        "Content-Type":"application/json;odata=nometadata",
-        "IF-MATCH":"*",
-        "X-HTTP-Method":"MERGE"
+        Authorization:`Bearer ${token}`,
+        "Content-Type":"application/json"
       },
       body:JSON.stringify({
         Title:"ESTADO_GLOBAL",
@@ -437,42 +467,65 @@ async function spSaveEstado(state, token){
         DataAtualizacao: new Date().toISOString()
       })
     });
+
+    if(!r.ok){
+
+      const txt = await r.text();
+
+      console.error(txt);
+
+      throw new Error("Erro ao atualizar estado");
+    }
 
   }else{
 
-    // criar
+    // CREATE
     const urlCreate =
-      `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items`;
+      `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${listId}/items`;
 
-    await fetch(urlCreate,{
+    const r = await fetch(urlCreate,{
       method:"POST",
       headers:{
-        "Authorization":`Bearer ${token}`,
-        "Accept":"application/json;odata=nometadata",
-        "Content-Type":"application/json;odata=nometadata"
+        Authorization:`Bearer ${token}`,
+        "Content-Type":"application/json"
       },
       body:JSON.stringify({
-        Title:"ESTADO_GLOBAL",
-        JSONEstado: json,
-        DataAtualizacao: new Date().toISOString()
+        fields:{
+          Title:"ESTADO_GLOBAL",
+          JSONEstado: json,
+          DataAtualizacao: new Date().toISOString()
+        }
       })
     });
+
+    if(!r.ok){
+
+      const txt = await r.text();
+
+      console.error(txt);
+
+      throw new Error("Erro ao criar estado");
+    }
 
   }
 
   console.log("✅ Estado global guardado");
 }
 
-/* LER ESTADO */
+/* =========================================
+   LER ESTADO
+========================================= */
+
 async function spLoadEstado(token){
 
+  const listId = await spGetEstadoListId(token);
+
   const url =
-    `${SP_SITE}/_api/web/lists/GetByTitle('${LIST_ESTADO}')/items?$top=1`;
+    `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/lists/${listId}/items?$expand=fields`;
 
   const r = await fetch(url,{
     headers:{
-      "Authorization":`Bearer ${token}`,
-      "Accept":"application/json;odata=nometadata"
+      Authorization:`Bearer ${token}`
     }
   });
 
@@ -484,9 +537,11 @@ async function spLoadEstado(token){
 
   const item = j.value[0];
 
-  if(!item.JSONEstado){
+  if(!item.fields?.JSONEstado){
     return null;
   }
 
-  return JSON.parse(item.JSONEstado);
+  console.log("✅ Estado carregado do SharePoint");
+
+  return JSON.parse(item.fields.JSONEstado);
 }
