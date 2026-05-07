@@ -577,11 +577,27 @@ let incidente =
     a.grupo === grupoNome &&
     a.estado !== "fechado"
   );
-      const div = document.createElement("div");
-      div.className =
-  `alert-row alert-live ${r.level}`;
+      let visualLevel = r.level;
+let monitoringBadge = "";
 
-if(r.level === "bad"){
+if(
+  incidente &&
+  incidente.estado === "em_analise"
+){
+  visualLevel = "monitoring";
+
+  monitoringBadge = `
+    <span class="monitor-badge">
+      EM MONITORIZAÇÃO
+    </span>
+  `;
+}
+
+const div = document.createElement("div");
+div.className =
+  `alert-row alert-live ${visualLevel}`;
+
+if(visualLevel === "bad"){
   div.classList.add("critical");
 }
       let action = "";
@@ -594,9 +610,15 @@ else if(r.level === "warn"){
 }
 
 div.innerHTML = `
-  <b class="${r.level}">
+  <div class="alert-title-row">
+
+  <b class="${visualLevel}">
     ${Core.escapeHtml(r.text)}
   </b>
+
+  ${monitoringBadge}
+
+</div>
 
   <div class="small">
     ${Core.escapeHtml(r.meta)}
