@@ -595,12 +595,70 @@ else if(r.level === "warn"){
 }
 
 div.innerHTML = `
-  <b class="${r.level}">${Core.escapeHtml(r.text)}</b>
+  <b class="${r.level}">
+    ${Core.escapeHtml(r.text)}
+  </b>
+
   <div class="small">
-  ${Core.escapeHtml(r.meta)}
-  ${r.pctBad != null ? `<br>🔴 críticos: <b>${r.pctBad.toFixed(0)}%</b>` : ""}
-</div>
-  ${action ? `<div class="small"><b>${action}</b></div>` : ""}
+    ${Core.escapeHtml(r.meta)}
+
+    ${
+      r.pctBad != null
+      ? `<br>🔴 críticos: <b>${r.pctBad.toFixed(0)}%</b>`
+      : ""
+    }
+  </div>
+
+  ${
+    action
+    ? `
+      <div class="small">
+        <b>${action}</b>
+      </div>
+    `
+    : ""
+  }
+
+  ${
+    incidente
+    ? `
+      <div class="alert-meta">
+
+        👤 Responsável:
+        <b>${incidente.responsavel || "—"}</b>
+
+        <br>
+
+        📝 Última ação:
+        ${incidente.acao || "Sem ação"}
+
+        <br>
+
+        <span class="alert-prazo">
+          prazo:
+          ${
+            incidente.prazo
+            ? new Date(incidente.prazo)
+                .toLocaleDateString("pt-PT")
+            : "—"
+          }
+        </span>
+
+      </div>
+    `
+    : ""
+  }
+
+  <div class="alert-actions">
+
+    <button
+      class="btnResolve"
+      onclick="resolverAlerta('${grupoNome}')"
+    >
+      Resolver
+    </button>
+
+  </div>
 `;
 
 alertsEl.appendChild(div);
