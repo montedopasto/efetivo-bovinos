@@ -462,15 +462,32 @@ const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null
   const pAtual = parseNumber(cols[i_patual]);
 
       let gmdInd = NaN;
-      if(dAnt && dAtual && Number.isFinite(pAnt) && Number.isFinite(pAtual)){
-        const d = daysBetweenUTC(dAnt, dAtual);
-        if(Number.isFinite(d) && d > 0){
-          gmdInd = (pAtual - pAnt) / d;
-          if(Number.isFinite(gmdInd)){
-            (gmdIndSamples[grupo] ||= []).push(gmdInd);
-          }
-        }
-      }
+
+if(dAnt && dAtual && Number.isFinite(pAnt) && Number.isFinite(pAtual)){
+
+  const d = daysBetweenUTC(dAnt, dAtual);
+
+  if(Number.isFinite(d) && d > 0){
+
+    gmdInd = (pAtual - pAnt) / d;
+
+    // 🔥 VALIDAR GMD
+    const gmdValido =
+      Number.isFinite(gmdInd) &&
+      gmdInd >= 0 &&
+      gmdInd <= 3;
+
+    // apenas guardar GMDs válidos
+    if(gmdValido){
+      (gmdIndSamples[grupo] ||= []).push(gmdInd);
+    }
+    else{
+      gmdInd = NaN;
+    }
+
+  }
+
+}
 
       if(dAtual){
         periodKeys.add(`${isoDateUTC(dAtual)}|${isoDateUTC(todayUTC)}`);
