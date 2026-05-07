@@ -763,10 +763,14 @@ async function resolverAlerta(grupo){
   const responsavel =
     prompt("Responsável:");
 
-  await fetch(
+ await fetch(
   "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec",
   {
     method:"POST",
+    mode:"no-cors",
+    headers:{
+      "Content-Type":"text/plain"
+    },
     body:JSON.stringify({
       action:"update_alert",
       id:incidente.id,
