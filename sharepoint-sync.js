@@ -407,7 +407,14 @@ async function spSaveEstado(state, token){
 
   const listId = LIST_ESTADO_ID;
 
-  const json = JSON.stringify(state);
+  const estadoCompacto = {
+  generated_at: state.generated_at,
+  meta: state.meta,
+  animalsOut: state.animalsOut,
+  groupsOut: state.groupsOut
+};
+
+const json = JSON.stringify(estadoCompacto);
 
   // procurar item existente
   const urlFind =
