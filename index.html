@@ -257,7 +257,45 @@ button:hover{
 .alert-row.ok{
   border-color:var(--green);
 }
+.alert-row.monitoring{
+  border-color:#2563eb;
+  background:linear-gradient(
+    135deg,
+    #eff6ff,
+    #dbeafe
+  );
 
+  box-shadow:
+    0 0 18px rgba(37,99,235,.18);
+}
+
+.alert-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.monitor-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  padding:6px 12px;
+
+  border-radius:999px;
+
+  background:#2563eb;
+  color:white;
+
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.4px;
+
+  box-shadow:
+    0 4px 12px rgba(37,99,235,.25);
+}
 /* TABLE */
 
 table{
