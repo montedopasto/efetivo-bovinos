@@ -462,6 +462,7 @@ O alerta do grupo ativa quando:<br>
 
 <script src="auth.js"></script>
 <script src="sharepoint-sync.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="core.js"></script>
 <script>
 (function(){
@@ -1363,14 +1364,60 @@ initAuthUI();
 
 async function loadGoogleSheet(){
 
-  const url =
-    "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec";
+  try{
 
-  const r = await fetch(url);
+    statusEl.innerHTML = "A carregar Google Sheets...";
 
-  const rows = await r.json();
+    const url =
+      "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec";
 
-  console.log("DADOS GOOGLE:", rows);
+    const r = await fetch(url);
+
+    const rows = await r.json();
+
+    console.log("DADOS GOOGLE:", rows);
+
+    if(!rows || !rows.length){
+      throw new Error("Google Sheets vazio");
+    }
+
+    // transformar JSON -> CSV
+    const csv = Papa.unparse(rows);
+
+    // usar motor atual do BOVITRACK
+    const st = await Core.importCSVText(csv, {
+
+      onProgress:(p)=>{
+
+        if(p.phase === "parse"){
+          statusEl.innerHTML =
+            `A processar Google Sheets... ${p.done}/${p.total}`;
+        }
+
+      }
+
+    });
+
+    // render dashboard
+    renderAll(st);
+
+    // guardar local
+    localStorage.setItem(
+      "bovitrack_state",
+      JSON.stringify(st)
+    );
+
+    statusEl.innerHTML =
+      "Google Sheets carregado ✅";
+
+  }catch(err){
+
+    console.error(err);
+
+    statusEl.innerHTML =
+      "Erro ao carregar Google Sheets ❌";
+
+  }
 
 }
 
