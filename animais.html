@@ -190,7 +190,14 @@ if(a.dataEntrada){
 
 <td>${dof}</td>
 
-<td>${Core.escapeHtml(a.dataAtual)}</td>
+<td>
+  ${
+    a.dataAtual
+    ? new Date(a.dataAtual)
+        .toLocaleDateString("pt-PT")
+    : "—"
+  }
+</td>
 
 <td>${Core.escapeHtml(a.temp)}</td>
       <td style="font-weight:700">
