@@ -177,7 +177,14 @@ if(a.dataEntrada){
       <td>${Core.escapeHtml(a.sexo)}</td>
       <td>${Core.escapeHtml(a.pesoAnterior || "—")}</td>
 
-<td>${Core.escapeHtml(a.dataEntrada || "—")}</td>
+<td>
+  ${
+    a.dataEntrada
+    ? new Date(a.dataEntrada)
+        .toLocaleDateString("pt-PT")
+    : "—"
+  }
+</td>
 
 <td>${Core.escapeHtml(a.pesoAtual)}</td>
 
