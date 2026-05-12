@@ -960,12 +960,35 @@ function buildSmartPlanning(state, targets){
 
   grupo: g.name,
 
-  sexo:
-    g.m > 0 && g.f === 0
-      ? "M"
-      : g.f > 0 && g.m === 0
-        ? "F"
-        : "MF",
+  sexo:(()=>{
+
+  const total =
+    (g.m || 0) + (g.f || 0);
+
+  if(total === 0){
+    return "MF";
+  }
+
+  const pctM =
+    (g.m || 0) / total;
+
+  const pctF =
+    (g.f || 0) / total;
+
+  // ≥90% machos
+  if(pctM >= 0.90){
+    return "M";
+  }
+
+  // ≥90% fêmeas
+  if(pctF >= 0.90){
+    return "F";
+  }
+
+  // equilibrado
+  return "MF";
+
+})(),
 
   totalAnimais:
     (g.m || 0) + (g.f || 0),
