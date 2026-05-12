@@ -176,12 +176,62 @@ function renderSmartCards(state, targets){
     div.className = cls;
 
     div.innerHTML = `
-      <b>${Core.escapeHtml(s.grupo)}</b><br>
-      <span><b>Ação:</b> ${Core.escapeHtml(s.acao)}</span><br>
-      <span><b>Estado:</b> ${Core.escapeHtml(s.estado)}</span><br>
-      <span class="small">${Core.escapeHtml(s.nota)}</span><br>
-      <span class="pill">⏳ ${Core.safeInt(s.diasPrevistos)} dias</span>
-    `;
+  <b style="font-size:18px">
+    ${Core.escapeHtml(s.grupo)}
+  </b>
+
+  <br>
+
+  <span>
+    <b>Ação:</b>
+    ${Core.escapeHtml(s.acao)}
+  </span>
+
+  <br>
+
+  <span>
+    <b>Estado:</b>
+    ${Core.escapeHtml(s.estado)}
+  </span>
+
+  <div style="
+    margin-top:10px;
+    font-size:13px;
+    color:#475569;
+    line-height:1.5;
+  ">
+
+    ${
+      s.sexo === "M"
+      ? "🐂 Machos"
+      : s.sexo === "F"
+        ? "🐄 Fêmeas"
+        : "🐂🐄 Misto"
+    }
+
+    · <b>${s.totalAnimais || 0}</b> animais
+
+    <br>
+
+    ✅ <b>${s.prontos || 0}</b>
+    ${
+      (s.prontos || 0) === 1
+      ? "pronto"
+      : "prontos"
+    }
+
+  </div>
+
+  <span class="small">
+    ${Core.escapeHtml(s.nota)}
+  </span>
+
+  <br>
+
+  <span class="pill">
+    ⏳ ${Core.safeInt(s.diasPrevistos)} dias
+  </span>
+`;
 
     smartCardsEl.appendChild(div);
   }
