@@ -957,13 +957,29 @@ function buildSmartPlanning(state, targets){
     }
 
     suggestions.push({
-      grupo: g.name,
-      prioridade,
-      acao,
-      nota,
-      diasPrevistos: g.minDays,
-      estado: g.estadoTexto
-    });
+
+  grupo: g.name,
+
+  sexo:
+    g.m > 0 && g.f === 0
+      ? "M"
+      : g.f > 0 && g.m === 0
+        ? "F"
+        : "MF",
+
+  totalAnimais:
+    (g.m || 0) + (g.f || 0),
+
+  prontos:
+    g.prontos || 0,
+
+  prioridade,
+  acao,
+  nota,
+  diasPrevistos: g.minDays,
+  estado: g.estadoTexto
+
+});
   }
 
   const order = { alta:0, media:1, baixa:2 };
