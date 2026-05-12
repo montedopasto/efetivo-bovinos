@@ -256,6 +256,8 @@ function renderSmartCards(state, targets){
 
     const rows = Core.computeForecast(state, targets);
 
+console.table(rows);
+
 renderSmartCards(state, targets);
 
     if(!rows.length){
