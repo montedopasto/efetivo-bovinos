@@ -1022,25 +1022,31 @@ div.innerHTML = `
 
     <div class="
   alert-kpi-value
+
   ${
-    grupoData?.tendenciaTexto === "Estável"
-      ? "trend-ok"
-      : grupoData?.tendenciaTexto === "A melhorar"
-        ? "trend-warn"
-        : grupoData?.tendenciaTexto === "Piorar"
-          ? "trend-bad"
-          : ""
+    (grupoData?.tendenciaTexto || "")
+      .toLowerCase()
+      .includes("est")
+        ? "trend-ok"
+
+        : (grupoData?.tendenciaTexto || "")
+            .toLowerCase()
+            .includes("melhor")
+
+            ? "trend-warn"
+
+            : (grupoData?.tendenciaTexto || "")
+                .toLowerCase()
+                .includes("pior")
+
+                ? "trend-bad"
+
+                : ""
   }
 ">
 
   ${
-    grupoData?.tendenciaTexto === "Estável"
-      ? "🟢 Estável"
-      : grupoData?.tendenciaTexto === "A melhorar"
-        ? "🟡 A melhorar"
-        : grupoData?.tendenciaTexto === "Piorar"
-          ? "🔴 Piorar"
-          : "—"
+    grupoData?.tendenciaTexto || "Sem tendência"
   }
 
 </div>
