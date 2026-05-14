@@ -104,15 +104,20 @@ function safeInt(x){
     return ["— (sem histórico)","muted", 9, "none"];
   }
 
-  const r = gmdInd / gmdMediaGrupo;
+  // arredondar para evitar micro diferenças invisíveis
+  gmdInd = Number(gmdInd.toFixed(2));
+  gmdMediaGrupo = Number(gmdMediaGrupo.toFixed(2));
+
+  // diferença absoluta para a média do grupo
+  const diff = gmdMediaGrupo - gmdInd;
 
   // 🟢 NORMAL
-  if(r >= 0.90){
+  if(diff <= 0.10){
     return ["🟢 Normal","ok", 3, "g"];
   }
 
   // 🟡 A VIGIAR
-  if(r >= 0.75){
+  if(diff <= 0.25){
     return ["🟡 A vigiar","warn", 2, "o"];
   }
 
