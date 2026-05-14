@@ -828,11 +828,57 @@ if (
 g.estadoAlim = estadoAlimGrupo;
 
   const totalStatus = g.ok + g.warn + g.bad;
-  g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
+  const totalStatus = g.ok + g.warn + g.bad;
+g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
 
-  g.sortKey = (g.bad*1000) + (g.warn*100) - (g.ok*10);
+/* =========================
+   TENDÊNCIA OPERACIONAL
+========================= */
 
-  return g;
+let tendencia = "estavel";
+let tendenciaTexto = "Estável ➖";
+
+const gmdMedioGrupo = (()=>{
+
+  const vals = [];
+
+  if(Number.isFinite(g.avgGmdM)){
+    vals.push(g.avgGmdM);
+  }
+
+  if(Number.isFinite(g.avgGmdF)){
+    vals.push(g.avgGmdF);
+  }
+
+  if(!vals.length) return NaN;
+
+  return vals.reduce((a,b)=>a+b,0) / vals.length;
+
+})();
+
+if(Number.isFinite(gmdMedioGrupo)){
+
+  if(gmdMedioGrupo < 1.0){
+
+    tendencia = "piorar";
+    tendenciaTexto = "A piorar 📉";
+
+  }
+  else if(gmdMedioGrupo >= 1.3){
+
+    tendencia = "melhorar";
+    tendenciaTexto = "A melhorar 📈";
+
+  }
+
+}
+
+g.tendencia = tendencia;
+g.tendenciaTexto = tendenciaTexto;
+
+g.sortKey = (g.bad*1000) + (g.warn*100) - (g.ok*10);
+
+return g;
 
 }).sort((a,b)=>b.sortKey-a.sortKey || b.risk-a.risk || a.name.localeCompare(b.name));
 st.animalsOut = animalsOut;
