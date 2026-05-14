@@ -271,7 +271,7 @@ button:hover{
 
   min-height:300px;
 
-  max-height:300px;
+  max-height:260px;
 
   display:flex;
 
@@ -322,22 +322,30 @@ button:hover{
 
 .alert-title{
 
-  font-size:16px;
+  font-size:13px;
 
   font-weight:900;
 
-  line-height:1;
+  line-height:1.1;
 
-  letter-spacing:-0.3px;
+  letter-spacing:-0.2px;
+
+  color:#b91c1c;
+
+  text-transform:uppercase;
 }
 
 .alert-subtitle{
 
-  margin-top:4px;
+  margin-top:2px;
 
-  color:#475569;
+  color:#64748b;
 
-  font-size:11px;
+  font-size:10px;
+
+  font-weight:700;
+
+  line-height:1.2;
 }
 
 .alert-kpis{
@@ -360,25 +368,33 @@ button:hover{
 
   border-radius:10px;
 
-  padding:6px 8px;
+  padding:8px;
 
   min-width:unset;
 }
 
 .alert-kpi-label{
-  font-size:11px;
+
+  font-size:9px;
+
   color:#64748b;
+
   text-transform:uppercase;
-  letter-spacing:.4px;
+
+  letter-spacing:.3px;
+
+  font-weight:800;
 }
 
 .alert-kpi-value{
 
-  font-size:12px;
+  font-size:15px;
 
-  font-weight:800;
+  font-weight:900;
 
-  margin-top:2px;
+  margin-top:1px;
+
+  line-height:1;
 }
 
 .alert-diagnosis{
@@ -468,11 +484,13 @@ button:hover{
 
 .alert-meta{
 
-  font-size:11px;
+  font-size:10px;
 
-  color:#475569;
+  color:#64748b;
 
-  line-height:1.5;
+  line-height:1.4;
+
+  font-weight:700;
 }
 
 .alert-live.critical{
@@ -578,6 +596,16 @@ th.left, td.left{text-align:left}
   nav, button, input, .small{display:none !important}
   body{background:#fff;color:#000}
   .card{background:#fff;border:1px solid #000}
+}
+.alert-actions button{
+
+  width:100%;
+
+  padding:8px;
+
+  font-size:12px;
+
+  border-radius:10px;
 }
 </style>
 </head>
