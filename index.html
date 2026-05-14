@@ -1430,9 +1430,9 @@ ${
       state?.baselinesIA?.[g.perfilIA];
 
     let gmdAtual =
-      sexoDominante === "M"
-        ? g.avgGmdM
-        : g.avgGmdF;
+  ((g.m || 0) >= (g.f || 0))
+    ? g.avgGmdM
+    : g.avgGmdF;
 
     if(
       !baseline?.media ||
