@@ -800,72 +800,154 @@ else if(r.level === "warn"){
   action = "👉 Ação: monitorizar crescimento nos próximos dias.";
 }
 
-div.innerHTML = `
-  <div class="alert-title-row">
+const riskPct =
+  parseFloat(
+    (r.meta.match(/(\d+)%/) || [])[1]
+  ) || 0;
 
-  <b class="${visualLevel}">
-    ${Core.escapeHtml(r.text)}
-  </b>
+const riskClass =
+  visualLevel === "bad"
+    ? "bad"
+    : visualLevel === "warn"
+      ? "warn"
+      : "ok";
+
+div.innerHTML = `
+
+<div class="alert-header">
+
+  <div>
+
+    <div class="alert-title">
+      ${Core.escapeHtml(grupoNome)}
+    </div>
+
+    <div class="alert-subtitle">
+      ${Core.escapeHtml(r.text)}
+    </div>
+
+  </div>
 
   ${monitoringBadge}
 
 </div>
 
-  <div class="small">
-    ${Core.escapeHtml(r.meta)}
+<div class="alert-kpis">
 
-    ${
-      r.pctBad != null
-      ? `<br>🔴 críticos: <b>${r.pctBad.toFixed(0)}%</b>`
-      : ""
-    }
+  <div class="alert-kpi">
+    <div class="alert-kpi-label">
+      Risco
+    </div>
+
+    <div class="alert-kpi-value">
+      ${riskPct}%
+    </div>
   </div>
 
-  ${
-    action
-    ? `
-      <div class="small">
-        <b>${action}</b>
-      </div>
-    `
-    : ""
-  }
+  <div class="alert-kpi">
+    <div class="alert-kpi-label">
+      Estado
+    </div>
 
-  ${
-    incidente
-    ? `
-      <div class="alert-meta">
-
-        👤 Responsável:
-        <b>${incidente.responsavel || "—"}</b>
-
-        <br>
-
-        📝 Última ação:
-        ${incidente.acao || "Sem ação"}
-
-        <br>
-
-        ${
-  incidente.estado === "em_analise"
-  ? `
-    <span class="alert-prazo">
-      prazo:
+    <div class="alert-kpi-value">
       ${
-        incidente.prazo
-        ? new Date(incidente.prazo)
-            .toLocaleDateString("pt-PT")
-        : "—"
+        visualLevel === "bad"
+          ? "Crítico"
+          : visualLevel === "warn"
+            ? "Atenção"
+            : "Normal"
       }
-    </span>
-  `
-  : ""
-}
+    </div>
+  </div>
 
-      </div>
-    `
-    : ""
+  <div class="alert-kpi">
+    <div class="alert-kpi-label">
+      Animais
+    </div>
+
+    <div class="alert-kpi-value">
+      ${
+        (r.meta.match(/🐄\s(\d+\/\d+)/) || [])[1] || "—"
+      }
+    </div>
+  </div>
+
+</div>
+
+<div class="alert-riskbar">
+  <div
+    class="alert-riskfill ${riskClass}"
+    style="width:${riskPct}%"
+  ></div>
+</div>
+
+<div class="alert-diagnosis">
+
+  ${
+    visualLevel === "bad"
+      ? "🔥 O grupo apresenta sinais críticos de desempenho. Recomenda-se validação imediata da alimentação, stress térmico, última pesagem e evolução recente."
+      : visualLevel === "warn"
+        ? "⚠️ O grupo apresenta tendência de risco moderado. Recomenda-se monitorização reforçada nos próximos dias."
+        : "🟢 O grupo encontra-se dentro dos parâmetros esperados."
   }
+
+</div>
+
+<div class="alert-actions-ai">
+
+  ${
+    visualLevel === "bad"
+      ? `
+        <div class="alert-action-ai">
+          👉 Rever plano alimentar e eficiência de conversão.
+        </div>
+
+        <div class="alert-action-ai">
+          👉 Validar intervalo desde última pesagem.
+        </div>
+
+        <div class="alert-action-ai">
+          👉 Confirmar impacto térmico e adaptação do lote.
+        </div>
+      `
+      : `
+        <div class="alert-action-ai">
+          👉 Continuar monitorização operacional.
+        </div>
+      `
+  }
+
+</div>
+
+<div class="alert-footer">
+
+  <div class="alert-meta">
+
+    👤 Responsável:
+    <b>${incidente?.responsavel || "—"}</b>
+
+    <br>
+
+    📝 Última ação:
+    ${incidente?.acao || "Sem ação"}
+
+    <br>
+
+    ${
+      incidente?.estado === "em_analise"
+      ? `
+        ⏳ Prazo:
+        ${
+          incidente.prazo
+            ? new Date(incidente.prazo)
+                .toLocaleDateString("pt-PT")
+            : "—"
+        }
+      `
+      : ""
+    }
+
+  </div>
 
   <div class="alert-actions">
 
@@ -877,6 +959,8 @@ div.innerHTML = `
     </button>
 
   </div>
+
+</div>
 `;
 if(
   !incidente &&
