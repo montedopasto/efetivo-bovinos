@@ -692,6 +692,9 @@ pesoAnteriorNum: Number.isFinite(r.pAnt) ? r.pAnt : null,
 pesoAtualNum: Number.isFinite(r.pAtual)
   ? r.pAtual
   : null,
+gmdReal: Number.isFinite(r.gmdInd)
+  ? r.gmdInd.toFixed(2)
+  : "—",        
         dataAtual: r.dAtual ? isoDateUTC(r.dAtual) : null,
         temp: Number.isFinite(meteo.tmean) ? `${meteo.tmean.toFixed(1)} °C` : "—",
         fatorClima: fc,
