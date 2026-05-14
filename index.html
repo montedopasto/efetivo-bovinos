@@ -1406,7 +1406,22 @@ if(animaisGrupo.length){
 <td>${ultimaPesagem}</td>
 <td>${avgDOF}</td>
 <td>${Number.isFinite(g.avgDmi) ? g.avgDmi.toFixed(2) + " kg/dia" : "—"}</td>
-<td>${g.estadoAlim || "—"}</td>
+<td>
+
+  <div>
+    ${g.estadoAlim || "—"}
+  </div>
+
+  <div style="
+    margin-top:4px;
+    font-size:11px;
+    color:#64748b;
+    font-weight:700;
+  ">
+    IA: ${perfilIA}
+  </div>
+
+</td>
       <td class="left">
         <div class="stackbar" title="Distribuição do estado (apenas com 2 pesagens)">
           <div class="seg g" style="width:${green}%"></div>
