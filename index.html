@@ -1295,7 +1295,8 @@ if(avgDOF !== "—"){
 }
 
 const perfilIA =
-  `${sexoDominante}-${faseEngorda}`;    
+  `${sexoDominante}-${faseEngorda}`; 
+g.perfilIA = perfilIA;    
 console.log("GRUPO:", g.name);
 console.table(animaisGrupo);
 /* =========================
@@ -1419,6 +1420,56 @@ if(animaisGrupo.length){
     font-weight:700;
   ">
     IA: ${perfilIA}
+
+<br>
+
+${
+  (() => {
+
+    const baseline =
+      state?.baselinesIA?.[perfilIA];
+
+    let gmdAtual =
+      sexoDominante === "M"
+        ? g.avgGmdM
+        : g.avgGmdF;
+
+    if(
+      !baseline?.media ||
+      !Number.isFinite(gmdAtual)
+    ){
+      return "";
+    }
+
+    const desvio =
+      (
+        (
+          (gmdAtual - baseline.media)
+          / baseline.media
+        ) * 100
+      );
+
+    let cor = "#15803d";
+
+    if(desvio < -15){
+      cor = "#b91c1c";
+    }
+    else if(desvio < -5){
+      cor = "#d97706";
+    }
+
+    return `
+      <span style="
+        color:${cor};
+        font-weight:800;
+      ">
+        ${desvio.toFixed(1)}%
+        vs IA
+      </span>
+    `;
+
+  })()
+}
   </div>
 
 </td>
@@ -1440,6 +1491,54 @@ if(animaisGrupo.length){
 
   function renderGroups(state){
     tbodyGroups.innerHTML = "";
+    /* =========================
+   IA — BASELINES DINÂMICOS
+========================= */
+
+const baselinesIA = {};
+
+(state?.groupsOut || []).forEach(g => {
+
+  if(!g.perfilIA) return;
+
+  let gmd = null;
+
+  if((g.m || 0) >= (g.f || 0)){
+    gmd = g.avgGmdM;
+  }else{
+    gmd = g.avgGmdF;
+  }
+
+  if(!Number.isFinite(gmd)) return;
+
+  if(!baselinesIA[g.perfilIA]){
+
+    baselinesIA[g.perfilIA] = {
+      total:0,
+      count:0
+    };
+
+  }
+
+  baselinesIA[g.perfilIA].total += gmd;
+  baselinesIA[g.perfilIA].count++;
+
+});
+
+/* média esperada por perfil */
+
+Object.keys(baselinesIA).forEach(k => {
+
+  const b = baselinesIA[k];
+
+  b.media =
+    b.count
+      ? b.total / b.count
+      : null;
+
+});
+
+state.baselinesIA = baselinesIA;
     const groups = state?.groupsOut || [];
     if(!groups.length){
       const tr = document.createElement("tr");
