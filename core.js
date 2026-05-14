@@ -95,12 +95,30 @@ function safeInt(x){
 }
   /* ===================== REGRAS (iguais à base estável) ===================== */
   function performanceStatus(gmdInd, gmdMediaGrupo){
-    if(!Number.isFinite(gmdInd) || !Number.isFinite(gmdMediaGrupo) || gmdMediaGrupo<=0) return ["— (sem histórico)","muted", 9, "none"];
-    const r = gmdInd / gmdMediaGrupo;
-    if(r >= 0.95) return ["🟢 Normal","ok", 3, "g"];
-    if(r >= 0.80) return ["🟡 A vigiar","warn", 2, "o"];
-    return ["🔴 Atrasado","bad", 1, "r"];
+
+  if(
+    !Number.isFinite(gmdInd) ||
+    !Number.isFinite(gmdMediaGrupo) ||
+    gmdMediaGrupo <= 0
+  ){
+    return ["— (sem histórico)","muted", 9, "none"];
   }
+
+  const r = gmdInd / gmdMediaGrupo;
+
+  // 🟢 NORMAL
+  if(r >= 0.90){
+    return ["🟢 Normal","ok", 3, "g"];
+  }
+
+  // 🟡 A VIGIAR
+  if(r >= 0.75){
+    return ["🟡 A vigiar","warn", 2, "o"];
+  }
+
+  // 🔴 ATRASADO
+  return ["🔴 Atrasado","bad", 1, "r"];
+}
   function confidenceByDays(days){
     if(!Number.isFinite(days)) return ["—","muted"];
     if(days < 14) return ["Alta","ok"];
