@@ -1014,13 +1014,30 @@ div.innerHTML = `
       Tendência
     </div>
 
-    <div class="alert-kpi-value">
+    <div class="
+  alert-kpi-value
+  ${
+    grupoData?.tendenciaTexto === "Estável"
+      ? "trend-ok"
+      : grupoData?.tendenciaTexto === "A melhorar"
+        ? "trend-warn"
+        : grupoData?.tendenciaTexto === "Piorar"
+          ? "trend-bad"
+          : ""
+  }
+">
 
-      ${
-        grupoData?.tendenciaTexto || "—"
-      }
+  ${
+    grupoData?.tendenciaTexto === "Estável"
+      ? "🟢 Estável"
+      : grupoData?.tendenciaTexto === "A melhorar"
+        ? "🟡 A melhorar"
+        : grupoData?.tendenciaTexto === "Piorar"
+          ? "🔴 Piorar"
+          : "—"
+  }
 
-    </div>
+</div>
 
   </div>
 
