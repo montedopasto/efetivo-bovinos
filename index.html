@@ -1272,6 +1272,30 @@ function buildRiskBadge(risk){
 
 const animaisGrupo = (state?.animalsOut || [])
   .filter(a => a.grupo === g.name);
+/* =========================
+   PERFIL IA DO GRUPO
+========================= */
+
+const sexoDominante =
+  (g.m || 0) >= (g.f || 0)
+    ? "M"
+    : "F";
+
+let faseEngorda = "crescimento";
+
+if(avgDOF !== "—"){
+
+  if(avgDOF < 15){
+    faseEngorda = "adaptacao";
+  }
+  else if(avgDOF > 60){
+    faseEngorda = "acabamento";
+  }
+
+}
+
+const perfilIA =
+  `${sexoDominante}-${faseEngorda}`;    
 console.log("GRUPO:", g.name);
 console.table(animaisGrupo);
 /* =========================
