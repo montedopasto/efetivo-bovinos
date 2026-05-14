@@ -828,7 +828,6 @@ if (
 g.estadoAlim = estadoAlimGrupo;
 
   const totalStatus = g.ok + g.warn + g.bad;
-  const totalStatus = g.ok + g.warn + g.bad;
 g.risk = totalStatus ? ((g.warn + g.bad) / totalStatus) : 0;
 
 /* =========================
