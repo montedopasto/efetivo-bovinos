@@ -429,6 +429,7 @@ const i_datual = getIndex("data_peso_atual");
 const i_raca = getIndex("raca");
 const i_nif = getIndex("nif");
 const i_dataEntrada = getIndex("data_entrada");
+const i_alocacao = getIndex("alocacao");
 console.log("INDICES:", {
   i_nif,
   i_raca,
@@ -475,6 +476,7 @@ if(!animal){
       const nif = i_nif >= 0 ? clean(cols[i_nif]) : "";
 const raca = i_raca >= 0 ? clean(cols[i_raca]) : "";
 const dataEntrada = i_dataEntrada >= 0 ? parseDatePT(cols[i_dataEntrada]) : null;
+const alocacao = i_alocacao >= 0 ? clean(cols[i_alocacao]) : "";
 
   // 👇 AQUI
   const dNasc = i_nasc >= 0 ? parseDatePT(cols[i_nasc]) : null;
@@ -523,6 +525,7 @@ if(dAnt && dAtual && Number.isFinite(pAnt) && Number.isFinite(pAtual)){
   nif,
   raca,
   dataEntrada,
+  alocacao,
   dNasc,
   dAnt,
   pAnt,
@@ -670,11 +673,13 @@ if (Number.isFinite(dmi) && Number.isFinite(esperadoAlim) && esperadoAlim > 0) {
       animalsOut.push({
   sortKey: estadoSort,
   animal:r.animal,
-  grupo:r.grupo,
-  sexo:r.sexo,
+grupo:r.grupo,
+sexo:r.sexo,
 
-  nif: r.nif || "—",
-  raca: r.raca || "—",
+alocacao: r.alocacao || "",
+
+nif: r.nif || "—",
+raca: r.raca || "—",
 
   // 🔥 CAMPOS CSV ORIGINAIS
   data_entrada: r.dataEntrada ? fmtDate(r.dataEntrada) : null,
