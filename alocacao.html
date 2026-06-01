@@ -402,15 +402,9 @@ function render(){
       Sem dados carregados. Volta ao Dashboard e sincroniza o Google Sheets.
     </div>
   `;
+
   return;
 }
-    output.innerHTML = `
-      <div class="empty">
-        Sem dados carregados. Volta ao Dashboard e sincroniza o Google Sheets.
-      </div>
-    `;
-    return;
-  }
 
   const dataDestino = dataInput.value || hojeISO();
 
