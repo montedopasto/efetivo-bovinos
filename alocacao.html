@@ -395,39 +395,15 @@ function render(){
   const animais = state?.animalsOut || [];
 
   if(!animais.length){
-  totalResumo.innerHTML = `
-  <div class="label">Total geral</div>
+  totalResumo.innerHTML = "";
 
-  <div class="box">
-    <div class="mini">M</div>
-    <div class="value">${totalGeral.m}</div>
-  </div>
-
-  <div class="box">
-    <div class="mini">F</div>
-    <div class="value">${totalGeral.f}</div>
-  </div>
-
-  <div class="box">
-    <div class="mini">Total</div>
-    <div class="value">${totalGeral.total}</div>
-  </div>
-
-  <div class="box">
-    <div class="mini">Peso M</div>
-    <div class="value">${media(totalGeral.pesoM)} kg</div>
-  </div>
-
-  <div class="box">
-    <div class="mini">Peso F</div>
-    <div class="value">${media(totalGeral.pesoF)} kg</div>
-  </div>
-
-  <div class="box">
-    <div class="mini">Peso Global</div>
-    <div class="value">${media(totalGeral.pesoTotal)} kg</div>
-  </div>
-`;  
+  output.innerHTML = `
+    <div class="empty">
+      Sem dados carregados. Volta ao Dashboard e sincroniza o Google Sheets.
+    </div>
+  `;
+  return;
+}
     output.innerHTML = `
       <div class="empty">
         Sem dados carregados. Volta ao Dashboard e sincroniza o Google Sheets.
@@ -547,7 +523,39 @@ lista.forEach(g => {
   totalGeral.pesoF.push(...g.pesoF);
   totalGeral.pesoTotal.push(...g.pesoTotal);
 });
+totalResumo.innerHTML = `
+  <div class="label">Total geral</div>
 
+  <div class="box">
+    <div class="mini">M</div>
+    <div class="value">${totalGeral.m}</div>
+  </div>
+
+  <div class="box">
+    <div class="mini">F</div>
+    <div class="value">${totalGeral.f}</div>
+  </div>
+
+  <div class="box">
+    <div class="mini">Total</div>
+    <div class="value">${totalGeral.total}</div>
+  </div>
+
+  <div class="box">
+    <div class="mini">Peso M</div>
+    <div class="value">${media(totalGeral.pesoM)} kg</div>
+  </div>
+
+  <div class="box">
+    <div class="mini">Peso F</div>
+    <div class="value">${media(totalGeral.pesoF)} kg</div>
+  </div>
+
+  <div class="box">
+    <div class="mini">Peso Global</div>
+    <div class="value">${media(totalGeral.pesoTotal)} kg</div>
+  </div>
+`;
 output.innerHTML = `
   <table class="aloc-table">
     <thead>
