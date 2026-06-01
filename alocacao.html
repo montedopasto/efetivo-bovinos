@@ -394,61 +394,75 @@ function render(){
 
   });
 
-  Object.values(grupos)
-    .sort((a,b)=> b.total - a.total)
-    .forEach(g => {
+  const lista = Object.values(grupos)
+  .sort((a,b)=> b.total - a.total);
 
-      const media = arr =>
-        arr.length
-          ? Math.round(arr.reduce((s,v)=>s+v,0) / arr.length)
-          : "—";
+const media = arr =>
+  arr.length
+    ? Math.round(arr.reduce((s,v)=>s+v,0) / arr.length)
+    : "—";
 
-      const card = document.createElement("div");
-      card.className = "aloc-card";
+const totalGeral = {
+  m:0,
+  f:0,
+  total:0,
+  pesoM:[],
+  pesoF:[],
+  pesoTotal:[]
+};
 
-      card.innerHTML = `
-        <div class="aloc-title">
-          ${g.nome}
-        </div>
+lista.forEach(g => {
+  totalGeral.m += g.m;
+  totalGeral.f += g.f;
+  totalGeral.total += g.total;
+  totalGeral.pesoM.push(...g.pesoM);
+  totalGeral.pesoF.push(...g.pesoF);
+  totalGeral.pesoTotal.push(...g.pesoTotal);
+});
 
-        <div class="kpis">
-          <div class="kpi">
-            <div class="kpi-label">M</div>
-            <div class="kpi-value">${g.m}</div>
-          </div>
+output.innerHTML = `
+  <table class="aloc-table">
+    <thead>
+      <tr>
+        <th rowspan="2">Alocação</th>
+        <th colspan="3">Quantidade</th>
+        <th colspan="3">Peso estimado na data</th>
+      </tr>
+      <tr>
+        <th>M</th>
+        <th>F</th>
+        <th>Total</th>
+        <th>M</th>
+        <th>F</th>
+        <th>Global</th>
+      </tr>
+    </thead>
 
-          <div class="kpi">
-            <div class="kpi-label">F</div>
-            <div class="kpi-value">${g.f}</div>
-          </div>
+    <tbody>
+      ${lista.map(g => `
+        <tr>
+          <td>${g.nome}</td>
+          <td class="num">${g.m}</td>
+          <td class="num">${g.f}</td>
+          <td class="num">${g.total}</td>
+          <td class="peso">${media(g.pesoM)} kg</td>
+          <td class="peso">${media(g.pesoF)} kg</td>
+          <td class="peso">${media(g.pesoTotal)} kg</td>
+        </tr>
+      `).join("")}
 
-          <div class="kpi">
-            <div class="kpi-label">Total</div>
-            <div class="kpi-value">${g.total}</div>
-          </div>
-        </div>
-
-        <div class="weights">
-          <div class="weight-box">
-            <div class="weight-label">Peso M</div>
-            <div class="weight-value">${media(g.pesoM)} kg</div>
-          </div>
-
-          <div class="weight-box f">
-            <div class="weight-label">Peso F</div>
-            <div class="weight-value">${media(g.pesoF)} kg</div>
-          </div>
-
-          <div class="weight-box total">
-            <div class="weight-label">Peso Global</div>
-            <div class="weight-value">${media(g.pesoTotal)} kg</div>
-          </div>
-        </div>
-      `;
-
-      output.appendChild(card);
-
-    });
+      <tr class="total-row">
+        <td>Total</td>
+        <td class="num">${totalGeral.m}</td>
+        <td class="num">${totalGeral.f}</td>
+        <td class="num">${totalGeral.total}</td>
+        <td class="peso">${media(totalGeral.pesoM)} kg</td>
+        <td class="peso">${media(totalGeral.pesoF)} kg</td>
+        <td class="peso">${media(totalGeral.pesoTotal)} kg</td>
+      </tr>
+    </tbody>
+  </table>
+`;
 
 }
 
