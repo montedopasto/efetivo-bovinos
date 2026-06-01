@@ -419,7 +419,33 @@ function render(){
 
   const lista = Object.values(grupos)
   .sort((a,b)=> b.total - a.total);
+const LINHAS_POR_PAGINA = 12;
 
+window.alocacoesTV =
+  lista;
+
+window.paginaAtual =
+  window.paginaAtual || 0;
+
+const totalPaginas =
+  Math.ceil(
+    lista.length /
+    LINHAS_POR_PAGINA
+  );
+
+const inicio =
+  window.paginaAtual *
+  LINHAS_POR_PAGINA;
+
+const fim =
+  inicio +
+  LINHAS_POR_PAGINA;
+
+const listaPagina =
+  lista.slice(
+    inicio,
+    fim
+  );
 const media = arr =>
   arr.length
     ? Math.round(arr.reduce((s,v)=>s+v,0) / arr.length)
@@ -462,7 +488,7 @@ output.innerHTML = `
     </thead>
 
     <tbody>
-      ${lista.map(g => `
+      ${listaPagina.map(g => `
         <tr>
           <td>${g.nome}</td>
           <td class="num">${g.m}</td>
@@ -513,6 +539,22 @@ function startClock(){
 
 startClock();
 render();
+setInterval(()=>{
+
+  if(!window.alocacoesTV) return;
+
+  const totalPaginas =
+    Math.ceil(
+      window.alocacoesTV.length / 12
+    );
+
+  window.paginaAtual =
+    (window.paginaAtual + 1) %
+    totalPaginas;
+
+  render();
+
+},10000);  
 </script>
 
 </body>
