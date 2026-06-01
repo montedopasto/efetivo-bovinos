@@ -96,29 +96,34 @@ nav a{
 .table-wrap{
   margin:0 34px 34px;
   background:white;
-  border:1px solid var(--line);
-  border-radius:18px;
+  border:1px solid #dbe4dc;
+  border-radius:24px;
   overflow:hidden;
-  box-shadow:0 14px 34px rgba(15,23,42,.12);
+  box-shadow:0 18px 45px rgba(15,23,42,.14);
 }
 
 .aloc-table{
   width:100%;
-  border-collapse:collapse;
+  border-collapse:separate;
+  border-spacing:0;
   table-layout:fixed;
 }
 
-.aloc-table thead{
-  background:#3f8f2f;
+.aloc-table thead tr:first-child{
+  background:linear-gradient(135deg,#166534,#2f9e44);
   color:white;
 }
 
+.aloc-table thead tr:nth-child(2){
+  background:#dcfce7;
+  color:#14532d;
+}
+
 .aloc-table th{
-  padding:10px 12px;
-  font-size:18px;
-  font-weight:900;
+  padding:10px 14px;
+  font-size:17px;
+  font-weight:950;
   text-align:center;
-  border-right:1px solid rgba(255,255,255,.25);
 }
 
 .aloc-table th:first-child{
@@ -127,38 +132,41 @@ nav a{
 }
 
 .aloc-table td{
-  padding:9px 12px;
-  font-size:19px;
+  padding:10px 14px;
+  font-size:18px;
   font-weight:800;
   text-align:center;
-  border-bottom:1px solid #dbe4dc;
+  border-bottom:1px solid #e2e8f0;
 }
 
 .aloc-table td:first-child{
   text-align:left;
-  font-weight:900;
+  font-weight:950;
 }
 
 .aloc-table tbody tr:nth-child(odd){
-  background:#f7fbf7;
+  background:#ffffff;
 }
 
 .aloc-table tbody tr:nth-child(even){
-  background:#eef8ee;
+  background:#f0fdf4;
 }
 
-.aloc-table .num{
-  font-variant-numeric:tabular-nums;
+.aloc-table td:nth-child(5){
+  color:#15803d;
 }
 
-.aloc-table .peso{
-  color:#0f172a;
-  font-weight:900;
+.aloc-table td:nth-child(6){
+  color:#2563eb;
+}
+
+.aloc-table td:nth-child(7){
+  color:#c2410c;
 }
 
 .total-row{
-  background:#d9ead3 !important;
-  border-top:3px solid #111;
+  background:#bbf7d0 !important;
+  border-top:4px solid #166534;
 }
 
 .total-row td{
