@@ -418,7 +418,14 @@ function render(){
   });
 
   const lista = Object.values(grupos)
-  .sort((a,b)=> b.total - a.total);
+  .sort((a,b)=>
+    String(a.nome || "")
+      .toLowerCase()
+      .localeCompare(
+        String(b.nome || "").toLowerCase(),
+        "pt"
+      )
+  );
 const LINHAS_POR_PAGINA = 12;
 
 window.alocacoesTV =
