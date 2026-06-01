@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>BOVITRACK — Alocação TV</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+:root{
+  --bg:#f3f7f4;
+  --panel:#ffffff;
+  --green:#2f9e44;
+  --dark:#0f172a;
+  --muted:#64748b;
+  --line:#dbe4dc;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:
+    radial-gradient(circle at 15% 20%, #dcfce7 0%, transparent 45%),
+    radial-gradient(circle at 85% 30%, #bbf7d0 0%, transparent 45%),
+    var(--bg);
+  color:var(--dark);
+}
+
+nav{
+  padding:14px 26px;
+  background:#e6f4ea;
+  border-bottom:1px solid #d9e3dc;
+}
+
+nav a{
+  color:#475569;
+  text-decoration:none;
+  margin-right:22px;
+  font-weight:700;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  padding:26px 34px;
+  background:#d1fae5;
+  border-bottom:1px solid #bbf7d0;
+}
+
+.logo{
+  height:72px;
+}
+
+.header h1{
+  margin:0;
+  font-size:30px;
+  font-weight:900;
+}
+
+.header-right{
+  margin-left:auto;
+  text-align:right;
+}
+
+.clock{
+  font-size:34px;
+  font-weight:900;
+}
+
+.date-control{
+  margin:28px 34px;
+  padding:20px;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.date-control label{
+  font-size:18px;
+  font-weight:800;
+}
+
+.date-control input{
+  font-size:18px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #cbd5e1;
+}
+
+.grid{
+  padding:0 34px 34px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.aloc-card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 14px 34px rgba(15,23,42,.12);
+  position:relative;
+  overflow:hidden;
+}
+
+.aloc-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:8px;
+  height:100%;
+  background:var(--green);
+}
+
+.aloc-title{
+  font-size:24px;
+  font-weight:900;
+  margin-bottom:14px;
+  padding-left:6px;
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.kpi{
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:14px;
+  padding:12px;
+}
+
+.kpi-label{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.kpi-value{
+  font-size:26px;
+  font-weight:900;
+  margin-top:4px;
+}
+
+.weights{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.weight-box{
+  border-radius:16px;
+  padding:14px;
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+}
+
+.weight-box.f{
+  background:#eff6ff;
+  border-color:#bfdbfe;
+}
+
+.weight-box.total{
+  background:#fff7ed;
+  border-color:#fed7aa;
+}
+
+.weight-label{
+  font-size:12px;
+  font-weight:900;
+  color:#475569;
+  text-transform:uppercase;
+}
+
+.weight-value{
+  font-size:30px;
+  font-weight:900;
+  margin-top:4px;
+}
+
+.empty{
+  margin:34px;
+  padding:28px;
+  background:white;
+  border-radius:20px;
+  border:1px solid var(--line);
+  font-size:20px;
+  font-weight:800;
+}
+
+@media(max-width:1500px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="animais.html">Animais</a>
+  <a href="planeamento.html">Planeamento</a>
+  <a href="ranking.html">Ranking</a>
+  <a href="alocacao.html">Alocação</a>
+</nav>
+
+<div class="header">
+  <img src="logo-monte-do-pasto.png" class="logo">
+
+  <div>
+    <h1>BOVITRACK — Dashboard TV de Alocação</h1>
+    <div id="stamp"></div>
+  </div>
+
+  <div class="header-right">
+    <div id="clock" class="clock">--:--</div>
+    <div id="dataHoje"></div>
+  </div>
+</div>
+
+<div class="date-control">
+  <label>Data de previsão:</label>
+  <input type="date" id="dataPrevisao">
+</div>
+
+<div id="output" class="grid"></div>
+
+<script src="core.js"></script>
+
+<script>
+const output = document.getElementById("output");
+const dataInput = document.getElementById("dataPrevisao");
+
+function hojeISO(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+dataInput.value = hojeISO();
+
+function diasEntre(dataBase, dataDestino){
+  const d1 = new Date(dataBase);
+  const d2 = new Date(dataDestino);
+
+  d1.setHours(0,0,0,0);
+  d2.setHours(0,0,0,0);
+
+  return Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+}
+
+function valorAnimal(a, nomes){
+  for(const n of nomes){
+    if(a[n] !== undefined && a[n] !== null && a[n] !== ""){
+      return a[n];
+    }
+  }
+  return null;
+}
+
+function numero(v){
+  if(v === null || v === undefined) return NaN;
+  return Number(String(v).replace(",", ".").replace("kg","").trim());
+}
+
+function pesoEstimadoNaData(a, dataDestino){
+
+  const pesoAtual = numero(
+    valorAnimal(a, [
+      "pesoAtual",
+      "peso_atual",
+      "peso",
+      "pesoAtualKg"
+    ])
+  );
+
+  const gmd = numero(
+    valorAnimal(a, [
+      "gmd",
+      "GMD",
+      "gmdReal",
+      "avgGmd"
+    ])
+  );
+
+  const dataPeso =
+    valorAnimal(a, [
+      "dataAtual",
+      "dataPeso",
+      "data_peso",
+      "dataPesagemAtual"
+    ]);
+
+  if(!Number.isFinite(pesoAtual)){
+    return NaN;
+  }
+
+  if(!Number.isFinite(gmd) || !dataPeso){
+    return pesoAtual;
+  }
+
+  const dias = diasEntre(dataPeso, dataDestino);
+
+  return pesoAtual + (gmd * dias);
+}
+
+function render(){
+
+  output.innerHTML = "";
+
+  const state = Core.loadState();
+
+  const animais = state?.animalsOut || [];
+
+  if(!animais.length){
+    output.innerHTML = `
+      <div class="empty">
+        Sem dados carregados. Volta ao Dashboard e sincroniza o Google Sheets.
+      </div>
+    `;
+    return;
+  }
+
+  const dataDestino = dataInput.value || hojeISO();
+
+  const grupos = {};
+
+  animais.forEach(a => {
+
+    const alocacao =
+      valorAnimal(a, [
+        "alocacao",
+        "Alocacao",
+        "ALOCACAO",
+        "alocação",
+        "Alocação"
+      ]) || "Sem alocação";
+
+    if(!grupos[alocacao]){
+      grupos[alocacao] = {
+        nome:alocacao,
+        m:0,
+        f:0,
+        total:0,
+        pesoM:[],
+        pesoF:[],
+        pesoTotal:[]
+      };
+    }
+
+    const sexo = String(a.sexo || "").toUpperCase();
+    const pesoPrevisto = pesoEstimadoNaData(a, dataDestino);
+
+    grupos[alocacao].total++;
+
+    if(Number.isFinite(pesoPrevisto)){
+      grupos[alocacao].pesoTotal.push(pesoPrevisto);
+    }
+
+    if(sexo === "M"){
+      grupos[alocacao].m++;
+
+      if(Number.isFinite(pesoPrevisto)){
+        grupos[alocacao].pesoM.push(pesoPrevisto);
+      }
+    }
+    else if(sexo === "F"){
+      grupos[alocacao].f++;
+
+      if(Number.isFinite(pesoPrevisto)){
+        grupos[alocacao].pesoF.push(pesoPrevisto);
+      }
+    }
+
+  });
+
+  Object.values(grupos)
+    .sort((a,b)=> b.total - a.total)
+    .forEach(g => {
+
+      const media = arr =>
+        arr.length
+          ? Math.round(arr.reduce((s,v)=>s+v,0) / arr.length)
+          : "—";
+
+      const card = document.createElement("div");
+      card.className = "aloc-card";
+
+      card.innerHTML = `
+        <div class="aloc-title">
+          ${g.nome}
+        </div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpi-label">M</div>
+            <div class="kpi-value">${g.m}</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpi-label">F</div>
+            <div class="kpi-value">${g.f}</div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpi-label">Total</div>
+            <div class="kpi-value">${g.total}</div>
+          </div>
+        </div>
+
+        <div class="weights">
+          <div class="weight-box">
+            <div class="weight-label">Peso M</div>
+            <div class="weight-value">${media(g.pesoM)} kg</div>
+          </div>
+
+          <div class="weight-box f">
+            <div class="weight-label">Peso F</div>
+            <div class="weight-value">${media(g.pesoF)} kg</div>
+          </div>
+
+          <div class="weight-box total">
+            <div class="weight-label">Peso Global</div>
+            <div class="weight-value">${media(g.pesoTotal)} kg</div>
+          </div>
+        </div>
+      `;
+
+      output.appendChild(card);
+
+    });
+
+}
+
+dataInput.addEventListener("change", render);
+
+function startClock(){
+  const clock = document.getElementById("clock");
+  const dataHoje = document.getElementById("dataHoje");
+
+  function tick(){
+    const now = new Date();
+
+    clock.textContent = now.toLocaleTimeString("pt-PT", {
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit"
+    });
+
+    dataHoje.textContent = now.toLocaleDateString("pt-PT");
+  }
+
+  tick();
+  setInterval(tick,1000);
+}
+
+startClock();
+render();
+</script>
+
+</body>
+</html>
