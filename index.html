@@ -856,291 +856,277 @@ document.addEventListener("keydown", e=>{
       `Local: <b>${loc}</b>`;
   }
 
-  function renderAlerts(state){
-    alertsEl.innerHTML = "";
-    const list = Core.buildAlerts(state?.groupsOut || []);
+  function getGrupoGMD(g){
 
-    if(!list.length){
-      const div = document.createElement("div");
-      div.className = "alert-row ok";
-      div.innerHTML = `<b class="ok">✔ Nenhum alerta ativo</b>`;
-      alertsEl.appendChild(div);
-      return;
+  const valores = [];
+
+  if(Number.isFinite(g.avgGmdM)) valores.push(g.avgGmdM);
+  if(Number.isFinite(g.avgGmdF)) valores.push(g.avgGmdF);
+
+  if(!valores.length) return null;
+
+  return valores.reduce((a,b)=>a+b,0) / valores.length;
+}
+
+function classificarGrupoAlerta(g){
+
+  const riskPct = Math.round((g.risk || 0) * 100);
+  const gmd = getGrupoGMD(g);
+
+  const animaisRisco = (g.warn || 0) + (g.bad || 0);
+  const animaisComHistorico = (g.ok || 0) + (g.warn || 0) + (g.bad || 0);
+
+  let level = "ok";
+  let estado = "Normal";
+  let motivo = "Grupo dentro dos parâmetros esperados.";
+  let acao = "Manter monitorização normal.";
+
+  if(
+    riskPct >= 40 ||
+    (Number.isFinite(gmd) && gmd < 0.90)
+  ){
+    level = "bad";
+    estado = "Crítico";
+
+    if(Number.isFinite(gmd) && gmd < 0.90){
+      motivo = "GMD abaixo do limite crítico.";
+      acao = "Validar alimentação, adaptação do lote e última pesagem.";
     }
-    const gruposAtivos = new Set();
-    for(const r of list){
-      const grupoNome =
-  r.text
-    .replace("🔥","")
-    .replace("⚠️","")
-    .replace("🟢","")
-    .split("—")[0]
-    .trim();
-
-const grupoData =
-  (state?.groupsOut || [])
-    .find(g => g.name === grupoNome);
-
-gruposAtivos.add(grupoNome);
-
-let incidente =
-  ALERTAS_DB.find(a =>
-    a.grupo === grupoNome &&
-    a.estado !== "fechado"
-  );
-      let visualLevel = r.level;
-let monitoringBadge = "";
-
-if(
-  incidente &&
-  incidente.estado === "em_analise"
-){
-  visualLevel = "monitoring";
-
-  monitoringBadge = `
-    <span class="monitor-badge">
-      EM MONITORIZAÇÃO
-    </span>
-  `;
-}
-
-const div = document.createElement("div");
-div.className =
-  `alert-row alert-live ${visualLevel}`;
-
-if(visualLevel === "bad"){
-  div.classList.add("critical");
-}
-      let action = "";
-
-if(r.level === "bad"){
-  action = "👉 Ação: verificar alimentação, stress térmico e última pesagem.";
-}
-else if(r.level === "warn"){
-  action = "👉 Ação: monitorizar crescimento nos próximos dias.";
-}
-
-const riskPct =
-  parseFloat(
-    (r.meta.match(/(\d+)%/) || [])[1]
-  ) || 0;
-
-const riskClass =
-  visualLevel === "bad"
-    ? "bad"
-    : visualLevel === "warn"
-      ? "warn"
-      : "ok";
-
-div.innerHTML = `
-
-<div class="alert-header">
-
-  <div>
-
-    <div class="alert-title">
-      ${Core.escapeHtml(grupoNome)}
-    </div>
-
-    <div class="alert-subtitle">
-      ${Core.escapeHtml(r.text)}
-    </div>
-
-  </div>
-
-  ${monitoringBadge}
-
-</div>
-
-<div class="alert-kpis">
-
-  <div class="alert-kpi">
-    <div class="alert-kpi-label">
-      Risco
-    </div>
-
-    <div class="alert-kpi-value">
-      ${riskPct}%
-    </div>
-  </div>
-
-  <div class="alert-kpi">
-    <div class="alert-kpi-label">
-      Estado
-    </div>
-
-    <div class="alert-kpi-value">
-      ${
-        visualLevel === "bad"
-          ? "Crítico"
-          : visualLevel === "warn"
-            ? "Atenção"
-            : "Normal"
-      }
-    </div>
-  </div>
-
-  <div class="alert-kpi">
-    <div class="alert-kpi-label">
-      Animais
-    </div>
-
-    <div class="alert-kpi-value">
-      ${
-        (r.meta.match(/🐄\s(\d+\/\d+)/) || [])[1] || "—"
-      }
-    </div>
-  </div>
-
-</div>
-
-<div class="alert-riskbar">
-  <div
-    class="alert-riskfill ${riskClass}"
-    style="width:${riskPct}%"
-  ></div>
-</div>
-
-<div class="alert-diagnosis">
-
-  ${
-    visualLevel === "bad"
-      ? "🔥 O grupo apresenta sinais críticos de desempenho. Recomenda-se validação imediata da alimentação, stress térmico, última pesagem e evolução recente."
-      : visualLevel === "warn"
-        ? "⚠️ O grupo apresenta tendência de risco moderado. Recomenda-se monitorização reforçada nos próximos dias."
-        : "🟢 O grupo encontra-se dentro dos parâmetros esperados."
-  }
-
-</div>
-
-<div class="alert-kpis">
-
-  <div class="alert-kpi">
-
-    <div class="alert-kpi-label">
-      Tendência
-    </div>
-
-    <div class="
-  alert-kpi-value
-
-  ${
-    (grupoData?.tendenciaTexto || "")
-      .toLowerCase()
-      .includes("est")
-        ? "trend-ok"
-
-        : (grupoData?.tendenciaTexto || "")
-            .toLowerCase()
-            .includes("melhor")
-
-            ? "trend-warn"
-
-            : (grupoData?.tendenciaTexto || "")
-                .toLowerCase()
-                .includes("pior")
-
-                ? "trend-bad"
-
-                : ""
-  }
-">
-
-  ${
-    grupoData?.tendenciaTexto || "Sem tendência"
-  }
-
-</div>
-
-  </div>
-
-</div>
-
-<div class="alert-actions-ai">
-
-  ${
-    visualLevel === "bad"
-      ? `
-        <div class="alert-action-ai">
-          👉 Rever plano alimentar e eficiência de conversão.
-        </div>
-
-        <div class="alert-action-ai">
-          👉 Validar intervalo desde última pesagem.
-        </div>
-
-        <div class="alert-action-ai">
-          👉 Confirmar impacto térmico e adaptação do lote.
-        </div>
-      `
-      : `
-        <div class="alert-action-ai">
-          👉 Continuar monitorização operacional.
-        </div>
-      `
-  }
-
-</div>
-
-<div class="alert-footer">
-
-  <div class="alert-meta">
-
-    👤 Responsável:
-    <b>${incidente?.responsavel || "—"}</b>
-
-    <br>
-
-    📝 Última ação:
-    ${incidente?.acao || "Sem ação"}
-
-    <br>
-
-    ${
-      incidente?.estado === "em_analise"
-      ? `
-        ⏳ Prazo:
-        ${
-          incidente.prazo
-            ? new Date(incidente.prazo)
-                .toLocaleDateString("pt-PT")
-            : "—"
-        }
-      `
-      : ""
-    }
-
-  </div>
-
-  <div class="alert-actions">
-
-    <button
-      class="btnResolve"
-      onclick="resolverAlerta('${grupoNome}')"
-    >
-      Update
-    </button>
-
-  </div>
-
-</div>
-`;
-if(
-  !incidente &&
-  (r.level === "bad" || r.level === "warn")
-){
-
-  createOperationalAlert(
-    grupoNome,
-    r.level === "bad"
-      ? "critico"
-      : "medio"
-  );
-
-}
-alertsEl.appendChild(div);
+    else{
+      motivo = "Percentagem elevada de animais em risco.";
+      acao = "Analisar animais em risco e rever plano alimentar.";
     }
   }
+  else if(
+    riskPct >= 25 ||
+    (Number.isFinite(gmd) && gmd < 1.10)
+  ){
+    level = "warn";
+    estado = "Atenção";
+
+    if(Number.isFinite(gmd) && gmd < 1.10){
+      motivo = "GMD abaixo do objetivo.";
+      acao = "Acompanhar evolução e confirmar próxima pesagem.";
+    }
+    else{
+      motivo = "Alguns animais apresentam sinais de risco.";
+      acao = "Monitorizar grupo nos próximos dias.";
+    }
+  }
+
+  return {
+    grupo: g.name,
+    level,
+    estado,
+    motivo,
+    acao,
+    riskPct,
+    gmd,
+    animaisRisco,
+    animaisComHistorico,
+    tendencia: g.tendenciaTexto || "Sem tendência"
+  };
+}
+
+function renderAlerts(state){
+
+  alertsEl.innerHTML = "";
+
+  const grupos = state?.groupsOut || [];
+
+  const list = grupos
+    .map(g => classificarGrupoAlerta(g))
+    .filter(a => a.level === "bad" || a.level === "warn")
+    .sort((a,b) => {
+
+      const pesoA = a.level === "bad" ? 2 : 1;
+      const pesoB = b.level === "bad" ? 2 : 1;
+
+      if(pesoB !== pesoA) return pesoB - pesoA;
+
+      return b.riskPct - a.riskPct;
+    });
+
+  if(!list.length){
+
+    const div = document.createElement("div");
+
+    div.className = "alert-row ok";
+
+    div.innerHTML = `
+      <div class="alert-title" style="color:#15803d">
+        Sem alertas ativos
+      </div>
+
+      <div class="alert-diagnosis" style="
+        color:#166534;
+        border-left-color:#16a34a;
+      ">
+        🟢 Todos os grupos estão dentro dos parâmetros definidos.
+      </div>
+    `;
+
+    alertsEl.appendChild(div);
+    return;
+  }
+
+  for(const alerta of list){
+
+    const incidente = ALERTAS_DB.find(a =>
+      a.grupo === alerta.grupo &&
+      a.estado !== "fechado"
+    );
+
+    let visualLevel = alerta.level;
+
+    let monitoringBadge = "";
+
+    if(incidente && incidente.estado === "em_analise"){
+
+      visualLevel = "monitoring";
+
+      monitoringBadge = `
+        <span class="monitor-badge">
+          EM MONITORIZAÇÃO
+        </span>
+      `;
+    }
+
+    const div = document.createElement("div");
+
+    div.className = `alert-row alert-live ${visualLevel}`;
+
+    if(alerta.level === "bad"){
+      div.classList.add("critical");
+    }
+
+    const riskClass =
+      alerta.level === "bad"
+        ? "bad"
+        : alerta.level === "warn"
+          ? "warn"
+          : "ok";
+
+    div.innerHTML = `
+
+      <div class="alert-header">
+
+        <div>
+          <div class="alert-title" style="
+            color:${alerta.level === "bad" ? "#b91c1c" : "#d97706"};
+          ">
+            ${Core.escapeHtml(alerta.grupo)}
+          </div>
+
+          <div class="alert-subtitle">
+            ${alerta.estado} · ${alerta.animaisRisco}/${alerta.animaisComHistorico} animais em risco
+          </div>
+        </div>
+
+        ${monitoringBadge}
+
+      </div>
+
+      <div class="alert-kpis">
+
+        <div class="alert-kpi">
+          <div class="alert-kpi-label">Risco</div>
+          <div class="alert-kpi-value">
+            ${alerta.riskPct}%
+          </div>
+        </div>
+
+        <div class="alert-kpi">
+          <div class="alert-kpi-label">GMD médio</div>
+          <div class="alert-kpi-value">
+            ${Number.isFinite(alerta.gmd) ? alerta.gmd.toFixed(2) : "—"}
+          </div>
+        </div>
+
+        <div class="alert-kpi">
+          <div class="alert-kpi-label">Tendência</div>
+          <div class="alert-kpi-value">
+            ${Core.escapeHtml(alerta.tendencia)}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="alert-riskbar">
+        <div
+          class="alert-riskfill ${riskClass}"
+          style="width:${Math.min(alerta.riskPct,100)}%"
+        ></div>
+      </div>
+
+      <div class="alert-diagnosis" style="
+        border-left-color:${alerta.level === "bad" ? "#dc2626" : "#f59e0b"};
+        color:${alerta.level === "bad" ? "#7f1d1d" : "#92400e"};
+      ">
+        <b>Motivo:</b> ${Core.escapeHtml(alerta.motivo)}
+      </div>
+
+      <div class="alert-action-ai">
+        👉 <b>Ação recomendada:</b> ${Core.escapeHtml(alerta.acao)}
+      </div>
+
+      <div class="alert-footer">
+
+        <div class="alert-meta">
+
+          👤 Responsável:
+          <b>${incidente?.responsavel || "—"}</b>
+
+          <br>
+
+          📝 Última ação:
+          ${incidente?.acao || "Sem ação registada"}
+
+          <br>
+
+          ${
+            incidente?.estado === "em_analise"
+              ? `
+                ⏳ Prazo:
+                ${
+                  incidente.prazo
+                    ? new Date(incidente.prazo).toLocaleDateString("pt-PT")
+                    : "—"
+                }
+              `
+              : ""
+          }
+
+        </div>
+
+        <div class="alert-actions">
+
+          <button
+            class="btnResolve"
+            onclick="resolverAlerta('${alerta.grupo}')"
+          >
+            Registar ação
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    alertsEl.appendChild(div);
+
+    if(!incidente){
+
+      createOperationalAlert(
+        alerta.grupo,
+        alerta.level === "bad" ? "critico" : "medio"
+      );
+
+    }
+
+  }
+
+}
 /* =========================================
    ALERTAS OPERACIONAIS
 ========================================= */
