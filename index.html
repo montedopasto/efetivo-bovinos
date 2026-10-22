@@ -1037,10 +1037,32 @@ const ALERTAS_URL = "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-
 let alertasDisponiveis = false;
 const registosEmCurso = new Set();
 
+function waitForSync(milliseconds){
+  return new Promise(resolve => setTimeout(resolve,milliseconds));
+}
+
+async function confirmCentralSync(syncId){
+  for(let attempt=0;attempt<7;attempt++){
+    try{
+      const url = ALERTAS_URL + "?type=sync_status&syncId=" + encodeURIComponent(syncId) + "&_=" + Date.now();
+      const response = await fetch(url,{cache:"no-store"});
+      const result = await response.json();
+      if(response.ok && result && result.ok) return result;
+    }catch(err){
+      console.warn("Confirmação central pendente:",err);
+    }
+    await waitForSync(1500);
+  }
+  return null;
+}
+
 async function publishImportedCsv(csvText){
   const syncToken = prompt("Código de sincronização do BoviTrack:");
   if(syncToken === null) throw new Error("Sincronização central cancelada");
   if(!syncToken.trim()) throw new Error("O código de sincronização é obrigatório");
+  const syncId = window.crypto && typeof window.crypto.randomUUID === "function"
+    ? window.crypto.randomUUID()
+    : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 90000);
@@ -1051,6 +1073,7 @@ async function publishImportedCsv(csvText){
       body:JSON.stringify({
         action:"replace_animals",
         token:syncToken.trim(),
+        syncId:syncId,
         csv:csvText
       }),
       signal:controller.signal
@@ -1058,13 +1081,25 @@ async function publishImportedCsv(csvText){
     const raw = await response.text();
     let result;
     try{ result = JSON.parse(raw); }
-    catch{ throw new Error("Resposta inválida do serviço central"); }
+    catch{
+      const confirmed = await confirmCentralSync(syncId);
+      if(confirmed) return confirmed;
+      const confirmationError = new Error("Não foi possível confirmar a sincronização central");
+      confirmationError.confirmationAttempted = true;
+      throw confirmationError;
+    }
     if(!response.ok || !result.ok){
-      throw new Error(result && result.error ? result.error : "Falha na sincronização central");
+      const serviceError = new Error(result && result.error ? result.error : "Falha na sincronização central");
+      serviceError.confirmationAttempted = true;
+      throw serviceError;
     }
     return result;
   }catch(err){
-    if(err && err.name === "AbortError") throw new Error("A sincronização demorou demasiado tempo");
+    if(!err || !err.confirmationAttempted){
+      const confirmed = await confirmCentralSync(syncId);
+      if(confirmed) return confirmed;
+    }
+    if(err && err.name === "AbortError") throw new Error("A sincronização demorou demasiado tempo e não foi possível confirmá-la");
     throw err;
   }finally{
     clearTimeout(timeout);

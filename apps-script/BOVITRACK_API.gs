@@ -2,6 +2,7 @@ const SHEET_ANIMAIS = "animais";
 const SHEET_ALERTAS = "alertas_operacionais";
 const SHEET_ANIMAIS_BACKUP = "_animais_backup";
 const SYNC_TOKEN_PROPERTY = "BOVITRACK_SYNC_TOKEN";
+const LAST_SYNC_ID_PROPERTY = "BOVITRACK_LAST_SYNC_ID";
 const MAX_IMPORT_ROWS = 20000;
 
 function doGet(e){
@@ -10,10 +11,11 @@ function doGet(e){
   const action = params.action || "";
 
   if(type === "summary") return json(getPublicSummary());
+  if(type === "sync_status") return json(getSyncStatus(params.syncId));
   if(type === "alertas") return getAlertas();
   if(action === "update_alert") return json(updateAlert(params));
   if(action === "create_alert") return json(createAlert(params));
-  return getAnimais();
+  return json({ok:true,service:"BOVITRACK_API"});
 }
 
 function doPost(e){
@@ -117,10 +119,24 @@ function replaceAnimals(body){
       throw writeError;
     }
     SpreadsheetApp.flush();
+    const syncId = cleanText(body.syncId);
+    if(syncId){
+      PropertiesService.getScriptProperties().setProperty(LAST_SYNC_ID_PROPERTY,syncId);
+    }
   }finally{
     lock.releaseLock();
   }
 
+  const summary = getPublicSummary();
+  return {ok:true,totalAnimals:summary.totalAnimals};
+}
+
+function getSyncStatus(syncId){
+  const candidate = cleanText(syncId);
+  const expected = PropertiesService.getScriptProperties().getProperty(LAST_SYNC_ID_PROPERTY);
+  if(!candidate || !expected || candidate !== expected){
+    return {ok:false,pending:true};
+  }
   const summary = getPublicSummary();
   return {ok:true,totalAnimals:summary.totalAnimals};
 }
