@@ -699,13 +699,17 @@ th.left, td.left{text-align:left}
     <h2>Alertas</h2>
     <div id="alerts" class="alerts-wrap"></div>
     <div class="small">
-      O GMD observado é ponderado pelo número de animais com GMD válido (mínimo de 5 para classificar).<br>
-      Crítico: GMD &lt; 0,90 kg/dia ou proporção abaixo da média ≥ 40%.
-      Atenção: GMD &lt; 1,10 kg/dia ou proporção ≥ 25%. Os limites usam valores sem arredondamento.<br>
-      “Abaixo da média” compara cada animal com o próprio grupo; não constitui diagnóstico alimentar ou sanitário.
-      A cobertura mostra GMD válidos / total. A percentagem usa apenas animais com classificação relativa.
-      Perdas de peso e GMD acima de 3 kg/dia são excluídos pelo motor atual; esta cobertura não representa todos os animais com duas pesagens.<br>
-      O estado da ação é independente da prioridade. Os incidentes são criados apenas ao registar uma ação.
+      Cada GMD médio do grupo é comparado com o GMD geral do efetivo do mesmo sexo: M com M e F com F.
+      Ambas as médias são ponderadas pelo número de GMD válidos; a referência inclui todos os grupos.<br>
+      Desvio = (GMD do grupo / GMD geral do mesmo sexo − 1) × 100.
+      Atenção: 10% ou mais abaixo. Crítico: 20% ou mais abaixo.
+      Nos grupos mistos, a prioridade reflete a comparação mais grave com dados suficientes.<br>
+      Mínimo de 5 GMD válidos por sexo no grupo e referência positiva para classificar.
+      Comparações incompletas ficam em “Dados a completar”.
+      Os limites usam valores sem arredondamento; a apresentação arredonda os resultados.<br>
+      O motor atual exclui perdas de peso e GMD acima de 3 kg/dia; “GMD válidos / total” mostra a cobertura.
+      O desvio é um indicador de desempenho relativo, não um diagnóstico alimentar ou sanitário.
+      O estado da ação é independente da prioridade.
     </div>
   </div>
 
@@ -868,46 +872,81 @@ document.addEventListener("keydown", e=>{
       `Local: <b>${loc}</b>`;
   }
 
-  // Regras exclusivas do painel; não alteram estados individuais nem previsões.
-  function getGrupoGMD(g){
-    const nM = Number.isFinite(g.nGmdM) ? g.nGmdM : 0;
-    const nF = Number.isFinite(g.nGmdF) ? g.nGmdF : 0;
-    const total = nM + nF;
-    if(!total) return null;
-    const sumM = nM ? (Number.isFinite(g.sumGmdM) ? g.sumGmdM : g.avgGmdM * nM) : 0;
-    const sumF = nF ? (Number.isFinite(g.sumGmdF) ? g.sumGmdF : g.avgGmdF * nF) : 0;
-    const media = (sumM + sumF) / total;
-    return Number.isFinite(media) ? media : null;
+  // Apenas alertas do painel: médias ponderadas pelos GMD válidos.
+  const LIMITES_ALERTA_GMD = { atencao:10, critico:20, minimoAmostra:5 };
+
+  function getDadosGmdSexo(g, sexo){
+    const n = g["nGmd" + sexo];
+    if(!Number.isFinite(n) || n <= 0) return {n:0, soma:0, media:null};
+    const soma = Number.isFinite(g["sumGmd" + sexo])
+      ? g["sumGmd" + sexo] : g["avgGmd" + sexo] * n;
+    if(!Number.isFinite(soma)) return {n:0, soma:0, media:null};
+    return {n, soma, media:soma / n};
   }
 
-  function classificarGrupoAlerta(g){
-    const avaliados = (g.ok || 0) + (g.warn || 0) + (g.bad || 0);
-    const abaixo = (g.warn || 0) + (g.bad || 0);
-    const risk = avaliados ? abaixo / avaliados : null;
-    const amostraGmd = (g.nGmdM || 0) + (g.nGmdF || 0);
-    const gmd = getGrupoGMD(g);
-    const motivos = [];
-    let severity = 0;
-    if(risk !== null && risk >= 0.25){
-      severity = risk >= 0.40 ? 2 : 1;
-      motivos.push(`${abaixo}/${avaliados} abaixo da média do grupo (${(risk * 100).toFixed(1)}%; limite ${severity === 2 ? "40" : "25"}%)`);
+  function getReferenciasGmd(grupos){
+    const refs = {};
+    for(const sexo of ["M","F"]){
+      let n = 0, soma = 0;
+      for(const g of grupos){
+        const dados = getDadosGmdSexo(g, sexo);
+        n += dados.n;
+        soma += dados.soma;
+      }
+      refs[sexo] = {n, media:n ? soma / n : null};
     }
-    if(amostraGmd >= 5 && Number.isFinite(gmd) && gmd < 1.10){
-      const nivelGmd = gmd < 0.90 ? 2 : 1;
-      severity = Math.max(severity, nivelGmd);
-      motivos.push(`GMD ${gmd.toFixed(2)} kg/dia (limite ${nivelGmd === 2 ? "0,90" : "1,10"})`);
+    return refs;
+  }
+
+  function classificarGrupoAlerta(g, referencias){
+    const comparacoes = [];
+    let severidade = 0;
+    let amostraGmd = 0;
+    for(const sexo of ["M","F"]){
+      const dados = getDadosGmdSexo(g, sexo);
+      amostraGmd += dados.n;
+      if(!(g[sexo === "M" ? "m" : "f"] > 0) && !dados.n) continue;
+      const ref = referencias[sexo];
+      const suficiente = dados.n >= LIMITES_ALERTA_GMD.minimoAmostra &&
+        ref.n >= LIMITES_ALERTA_GMD.minimoAmostra &&
+        Number.isFinite(ref.media) && ref.media > 0 &&
+        Number.isFinite(dados.media);
+      // Positivo = acima da referência; negativo = abaixo.
+      const desvio = suficiente ? (dados.media / ref.media - 1) * 100 : null;
+      let nivel = 0;
+      if(suficiente){
+        // Comparar médias sem arredondamento (tolerância só para precisão numérica).
+        if(dados.media <= ref.media * (1 - LIMITES_ALERTA_GMD.critico / 100) + 1e-12) nivel = 2;
+        else if(dados.media <= ref.media * (1 - LIMITES_ALERTA_GMD.atencao / 100) + 1e-12) nivel = 1;
+      }
+      severidade = Math.max(severidade, nivel);
+      comparacoes.push({sexo, n:dados.n, gmd:dados.media, referencia:ref.media, nReferencia:ref.n, suficiente, desvio, nivel});
     }
-    const insuficiente = amostraGmd < 5 || !Number.isFinite(gmd) || !avaliados;
-    if(amostraGmd < 5) motivos.push("Menos de 5 GMD válidos; GMD sem classificação");
-    else if(!Number.isFinite(gmd)) motivos.push("GMD indisponível");
-    if(!avaliados) motivos.push("Sem classificação relativa disponível");
-    if(avaliados > 0 && avaliados < 5) motivos.push("Percentagem baseada em menos de 5 animais");
+    const incompleto = !comparacoes.length || comparacoes.some(c => !c.suficiente);
+    const level = severidade === 2 ? "bad" : severidade === 1 ? "warn" : incompleto ? "unknown" : "ok";
+    const motivos = comparacoes.map(c => {
+      if(!c.suficiente) return c.sexo + ": dados insuficientes para comparar (mínimo 5 GMD válidos e referência positiva).";
+      const situacao = c.desvio < 0 ? Math.abs(c.desvio).toFixed(1) + "% abaixo" : c.desvio.toFixed(1) + "% acima";
+      return c.sexo + ": GMD do grupo " + situacao + " do GMD geral do mesmo sexo.";
+    });
+    const desvios = comparacoes.filter(c => c.suficiente).map(c => c.desvio);
     return {
-      grupo:g.name, level:severity === 2 ? "bad" : severity === 1 ? "warn" : insuficiente ? "unknown" : "ok",
-      estado:severity === 2 ? "Crítico" : severity === 1 ? "Atenção" : insuficiente ? "Dados insuficientes" : "Sem alerta",
-      motivos, risk, abaixo, avaliados, amostraGmd, total:g.n || 0, gmd,
-      ordem:severity === 2 ? 0 : severity === 1 ? 1 : insuficiente ? 2 : 3
+      grupo:g.name, level,
+      estado:level === "bad" ? "Crítico" : level === "warn" ? "Atenção" : level === "unknown" ? "Dados insuficientes" : "Sem alerta",
+      comparacoes, motivos, amostraGmd, total:g.n || 0,
+      desvio:desvios.length ? Math.min(...desvios) : null,
+      ordem:level === "bad" ? 0 : level === "warn" ? 1 : level === "unknown" ? 2 : 3
     };
+  }
+
+  function formatComparacoesGmd(comparacoes, campo, percentual = false){
+    return comparacoes.map(c => {
+      const v = c[campo];
+      const texto = Number.isFinite(v)
+        ? (percentual ? (v > 0 ? "+" : "") + v.toFixed(1) + "%" : v.toFixed(2))
+        : "—";
+      return c.sexo + ": " + texto;
+    }).join("<br>");
   }
 
   function renderAlerts(state){
@@ -917,50 +956,79 @@ document.addEventListener("keydown", e=>{
       alertsEl.textContent = "Sem dados para avaliar os alertas.";
       return;
     }
-    const todos = grupos.map(classificarGrupoAlerta);
-    const list = todos.filter(a => a.level !== "ok")
-      .sort((a,b) => a.ordem - b.ordem || (b.risk ?? -1) - (a.risk ?? -1) || a.grupo.localeCompare(b.grupo));
+    const referencias = getReferenciasGmd(grupos);
+    const todos = grupos.map(g => classificarGrupoAlerta(g, referencias));
+    const list = todos.filter(a => a.level === "bad" || a.level === "warn")
+      .sort((a,b) => a.ordem - b.ordem || a.desvio - b.desvio || a.grupo.localeCompare(b.grupo));
     const resumo = document.createElement("p");
     resumo.className = "small";
-    resumo.textContent = `${todos.filter(a => a.level === "bad").length} críticos · ${todos.filter(a => a.level === "warn").length} em atenção · ${todos.filter(a => a.level === "unknown").length} com dados insuficientes · ${todos.filter(a => a.level === "ok").length} sem alerta`;
+    resumo.textContent = `${todos.filter(a => a.level === "bad").length} críticos · ${todos.filter(a => a.level === "warn").length} em atenção · ${todos.filter(a => !a.comparacoes.length || a.comparacoes.some(c => !c.suficiente)).length} com comparação incompleta · ${todos.filter(a => a.level === "ok").length} sem alerta`;
     alertsEl.appendChild(resumo);
+    const refEl = document.createElement("p");
+    refEl.className = "small";
+    refEl.textContent = "GMD geral do efetivo: " + ["M","F"].map(sexo => {
+      const ref = referencias[sexo];
+      return sexo + ": " + (Number.isFinite(ref.media) ? ref.media.toFixed(2) + " kg/dia" : "—") + " (" + ref.n + " GMD válidos)";
+    }).join(" · ");
+    alertsEl.appendChild(refEl);
     if(!alertasDisponiveis){
       const aviso = document.createElement("p");
       aviso.className = "small";
       aviso.textContent = "Serviço de ações indisponível: o histórico não foi confirmado.";
       alertsEl.appendChild(aviso);
     }
-    if(!list.length) return;
-    const table = document.createElement("table");
-    table.className = "alerts-table";
-    table.innerHTML = `<caption class="small">Grupos com alertas ou dados insuficientes</caption>
-      <thead><tr><th scope="col">Grupo</th><th scope="col">Prioridade</th><th scope="col">Motivos</th><th scope="col">GMD observado<br>(kg/dia)</th><th scope="col">Abaixo da média / avaliados</th><th scope="col">GMD válidos / total</th><th scope="col">Ação registada</th></tr></thead>`;
-    const tbody = document.createElement("tbody");
-    for(const a of list){
-      const incidente = ALERTAS_DB.find(i => i.grupo === a.grupo && i.estado !== "fechado");
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<th scope="row">${Core.escapeHtml(a.grupo)}</th>
-        <td><span class="alert-priority ${a.level}">${a.estado}</span></td>
-        <td>${a.motivos.map(Core.escapeHtml).join("<br>")}</td>
-        <td>${Number.isFinite(a.gmd) ? a.gmd.toFixed(2) : "—"}</td>
-        <td>${a.avaliados ? a.abaixo + "/" + a.avaliados + " (" + (a.risk * 100).toFixed(1) + "%)" : "—"}</td>
-        <td>${a.amostraGmd}/${a.total}</td>
-        <td><details><summary>${!alertasDisponiveis ? "Histórico indisponível" : incidente ? incidente.estado === "em_analise" ? "Em análise" : "Incidente aberto" : "Sem ação registada"}</summary>
-          <p>Responsável: ${Core.escapeHtml(incidente?.responsavel || "—")}<br>
-          Última ação: ${Core.escapeHtml(incidente?.acao || "Sem ação registada")}<br>
-          Prazo: ${incidente?.prazo && Number.isFinite(new Date(incidente.prazo).getTime()) ? new Date(incidente.prazo).toLocaleDateString("pt-PT") : "—"}</p>
-          <button type="button">Registar ação</button></details></td>`;
-      tr.querySelector("button").addEventListener("click", async (event) => {
-        const button = event.currentTarget;
-        button.disabled = true;
-        try{ await resolverAlerta(a.grupo, a.level === "bad" ? "critico" : "medio"); }
-        catch(err){ console.error(err); alert("Não foi possível confirmar o registo. Verifica o serviço antes de repetir."); }
-        finally{ button.disabled = false; }
-      });
-      tbody.appendChild(tr);
+    if(list.length){
+      const table = document.createElement("table");
+      table.className = "alerts-table";
+      table.innerHTML = `<caption class="small">Grupos com GMD abaixo da referência geral do respetivo sexo</caption>
+        <thead><tr><th scope="col">Grupo</th><th scope="col">Prioridade</th><th scope="col">Motivo</th><th scope="col">GMD grupo<br>(kg/dia)</th><th scope="col">GMD geral<br>(kg/dia)</th><th scope="col">Desvio face ao geral</th><th scope="col">GMD válidos / total</th><th scope="col">Ação registada</th></tr></thead>`;
+      const tbody = document.createElement("tbody");
+      for(const a of list){
+        const incidente = ALERTAS_DB.find(i => i.grupo === a.grupo && i.estado !== "fechado");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<th scope="row">${Core.escapeHtml(a.grupo)}</th>
+          <td><span class="alert-priority ${a.level}">${a.estado}</span></td>
+          <td>${a.motivos.map(Core.escapeHtml).join("<br>")}</td>
+          <td>${formatComparacoesGmd(a.comparacoes, "gmd")}</td>
+          <td>${formatComparacoesGmd(a.comparacoes, "referencia")}</td>
+          <td>${formatComparacoesGmd(a.comparacoes, "desvio", true)}</td>
+          <td>${a.amostraGmd}/${a.total}<br>${a.comparacoes.map(c => c.sexo + ": " + c.n).join(" · ")}</td>
+          <td><details><summary>${!alertasDisponiveis ? "Histórico indisponível" : incidente ? incidente.estado === "em_analise" ? "Em análise" : "Incidente aberto" : "Sem ação registada"}</summary>
+            <p>Responsável: ${Core.escapeHtml(incidente?.responsavel || "—")}<br>
+            Última ação: ${Core.escapeHtml(incidente?.acao || "Sem ação registada")}<br>
+            Prazo: ${incidente?.prazo && Number.isFinite(new Date(incidente.prazo).getTime()) ? new Date(incidente.prazo).toLocaleDateString("pt-PT") : "—"}</p>
+            <button type="button">Registar ação</button></details></td>`;
+        tr.querySelector("button").addEventListener("click", async (event) => {
+          const button = event.currentTarget;
+          button.disabled = true;
+          try{ await resolverAlerta(a.grupo, a.level === "bad" ? "critico" : "medio"); }
+          catch(err){ console.error(err); alert("Não foi possível confirmar o registo. Verifica o serviço antes de repetir."); }
+          finally{ button.disabled = false; }
+        });
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      alertsEl.appendChild(table);
+    }else{
+      const normal = document.createElement("p");
+      normal.textContent = "Sem alertas de desempenho nas comparações com dados suficientes.";
+      alertsEl.appendChild(normal);
     }
-    table.appendChild(tbody);
-    alertsEl.appendChild(table);
+    const incompletos = todos.filter(a => a.comparacoes.length === 0 || a.comparacoes.some(c => !c.suficiente));
+    if(incompletos.length){
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "Dados a completar (" + incompletos.length + (incompletos.length === 1 ? " grupo)" : " grupos)");
+      details.appendChild(summary);
+      const ul = document.createElement("ul");
+      for(const a of incompletos){
+        const li = document.createElement("li");
+        li.textContent = a.grupo + " — " + (a.comparacoes.filter(c => !c.suficiente).map(c => c.sexo + ": " + c.n + " GMD válidos").join("; ") || "sem GMD válido por sexo");
+        ul.appendChild(li);
+      }
+      details.appendChild(ul);
+      alertsEl.appendChild(details);
+    }
   }
 /* =========================================
    ALERTAS OPERACIONAIS
