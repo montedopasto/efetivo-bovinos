@@ -49,14 +49,24 @@ function replaceAnimals(body){
   });
   const required = [
     "animal_id","grupo","sexo","data_nasc","peso_anterior","data_peso_anterior",
-    "peso_atual","data_peso_atual","raca","nif","data_entrada","Alocacao"
+    "peso_atual","data_peso_atual","raca","nif","data_entrada"
   ];
+  const headerIndex = {};
+  headers.forEach(function(header,index){
+    headerIndex[header.toLowerCase()] = index;
+  });
   required.forEach(function(header){
-    if(headers.indexOf(header) < 0) throw new Error("Falta a coluna obrigatória: " + header);
+    const index = headerIndex[header.toLowerCase()];
+    if(index === undefined) throw new Error("Falta a coluna obrigatória: " + header);
+    headers[index] = header;
   });
 
-  const idIndex = headers.indexOf("animal_id");
-  const sexIndex = headers.indexOf("sexo");
+  const allocationIndex = headerIndex.alocacao;
+  if(allocationIndex === undefined) headers.push("Alocacao");
+  else headers[allocationIndex] = "Alocacao";
+
+  const idIndex = headerIndex.animal_id;
+  const sexIndex = headerIndex.sexo;
   const seen = {};
   const rows = parsed.filter(function(row){
     return row.some(function(value){return cleanText(value) !== "";});

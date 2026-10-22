@@ -1646,6 +1646,7 @@ if(icon){
 
 }
   async function importFromFile(file){
+    const previousState = Core.loadState();
     const reader = new FileReader();
     reader.onload = async (ev) => {
       const txt = ev.target.result;
@@ -1678,7 +1679,9 @@ if(icon){
       }catch(err){
         console.error(err);
         alert("Falha na importação ou sincronização.\n\nDetalhe: " + (err?.message || err));
-        renderAll(Core.loadState());
+        if(previousState) Core.saveState(previousState);
+        else Core.clearState();
+        renderAll(previousState);
       }finally{
         fileInput.disabled = false;
         btnClear.disabled = false;
