@@ -1037,6 +1037,40 @@ const ALERTAS_URL = "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-
 let alertasDisponiveis = false;
 const registosEmCurso = new Set();
 
+async function publishImportedCsv(csvText){
+  const syncToken = prompt("Código de sincronização do BoviTrack:");
+  if(syncToken === null) throw new Error("Sincronização central cancelada");
+  if(!syncToken.trim()) throw new Error("O código de sincronização é obrigatório");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 90000);
+  try{
+    const response = await fetch(ALERTAS_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({
+        action:"replace_animals",
+        token:syncToken.trim(),
+        csv:csvText
+      }),
+      signal:controller.signal
+    });
+    const raw = await response.text();
+    let result;
+    try{ result = JSON.parse(raw); }
+    catch{ throw new Error("Resposta inválida do serviço central"); }
+    if(!response.ok || !result.ok){
+      throw new Error(result && result.error ? result.error : "Falha na sincronização central");
+    }
+    return result;
+  }catch(err){
+    if(err && err.name === "AbortError") throw new Error("A sincronização demorou demasiado tempo");
+    throw err;
+  }finally{
+    clearTimeout(timeout);
+  }
+}
+
 async function loadAlertasOperacionais(){
   try{
     const r = await fetch(ALERTAS_URL + "?type=alertas");
@@ -1635,17 +1669,16 @@ if(icon){
           }
         });
 
-        statusEl.innerHTML = `Importação concluída ✅ (dados guardados)`;
+        statusEl.innerHTML = `Dados validados. A sincronizar a base central…`;
+        const syncResult = await publishImportedCsv(txt);
         renderAll(st);
-
-statusEl.innerHTML =
-  "Importação concluída ✅";
-// 2. Pesagens
+        statusEl.innerHTML =
+          `Importação e sincronização concluídas ✅ (${syncResult.totalAnimals} animais)`;
 
       }catch(err){
         console.error(err);
-        alert("Falha ao importar o CSV. Confirma o formato/colunas.\n\nDetalhe: " + (err?.message || err));
-        renderAll(null);
+        alert("Falha na importação ou sincronização.\n\nDetalhe: " + (err?.message || err));
+        renderAll(Core.loadState());
       }finally{
         fileInput.disabled = false;
         btnClear.disabled = false;
