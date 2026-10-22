@@ -3,6 +3,7 @@ const SHEET_ALERTAS = "alertas_operacionais";
 const SHEET_ANIMAIS_BACKUP = "_animais_backup";
 const SYNC_TOKEN_PROPERTY = "BOVITRACK_SYNC_TOKEN";
 const LAST_SYNC_ID_PROPERTY = "BOVITRACK_LAST_SYNC_ID";
+const SUMMARY_HISTORY_PROPERTY = "BOVITRACK_SUMMARY_HISTORY";
 const MAX_IMPORT_ROWS = 20000;
 
 function doGet(e){
@@ -88,11 +89,14 @@ function replaceAnimals(body){
   if(!rows.length) throw new Error("O ficheiro não contém animais válidos");
 
   const lock = LockService.getScriptLock();
+  let importedSummary = null;
   lock.waitLock(30000);
   try{
     const book = SpreadsheetApp.getActive();
     const target = book.getSheetByName(SHEET_ANIMAIS);
     if(!target) throw new Error("A folha central de animais não existe");
+    let previousSummary = null;
+    try{ previousSummary = getCurrentSummary(); }catch(summaryError){}
     let backup = book.getSheetByName(SHEET_ANIMAIS_BACKUP);
     if(!backup) backup = book.insertSheet(SHEET_ANIMAIS_BACKUP);
 
@@ -119,6 +123,9 @@ function replaceAnimals(body){
       throw writeError;
     }
     SpreadsheetApp.flush();
+    importedSummary = getCurrentSummary();
+    try{ storeSummaryHistory(previousSummary,importedSummary); }
+    catch(historyError){ console.error("Falha ao guardar histórico agregado",historyError); }
     const syncId = cleanText(body.syncId);
     if(syncId){
       PropertiesService.getScriptProperties().setProperty(LAST_SYNC_ID_PROPERTY,syncId);
@@ -127,8 +134,7 @@ function replaceAnimals(body){
     lock.releaseLock();
   }
 
-  const summary = getPublicSummary();
-  return {ok:true,totalAnimals:summary.totalAnimals};
+  return {ok:true,totalAnimals:importedSummary.totalAnimals};
 }
 
 function getSyncStatus(syncId){
@@ -137,7 +143,7 @@ function getSyncStatus(syncId){
   if(!candidate || !expected || candidate !== expected){
     return {ok:false,pending:true};
   }
-  const summary = getPublicSummary();
+  const summary = getCurrentSummary();
   return {ok:true,totalAnimals:summary.totalAnimals};
 }
 
@@ -148,6 +154,16 @@ function assertSyncToken(candidate){
 }
 
 function getPublicSummary(){
+  const summary = getCurrentSummary();
+  const history = readSummaryHistory();
+  if(history.length){
+    summary.history = history;
+    summary.previous = history.length > 1 ? history[history.length-2] : null;
+  }
+  return summary;
+}
+
+function getCurrentSummary(){
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_ANIMAIS);
   if(!sheet) throw new Error("Folha de animais indisponível");
   const data = sheet.getDataRange().getValues();
@@ -196,6 +212,50 @@ function getPublicSummary(){
     male:publicSex(aggregate.M),
     female:publicSex(aggregate.F)
   };
+}
+
+function readSummaryHistory(){
+  const raw = PropertiesService.getScriptProperties().getProperty(SUMMARY_HISTORY_PROPERTY);
+  if(!raw) return [];
+  try{
+    const history = JSON.parse(raw);
+    return Array.isArray(history) ? history.slice(-16) : [];
+  }catch(error){
+    return [];
+  }
+}
+
+function summarySnapshot(summary){
+  if(!summary || !summary.male || !summary.female) return null;
+  return {
+    totalAnimals:Number(summary.totalAnimals),
+    male:{
+      averageWeightKg:summary.male.averageWeightKg,
+      averageGmdKgDay:summary.male.averageGmdKgDay,
+      averageAgeMonths:summary.male.averageAgeMonths
+    },
+    female:{
+      averageWeightKg:summary.female.averageWeightKg,
+      averageGmdKgDay:summary.female.averageGmdKgDay,
+      averageAgeMonths:summary.female.averageAgeMonths
+    }
+  };
+}
+
+function sameSnapshot(first,second){
+  return first && second && JSON.stringify(first) === JSON.stringify(second);
+}
+
+function storeSummaryHistory(previousSummary,currentSummary){
+  const history = readSummaryHistory();
+  const previous = summarySnapshot(previousSummary);
+  const current = summarySnapshot(currentSummary);
+  if(previous && !sameSnapshot(history[history.length-1],previous)) history.push(previous);
+  if(current && !sameSnapshot(history[history.length-1],current)) history.push(current);
+  PropertiesService.getScriptProperties().setProperty(
+    SUMMARY_HISTORY_PROPERTY,
+    JSON.stringify(history.slice(-16))
+  );
 }
 
 function getAnimais(){
