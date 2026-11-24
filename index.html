@@ -690,7 +690,7 @@ th.left, td.left{text-align:left}
     </div>
 
     <div class="small">
-      • Esta página é o <b>painel principal</b>. Carregas o CSV uma vez e depois vais para “Animais” e “Planeamento”.<br>
+      • Os dados são sincronizados automaticamente a partir do e‑Exploração. Entra com a tua conta Microsoft da Monte do Pasto para os consultar.<br>
       • “Limpar dados” apaga o estado guardado no browser. “Limpar cache meteo” força novo download da meteorologia (pode demorar um pouco).
     </div>
   </div>
@@ -782,6 +782,7 @@ th.left, td.left{text-align:left}
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="core.js"></script>
+<script src="microsoft-data-auth.js"></script>
 
 <script>
 window.addEventListener("load", ()=>{
@@ -1458,7 +1459,7 @@ Object.keys(baselinesIA).forEach(k => {
 
 });
 
-state.baselinesIA = baselinesIA;
+if(state) state.baselinesIA = baselinesIA;
     const groups = state?.groupsOut || [];
     if(!groups.length){
       const tr = document.createElement("tr");
@@ -1841,80 +1842,86 @@ setInterval(loadWeather, 10 * 60 * 1000);
    GOOGLE SHEETS
 ========================================= */
 
-async function loadGoogleSheet(){
-
-  try{
-
-    statusEl.innerHTML = `
-<div style="
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-weight:700;
-  color:#166534;
-">
-
-  <div style="
-    width:18px;
-    height:18px;
-    border:3px solid #bbf7d0;
-    border-top:3px solid #16a34a;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-  "></div>
-
-  <div>
-    A sincronizar dados do efetivo com a IA. Aguardar...
-  </div>
-
-</div>
-`;
-
-    const url =
-      "https://script.google.com/macros/s/AKfycbxyobcRj8Phe6rCZKW-7kcOunoF5difoXlTtLKXCnZA_oprNAXwlqrZDTQcuTLQ0_35/exec";
-
-    const r = await fetch(url);
-
-    const rows = await r.json();
-
-    console.log("DADOS GOOGLE:", rows);
-
-    if(!rows || !rows.length){
-      throw new Error("Google Sheets vazio");
-    }
-
-    // transformar JSON -> CSV
-    const csv = Papa.unparse(rows);
-
-    // usar motor atual do BOVITRACK
-    const st = await Core.importCSVText(csv, {
-
-      onProgress:(p)=>{
-
-        if(p.phase === "parse"){
-          statusEl.innerHTML =
-            `A processar Google Sheets... ${p.done}/${p.total}`;
-        }
-
-      }
-
-    });
-
-    // render dashboard
-    renderAll(st);
-
-    statusEl.innerHTML =
-      "Dados Sincronizados e IA Online ✅";
-
-   }catch(err){
-
-    console.error(err);
-
-    statusEl.innerHTML =
-      "Erro ao carregar Google Sheets ❌";
-
+function microsoftControls(){
+  userInfoEl.replaceChildren();
+  const account=window.BoviMicrosoft && BoviMicrosoft.account();
+  if(account){
+    const label=document.createElement("span");
+    label.textContent=account.username;
+    userInfoEl.appendChild(label);
   }
+  const login=document.createElement("button");
+  login.type="button";
+  login.textContent=account ? "Atualizar dados" : "Entrar com Microsoft";
+  login.addEventListener("click",async()=>{
+    login.disabled=true;
+    try{await loadGoogleSheet(true);}finally{login.disabled=false;}
+  });
+  userInfoEl.appendChild(login);
+  if(account){
+    const sair=document.createElement("button");
+    sair.type="button";sair.textContent="Sair";
+    sair.addEventListener("click",async()=>{
+      Core.clearState();renderAll(null);
+      try{await BoviMicrosoft.signOut();}catch(_){
+        statusEl.textContent="Dados locais removidos. Não foi possível terminar a sessão Microsoft; tenta novamente.";
+      }
+    });
+    userInfoEl.appendChild(sair);
+  }
+}
 
+async function loadGoogleSheet(interactive=false){
+  let authenticated=false;
+  try{
+    microsoftControls();
+    if(!window.BoviMicrosoft)throw new Error("Não foi possível carregar o início de sessão Microsoft.");
+    statusEl.textContent="A confirmar a sessão Microsoft…";
+    const idToken=await BoviMicrosoft.token(interactive);
+    authenticated=true;
+    microsoftControls();
+    statusEl.textContent="A obter os dados sincronizados do efetivo…";
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),60000);
+    let result;
+    try{
+      const response=await fetch(ALERTAS_URL,{
+        method:"POST",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({action:"read_animals_microsoft",idToken}),
+        signal:controller.signal
+      });
+      if(!response.ok)throw new Error("O serviço de dados está indisponível.");
+      result=await response.json();
+    }finally{clearTimeout(timeout);}
+    if(!result || result.ok!==true || !Array.isArray(result.rows)){
+      if(result && result.code==="AUTH_REQUIRED")authenticated=false;
+      throw new Error(result && result.error || "Não foi possível obter os dados do efetivo.");
+    }
+    const rows=result.rows;
+    if(!rows.length)throw new Error("A fonte automática não devolveu animais. Os últimos dados válidos foram preservados.");
+    if(rows.some(a=>String(a.nif)!=="505609762"))throw new Error("A fonte devolveu dados fora do âmbito configurado.");
+    const csv=Papa.unparse(rows);
+    const previousState=Core.loadState();
+    let st;
+    try{
+      st=await Core.importCSVText(csv,{onProgress:p=>{
+        statusEl.textContent=p.phase==="parse" ? "A processar o efetivo… "+p.done+"/"+p.total : "A preparar os dados do efetivo…";
+      }});
+      renderAll(st);
+    }catch(error){
+      if(previousState)Core.saveState(previousState);else Core.clearState();
+      throw error;
+    }
+    const when=result.lastSync ? new Date(result.lastSync) : null;
+    statusEl.textContent="Dados automáticos carregados: "+rows.length+" animais."+
+      (when && Number.isFinite(when.getTime()) ? " Última sincronização: "+when.toLocaleString("pt-PT") : "");
+  }catch(error){
+    if(!authenticated){
+      Core.clearState();renderAll(null);
+    }
+    statusEl.textContent=error && error.message || "Não foi possível carregar os dados automáticos.";
+  }finally{microsoftControls();}
 }
 
 })();
